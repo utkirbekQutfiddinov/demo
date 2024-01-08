@@ -1,5 +1,6 @@
 package uz.utkirbek.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uz.utkirbek.dao.TrainerDao;
 import uz.utkirbek.model.Trainer;
@@ -10,11 +11,9 @@ import java.util.List;
 @Service
 public class TrainerServiceImpl implements TrainerService {
 
-    private final TrainerDao dao;
+    @Autowired
+    private TrainerDao dao;
 
-    public TrainerServiceImpl(TrainerDao dao) {
-        this.dao = dao;
-    }
 
     public List<Trainer> getAll() {
         return dao.getAll();
