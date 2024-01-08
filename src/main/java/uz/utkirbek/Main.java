@@ -26,10 +26,16 @@ public class Main {
         newUser.setLastname("Qutfiddinov");
         userService.add(newUser);
 
+
+        User newUser1 = new User();
+        newUser1.setFirstname("Utkirbek");
+        newUser1.setLastname("Qutfiddinov");
+        userService.add(newUser1);
+
         System.out.println("After:");
         users = userService.getAll();
         for (User user : users) {
-            System.out.println(user.getFirstname() + " - " + user.getLastname() + " - " + user.getActive());
+            System.out.println(user);
         }
 
     }

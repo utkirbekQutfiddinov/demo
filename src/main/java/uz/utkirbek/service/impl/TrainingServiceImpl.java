@@ -30,19 +30,4 @@ public class TrainingServiceImpl implements TrainingService {
         }
     }
 
-    public void update(Training bean) {
-        try{
-            dao.update(bean);
-        } catch (Exception e) {
-            System.out.println("Error on updating");
-        }
-    }
-
-    public void delete(Integer id) {
-        try{
-            dao.delete(id);
-        } catch (Exception e) {
-            System.out.println("Error on deleting");
-        }
-    }
 }

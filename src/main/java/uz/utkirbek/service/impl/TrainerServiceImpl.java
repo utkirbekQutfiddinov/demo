@@ -39,12 +39,4 @@ public class TrainerServiceImpl implements TrainerService {
         }
     }
 
-    public void delete(Integer id) {
-        try{
-            dao.delete(id);
-        } catch (Exception e) {
-            System.out.println("Error on deleting");
-        }
-    }
-
 }

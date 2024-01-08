@@ -56,12 +56,12 @@ public class UserServiceImpl implements UserService {
     }
 
     private String generateUsername(String firstname, String lastname) {
-        String baseUsername = firstname + "." + lastname;
+        String baseUsername = firstname + lastname;
         String username = baseUsername;
 
         int serialNumber = 1;
         while (usernameExists(username)) {
-            username = baseUsername + "." + serialNumber;
+            username = baseUsername + serialNumber;
             serialNumber++;
         }
 

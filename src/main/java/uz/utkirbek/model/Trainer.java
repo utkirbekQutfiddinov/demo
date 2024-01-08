@@ -25,4 +25,12 @@ public class Trainer extends BaseIdBean{
     public void setSpecialization(String specialization) {
         this.specialization = specialization;
     }
+
+    @Override
+    public String toString() {
+        return "Trainer{" +
+                "userId=" + userId +
+                ", specialization='" + specialization + '\'' +
+                '}';
+    }
 }

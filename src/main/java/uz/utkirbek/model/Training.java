@@ -64,4 +64,17 @@ public class Training extends BaseIdBean{
     public void setDuration(Integer duration) {
         this.duration = duration;
     }
+
+
+    @Override
+    public String toString() {
+        return "Training{" +
+                "trainerId=" + trainerId +
+                ", traineeId=" + traineeId +
+                ", name='" + name + '\'' +
+                ", trainingTypeId=" + trainingTypeId +
+                ", date=" + date +
+                ", duration=" + duration +
+                '}';
+    }
 }

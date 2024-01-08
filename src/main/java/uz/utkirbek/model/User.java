@@ -1,9 +1,6 @@
 package uz.utkirbek.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uz.utkirbek.service.UserService;
-import uz.utkirbek.service.impl.UserServiceImpl;
 
 @Component
 public class User extends BaseIdBean{
@@ -60,5 +57,16 @@ public class User extends BaseIdBean{
 
     public void setActive(Boolean active) {
         isActive = active;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", isActive=" + isActive +
+                '}';
     }
 }

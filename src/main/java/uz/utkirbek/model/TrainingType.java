@@ -16,4 +16,11 @@ public class TrainingType extends BaseIdBean{
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "TrainingType{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

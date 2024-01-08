@@ -36,4 +36,13 @@ public class Trainee extends BaseIdBean{
     public void setBirthdate(Date birthdate) {
         this.birthdate = birthdate;
     }
+
+    @Override
+    public String toString() {
+        return "Trainee{" +
+                "userId=" + userId +
+                ", address='" + address + '\'' +
+                ", birthdate=" + birthdate +
+                '}';
+    }
 }
