@@ -1,56 +1,49 @@
 package uz.utkirbek.dao.impl;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.dao.TrainingTypeDao;
 import uz.utkirbek.model.TrainingType;
+import uz.utkirbek.storage.StorageBean;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 @Repository
 public class TrainingTypeDaoImpl implements TrainingTypeDao {
-    private JdbcTemplate jdbcTemplate;
+    private final StorageBean storageBean;
 
-    public TrainingTypeDaoImpl(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
+    public TrainingTypeDaoImpl(StorageBean storageBean) {
+        this.storageBean = storageBean;
     }
 
     public List<TrainingType> getAll() {
-        String sql = "SELECT * FROM training_types";
-        return jdbcTemplate.query(sql, new TrainingTypeRowMapper());
+        return storageBean.getList("trainingTypes");
     }
 
     public TrainingType getOne(Integer id) {
-        String sql = "SELECT * FROM training_types WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new TrainingTypeRowMapper());
+        for(TrainingType trainingType: getAll()){
+            if(trainingType.getId().equals(id)){
+                return trainingType;
+            }
+        }
+
+        return null;
     }
 
     public void add(TrainingType bean) throws Exception {
-        String sql = "INSERT INTO training_types (name) VALUES (?)";
-        jdbcTemplate.update(sql, bean.getName());
+        List<TrainingType> list=getAll();
+        list.add(bean);
+        storageBean.setList("trainingTypes",list);
     }
 
     public void update(TrainingType bean) throws Exception {
-        String sql = "update training_types set name=? where id=?";
-        jdbcTemplate.update(sql, bean.getName(),bean.getId());
+        TrainingType trainingType=getOne(bean.getId());
+        trainingType.setName(bean.getName());
+
     }
 
     public void delete(Integer id) throws Exception {
-        String sql = "DELETE FROM training_types WHERE id = ?";
-        jdbcTemplate.update(sql, id);
-    }
+        List<TrainingType> list=getAll();
 
-    private static final class TrainingTypeRowMapper implements RowMapper<TrainingType> {
-
-        public TrainingType mapRow(ResultSet rs, int rowNum) throws SQLException {
-            TrainingType type = new TrainingType();
-            type.setId(rs.getInt("id"));
-            type.setName(rs.getString("name"));
-            return type;
-        }
+        list.removeIf(t -> t.getId().equals(id));
     }
 }

@@ -1,62 +1,53 @@
 package uz.utkirbek.dao.impl;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.dao.UserDao;
 import uz.utkirbek.model.User;
+import uz.utkirbek.storage.StorageBean;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 @Repository
 public class UserDaoImpl implements UserDao {
-    private final JdbcTemplate jdbcTemplate;
+    private final StorageBean storageBean;
 
-    public UserDaoImpl(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
+    public UserDaoImpl(StorageBean storageBean) {
+        this.storageBean = storageBean;
     }
 
     public List<User> getAll() {
-        String sql = "SELECT * FROM users";
-        return jdbcTemplate.query(sql, new UserRowMapper());
+        return storageBean.getList("users");
     }
 
     public User getOne(Integer id) {
-        String sql = "SELECT * FROM users WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new UserRowMapper());
+        for(User user: getAll()){
+            if(user.getId().equals(id)){
+                return user;
+            }
+        }
+
+        return null;
     }
 
-    public void add(User newBean) throws Exception {
-        String sql = "INSERT INTO users (firstname, lastname, username, password, isactive) VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, newBean.getFirstname(), newBean.getLastname(),
-                                newBean.getUsername(), newBean.getPassword(), newBean.getActive());
+    public void add(User bean) throws Exception {
+        List<User> list=getAll();
+        list.add(bean);
+        storageBean.setList("users",list);
     }
 
     public void update(User bean) throws Exception {
-        String sql = "update users set firstname=?, lastname=?, username=?, password=?, isactive=? where id=?";
-        jdbcTemplate.update(sql, bean.getFirstname(), bean.getLastname(), bean.getUsername(),
-                bean.getPassword(), bean.getActive(),bean.getId());
+        User user=getOne(bean.getId());
+        user.setActive(bean.getActive());
+        user.setUsername(bean.getUsername());
+        user.setPassword(bean.getPassword());
+        user.setFirstname(bean.getFirstname());
+        user.setLastname(bean.getLastname());
+
     }
 
     public void delete(Integer id) throws Exception {
-        String sql = "DELETE FROM users WHERE id = ?";
-        jdbcTemplate.update(sql, id);
-    }
+        List<User> list=getAll();
 
-    private static final class UserRowMapper implements RowMapper<User>{
-
-        public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-            User user = new User();
-            user.setId(rs.getInt("id"));
-            user.setFirstname(rs.getString("firstname"));
-            user.setLastname(rs.getString("lastname"));
-            user.setUsername(rs.getString("username"));
-            user.setPassword(rs.getString("password"));
-            user.setActive(rs.getBoolean("isActive"));
-            return user;
-        }
+        list.removeIf(t -> t.getId().equals(id));
     }
 }

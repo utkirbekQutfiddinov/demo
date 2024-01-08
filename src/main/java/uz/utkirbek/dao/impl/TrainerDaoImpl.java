@@ -1,58 +1,51 @@
 package uz.utkirbek.dao.impl;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.dao.TrainerDao;
 import uz.utkirbek.model.Trainer;
+import uz.utkirbek.storage.StorageBean;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 @Repository
 public class TrainerDaoImpl implements TrainerDao {
-    private JdbcTemplate jdbcTemplate;
+    private final StorageBean storageBean;
 
-    public TrainerDaoImpl(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
+    public TrainerDaoImpl(StorageBean storageBean) {
+        this.storageBean = storageBean;
     }
 
     public List<Trainer> getAll() {
-        String sql = "SELECT * FROM trainers";
-        return jdbcTemplate.query(sql, new TrainerRowMapper());
+        return storageBean.getList("trainers");
     }
 
     public Trainer getOne(Integer id) {
-        String sql = "SELECT * FROM trainers WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new TrainerRowMapper());
+        for(Trainer trainer: getAll()){
+            if(trainer.getId().equals(id)){
+                return trainer;
+            }
+        }
+
+        return null;
     }
 
     public void add(Trainer bean) throws Exception {
-        String sql = "INSERT INTO trainers (userId, specialization) VALUES (?, ?)";
-        jdbcTemplate.update(sql, bean.getUserId(), bean.getSpecialization());
+        List<Trainer> list=getAll();
+        list.add(bean);
+        storageBean.setList("trainers",list);
     }
 
     public void update(Trainer bean) throws Exception {
-        String sql = "update trainers set userId=?, specialization=? where id=?";
-        jdbcTemplate.update(sql, bean.getUserId(),bean.getSpecialization(),bean.getId());
+        Trainer trainer=getOne(bean.getId());
+        trainer.setUserId(bean.getUserId());
+        trainer.setSpecialization(bean.getSpecialization());
+
     }
 
     public void delete(Integer id) throws Exception {
-        String sql = "DELETE FROM trainers WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+        List<Trainer> list=getAll();
 
+        list.removeIf(t -> t.getId().equals(id));
     }
 
-    private static final class TrainerRowMapper implements RowMapper<Trainer> {
-
-        public Trainer mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Trainer trainer = new Trainer();
-            trainer.setId(rs.getInt("id"));
-            trainer.setUserId(rs.getInt("userId"));
-            trainer.setSpecialization(rs.getString("specialization"));
-            return trainer;
-        }
-    }
 }
