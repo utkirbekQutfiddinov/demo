@@ -1,0 +1,28 @@
+package uz.utkirbek.model;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class Trainer extends BaseIdBean{
+    private Integer userId;
+    private String specialization;
+
+    public Trainer() {
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
+    }
+}
