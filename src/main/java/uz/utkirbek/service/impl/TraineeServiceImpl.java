@@ -1,18 +1,23 @@
 package uz.utkirbek.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import uz.utkirbek.dao.TraineeDao;
+import uz.utkirbek.dao.BaseDao;
 import uz.utkirbek.model.Trainee;
-import uz.utkirbek.service.TraineeService;
+import uz.utkirbek.service.BaseService;
 
 import java.util.List;
 
 @Service
-public class TraineeServiceImpl implements TraineeService {
+public class TraineeServiceImpl implements BaseService<Trainee> {
+    static final Logger LOG = LoggerFactory.getLogger(TraineeServiceImpl.class);
 
     @Autowired
-    private TraineeDao dao;
+    @Qualifier(value = "traineeDaoImpl")
+    private BaseDao<Trainee> dao;
 
     public List<Trainee> getAll() {
         return dao.getAll();
@@ -26,7 +31,7 @@ public class TraineeServiceImpl implements TraineeService {
         try {
             dao.add(newBean);
         } catch (Exception e) {
-            System.out.println("Error on adding");
+            LOG.debug("Error on adding");
         }
     }
 
@@ -34,7 +39,7 @@ public class TraineeServiceImpl implements TraineeService {
         try{
             dao.update(bean);
         } catch (Exception e) {
-            System.out.println("Error on updating");
+            LOG.debug("Error on updating");
         }
     }
 
@@ -42,7 +47,7 @@ public class TraineeServiceImpl implements TraineeService {
         try{
             dao.delete(id);
         } catch (Exception e) {
-            System.out.println("Error on deleting");
+            LOG.debug("Error on deleting");
         }
     }
 }

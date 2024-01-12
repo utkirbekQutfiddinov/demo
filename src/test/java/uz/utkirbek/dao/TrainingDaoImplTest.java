@@ -2,13 +2,11 @@ package uz.utkirbek.dao;
 
 import org.junit.Before;
 import org.junit.Test;
-import uz.utkirbek.dao.TrainingDao;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import uz.utkirbek.dao.impl.TrainingDaoImpl;
 import uz.utkirbek.model.Training;
-import uz.utkirbek.storage.StorageBean;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -16,17 +14,17 @@ import static org.junit.Assert.assertNotNull;
 
 public class TrainingDaoImplTest {
 
-    private TrainingDao trainingDao;
+    private BaseDao<Training> dao;
 
     @Before
-    public void setUp() {
-        StorageBean storageBean = new StorageBean(new HashMap<>());
-        trainingDao = new TrainingDaoImpl(storageBean);
+    public void setUp(){
+        AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext("uz.utkirbek");
+        this.dao=context.getBean(TrainingDaoImpl.class);
     }
 
     @Test
     public void testGetAll() {
-        List<Training> trainings = trainingDao.getAll();
+        List<Training> trainings = dao.getAll();
         assertNotNull(trainings);
         assertEquals(0, trainings.size());
     }
@@ -34,12 +32,12 @@ public class TrainingDaoImplTest {
     @Test
     public void testAddAndGetOne() throws Exception {
         Training trainingToAdd = createTraining(1, 1, 2, "Java Basics", 1, new Date(), 60);
-        trainingDao.add(trainingToAdd);
+        dao.add(trainingToAdd);
 
-        List<Training> trainings = trainingDao.getAll();
+        List<Training> trainings = dao.getAll();
         assertEquals(1, trainings.size());
 
-        Training retrievedTraining = trainingDao.getOne(1);
+        Training retrievedTraining = dao.getOne(1);
         assertNotNull(retrievedTraining);
         assertTrainingEquals(trainingToAdd, retrievedTraining);
     }
@@ -47,12 +45,12 @@ public class TrainingDaoImplTest {
     @Test
     public void testUpdate() throws Exception {
         Training initialTraining = createTraining(1, 1, 2, "Java Basics", 1, new Date(), 60);
-        trainingDao.add(initialTraining);
+        dao.add(initialTraining);
 
         Training updatedTraining = createTraining(1, 2, 3, "Advanced Java", 2, new Date(), 90);
-        trainingDao.update(updatedTraining);
+        dao.update(updatedTraining);
 
-        Training retrievedTraining = trainingDao.getOne(1);
+        Training retrievedTraining = dao.getOne(1);
         assertNotNull(retrievedTraining);
         assertTrainingEquals(updatedTraining, retrievedTraining);
     }
@@ -60,14 +58,14 @@ public class TrainingDaoImplTest {
     @Test
     public void testDelete() throws Exception {
         Training trainingToDelete = createTraining(1, 1, 2, "Java Basics", 1, new Date(), 60);
-        trainingDao.add(trainingToDelete);
+        dao.add(trainingToDelete);
 
-        List<Training> initialTrainings = trainingDao.getAll();
+        List<Training> initialTrainings = dao.getAll();
         assertEquals(1, initialTrainings.size());
 
-        trainingDao.delete(1);
+        dao.delete(1);
 
-        List<Training> remainingTrainings = trainingDao.getAll();
+        List<Training> remainingTrainings = dao.getAll();
         assertEquals(0, remainingTrainings.size());
     }
 

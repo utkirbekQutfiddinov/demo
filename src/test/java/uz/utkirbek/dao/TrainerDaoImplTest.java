@@ -2,11 +2,11 @@ package uz.utkirbek.dao;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import uz.utkirbek.dao.impl.TrainerDaoImpl;
 import uz.utkirbek.model.Trainer;
-import uz.utkirbek.storage.StorageBean;
+import uz.utkirbek.model.User;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -14,30 +14,31 @@ import static org.junit.Assert.assertNotNull;
 
 public class TrainerDaoImplTest {
 
-    private TrainerDao trainerDao;
+    private BaseDao<Trainer> dao;
 
     @Before
-    public void setUp() {
-        StorageBean storageBean = new StorageBean(new HashMap<>());
-        trainerDao = new TrainerDaoImpl(storageBean);
+    public void setUp(){
+        AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext("uz.utkirbek");
+        this.dao=context.getBean(TrainerDaoImpl.class);
     }
 
     @Test
     public void testGetAll() {
-        List<Trainer> trainers = trainerDao.getAll();
+        List<Trainer> trainers = dao.getAll();
         assertNotNull(trainers);
         assertEquals(0, trainers.size());
     }
 
     @Test
     public void testAddAndGetOne() throws Exception {
-        Trainer trainerToAdd = createTrainer(1, "John Doe", "Java");
-        trainerDao.add(trainerToAdd);
+        final int userId=1;
+        Trainer trainerToAdd = new Trainer(userId, "Java");
+        dao.add(trainerToAdd);
 
-        List<Trainer> trainers = trainerDao.getAll();
-        assertEquals(1, trainers.size());
+        List<Trainer> trainers = dao.getAll();
+        assertEquals(userId, trainers.size());
 
-        Trainer retrievedTrainer = trainerDao.getOne(1);
+        Trainer retrievedTrainer = dao.getOne(userId);
         assertNotNull(retrievedTrainer);
         assertEquals(trainerToAdd.getUserId(), retrievedTrainer.getUserId());
         assertEquals(trainerToAdd.getSpecialization(), retrievedTrainer.getSpecialization());
@@ -45,13 +46,14 @@ public class TrainerDaoImplTest {
 
     @Test
     public void testUpdate() throws Exception {
-        Trainer initialTrainer = createTrainer(1, "John Doe", "Java");
-        trainerDao.add(initialTrainer);
+        final int userId=1;
+        Trainer initialTrainer = new Trainer(userId, "Java");
+        dao.add(initialTrainer);
 
-        Trainer updatedTrainer = createTrainer(1, "Updated Name", "Python");
-        trainerDao.update(updatedTrainer);
+        Trainer updatedTrainer = new Trainer(userId, "Python");
+        dao.update(updatedTrainer);
 
-        Trainer retrievedTrainer = trainerDao.getOne(1);
+        Trainer retrievedTrainer = dao.getOne(userId);
         assertNotNull(retrievedTrainer);
         assertEquals(updatedTrainer.getUserId(), retrievedTrainer.getUserId());
         assertEquals(updatedTrainer.getSpecialization(), retrievedTrainer.getSpecialization());
@@ -59,24 +61,16 @@ public class TrainerDaoImplTest {
 
     @Test
     public void testDelete() throws Exception {
-        Trainer trainerToDelete = createTrainer(1, "John Doe", "Java");
-        trainerDao.add(trainerToDelete);
+        final int userId=1;
+        Trainer trainerToDelete = new Trainer(userId, "Java");
+        dao.add(trainerToDelete);
 
-        List<Trainer> initialTrainers = trainerDao.getAll();
-        assertEquals(1, initialTrainers.size());
+        List<Trainer> initialTrainers = dao.getAll();
+        assertEquals(userId, initialTrainers.size());
 
-        trainerDao.delete(1);
+        dao.delete(userId);
 
-        List<Trainer> remainingTrainers = trainerDao.getAll();
+        List<Trainer> remainingTrainers = dao.getAll();
         assertEquals(0, remainingTrainers.size());
-    }
-
-    private Trainer createTrainer(Integer id, String name, String specialization) {
-        Trainer trainer = new Trainer();
-        trainer.setId(id);
-        trainer.setUserId(id);
-        trainer.setSpecialization(specialization);
-
-        return trainer;
     }
 }

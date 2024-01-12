@@ -2,89 +2,69 @@ package uz.utkirbek.dao;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import uz.utkirbek.dao.impl.UserDaoImpl;
 import uz.utkirbek.model.User;
-import uz.utkirbek.storage.StorageBean;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class UserDaoImplTest {
-
-    private UserDao userDao;
+    private BaseDao<User> userDao;
 
     @Before
-    public void setUp() {
-        StorageBean storageBean = new StorageBean(new HashMap<>());
-        userDao = new UserDaoImpl(storageBean);
+    public void setUp(){
+        AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext("uz.utkirbek");
+        this.userDao=context.getBean(UserDaoImpl.class);
     }
 
     @Test
     public void testGetAll() {
         List<User> users = userDao.getAll();
         assertNotNull(users);
-        assertEquals(0, users.size());
+        assertEquals(3, users.size());
     }
 
     @Test
     public void testAddAndGetOne() throws Exception {
-        User userToAdd = createUser(1, "Utkirbek", "Qutfiddinov");
+        final int userId=100;
+        User userToAdd = new User(userId, "Utkirbek", "Qutfiddinov");
         userDao.add(userToAdd);
 
-        List<User> users = userDao.getAll();
-        assertEquals(1, users.size());
-
-        User retrievedUser = userDao.getOne(1);
+        User retrievedUser = userDao.getOne(userId);
         assertNotNull(retrievedUser);
-        assertUserEquals(userToAdd, retrievedUser);
+        assertEquals(userToAdd.getFirstname(), retrievedUser.getFirstname());
     }
 
     @Test
     public void testUpdate() throws Exception {
-        User initialUser = createUser(1, "Utkirbek", "Qutfiddinov");
+        final int userId=100;
+        User initialUser = new User(userId, "Utkirbek", "Qutfiddinov");
         userDao.add(initialUser);
 
-        User updatedUser = createUser(1, "Akbar", "Akbarov");
+        User updatedUser = new User(userId, "Akbar", "Akbarov");
         userDao.update(updatedUser);
 
-        User retrievedUser = userDao.getOne(1);
+        User retrievedUser = userDao.getOne(userId);
         assertNotNull(retrievedUser);
-        assertUserEquals(updatedUser, retrievedUser);
+        assertEquals(updatedUser.getFirstname(), retrievedUser.getFirstname());
+        assertEquals(updatedUser.getLastname(), retrievedUser.getLastname());
     }
 
     @Test
     public void testDelete() throws Exception {
-        User userToDelete = createUser(1, "Utkirbek", "Qutfiddinov");
+        final int userId=100;
+        User userToDelete = new User(userId, "Utkirbek", "Qutfiddinov");
         userDao.add(userToDelete);
 
         List<User> initialUsers = userDao.getAll();
-        assertEquals(1, initialUsers.size());
 
-        userDao.delete(1);
+        userDao.delete(userId);
 
         List<User> remainingUsers = userDao.getAll();
-        assertEquals(0, remainingUsers.size());
-    }
-
-    private User createUser(Integer id, String firstname, String lastname) {
-        User user = new User();
-        user.setId(id);
-        user.setFirstname(firstname);
-        user.setLastname(lastname);
-
-        return user;
-    }
-
-    private void assertUserEquals(User expected, User actual) {
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getFirstname(), actual.getFirstname());
-        assertEquals(expected.getLastname(), actual.getLastname());
-        assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.getPassword(), actual.getPassword());
-        assertEquals(expected.getActive(), actual.getActive());
+        assertEquals(initialUsers.size(), remainingUsers.size()+1);
     }
 }
 

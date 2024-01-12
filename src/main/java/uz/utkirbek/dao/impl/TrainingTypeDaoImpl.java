@@ -3,14 +3,17 @@ package uz.utkirbek.dao.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import uz.utkirbek.dao.TrainingTypeDao;
+import uz.utkirbek.dao.BaseDao;
+import uz.utkirbek.enums.TABLE;
+import uz.utkirbek.model.BaseIdBean;
 import uz.utkirbek.model.TrainingType;
 import uz.utkirbek.storage.StorageBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class TrainingTypeDaoImpl implements TrainingTypeDao {
+public class TrainingTypeDaoImpl implements BaseDao<TrainingType> {
     static final Logger LOG = LoggerFactory.getLogger(TrainingTypeDaoImpl.class);
     private final StorageBean storageBean;
 
@@ -19,16 +22,24 @@ public class TrainingTypeDaoImpl implements TrainingTypeDao {
     }
 
     public List<TrainingType> getAll() {
-        LOG.info("getAll: ");
+        LOG.debug("getAll: ");
+        List<? extends BaseIdBean> baseIdBeans = storageBean.getList(TABLE.TRAINING_TYPES);
 
-        return storageBean.getList("trainingTypes");
+        List<TrainingType> trainingTypes = new ArrayList<>();
+        for (BaseIdBean baseIdBean : baseIdBeans) {
+            if (baseIdBean instanceof TrainingType) {
+                trainingTypes.add((TrainingType) baseIdBean);
+            }
+        }
+
+        return trainingTypes;
     }
 
     public TrainingType getOne(Integer id) {
-        LOG.info("getOne: "+id);
+        LOG.debug("getOne: "+id);
 
         for(TrainingType trainingType: getAll()){
-            if(trainingType.getId().equals(id)){
+            if(trainingType.getId()==id){
                 return trainingType;
             }
         }
@@ -37,25 +48,27 @@ public class TrainingTypeDaoImpl implements TrainingTypeDao {
     }
 
     public void add(TrainingType bean) throws Exception {
-        LOG.info("add: "+bean);
+        LOG.debug("add: "+bean);
 
         List<TrainingType> list=getAll();
+        bean.setId(bean.getId()==0?list.size():bean.getId());
         list.add(bean);
-        storageBean.setList("trainingTypes",list);
+        storageBean.setList(TABLE.TRAINING_TYPES,new ArrayList<>(list));
     }
 
     public void update(TrainingType bean) throws Exception {
-        LOG.info("update: "+bean);
+        LOG.debug("update: "+bean);
 
         TrainingType trainingType=getOne(bean.getId());
         trainingType.setName(bean.getName());
     }
 
     public void delete(Integer id) throws Exception {
-        LOG.info("delete: "+id);
+        LOG.debug("delete: "+id);
 
         List<TrainingType> list=getAll();
 
-        list.removeIf(t -> t.getId().equals(id));
+        list.removeIf(t -> t.getId()==id);
+        storageBean.setList(TABLE.TRAINING_TYPES,new ArrayList<>(list));
     }
 }

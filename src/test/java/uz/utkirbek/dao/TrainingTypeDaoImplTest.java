@@ -2,12 +2,10 @@ package uz.utkirbek.dao;
 
 import org.junit.Before;
 import org.junit.Test;
-import uz.utkirbek.dao.TrainingTypeDao;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import uz.utkirbek.dao.impl.TrainingTypeDaoImpl;
 import uz.utkirbek.model.TrainingType;
-import uz.utkirbek.storage.StorageBean;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -15,17 +13,17 @@ import static org.junit.Assert.assertNotNull;
 
 public class TrainingTypeDaoImplTest {
 
-    private TrainingTypeDao trainingTypeDao;
+    private BaseDao<TrainingType> dao;
 
     @Before
-    public void setUp() {
-        StorageBean storageBean = new StorageBean(new HashMap<>());
-        trainingTypeDao = new TrainingTypeDaoImpl(storageBean);
+    public void setUp(){
+        AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext("uz.utkirbek");
+        this.dao=context.getBean(TrainingTypeDaoImpl.class);
     }
 
     @Test
     public void testGetAll() {
-        List<TrainingType> trainingTypes = trainingTypeDao.getAll();
+        List<TrainingType> trainingTypes = dao.getAll();
         assertNotNull(trainingTypes);
         assertEquals(0, trainingTypes.size());
     }
@@ -33,12 +31,12 @@ public class TrainingTypeDaoImplTest {
     @Test
     public void testAddAndGetOne() throws Exception {
         TrainingType trainingTypeToAdd = createTrainingType(1, "Java Programming");
-        trainingTypeDao.add(trainingTypeToAdd);
+        dao.add(trainingTypeToAdd);
 
-        List<TrainingType> trainingTypes = trainingTypeDao.getAll();
+        List<TrainingType> trainingTypes = dao.getAll();
         assertEquals(1, trainingTypes.size());
 
-        TrainingType retrievedTrainingType = trainingTypeDao.getOne(1);
+        TrainingType retrievedTrainingType = dao.getOne(1);
         assertNotNull(retrievedTrainingType);
         assertTrainingTypeEquals(trainingTypeToAdd, retrievedTrainingType);
     }
@@ -46,12 +44,12 @@ public class TrainingTypeDaoImplTest {
     @Test
     public void testUpdate() throws Exception {
         TrainingType initialTrainingType = createTrainingType(1, "Java Basics");
-        trainingTypeDao.add(initialTrainingType);
+        dao.add(initialTrainingType);
 
         TrainingType updatedTrainingType = createTrainingType(1, "Advanced Java");
-        trainingTypeDao.update(updatedTrainingType);
+        dao.update(updatedTrainingType);
 
-        TrainingType retrievedTrainingType = trainingTypeDao.getOne(1);
+        TrainingType retrievedTrainingType = dao.getOne(1);
         assertNotNull(retrievedTrainingType);
         assertTrainingTypeEquals(updatedTrainingType, retrievedTrainingType);
     }
@@ -59,14 +57,14 @@ public class TrainingTypeDaoImplTest {
     @Test
     public void testDelete() throws Exception {
         TrainingType trainingTypeToDelete = createTrainingType(1, "Java Basics");
-        trainingTypeDao.add(trainingTypeToDelete);
+        dao.add(trainingTypeToDelete);
 
-        List<TrainingType> initialTrainingTypes = trainingTypeDao.getAll();
+        List<TrainingType> initialTrainingTypes = dao.getAll();
         assertEquals(1, initialTrainingTypes.size());
 
-        trainingTypeDao.delete(1);
+        dao.delete(1);
 
-        List<TrainingType> remainingTrainingTypes = trainingTypeDao.getAll();
+        List<TrainingType> remainingTrainingTypes = dao.getAll();
         assertEquals(0, remainingTrainingTypes.size());
     }
 

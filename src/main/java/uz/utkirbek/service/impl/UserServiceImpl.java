@@ -1,18 +1,23 @@
 package uz.utkirbek.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import uz.utkirbek.dao.UserDao;
+import uz.utkirbek.dao.BaseDao;
 import uz.utkirbek.model.User;
-import uz.utkirbek.service.UserService;
+import uz.utkirbek.service.BaseService;
 
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements BaseService<User> {
+    static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    private UserDao dao;
+    @Qualifier(value = "userDaoImpl")
+    private BaseDao<User> dao;
 
     public List<User> getAll() {
         return dao.getAll();
@@ -23,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void add(User bean) {
-        
+
         bean.setUsername(generateUsername(bean.getFirstname(), bean.getLastname()));
         bean.setPassword(generatePassword());
         bean.setActive(true);
@@ -31,7 +36,7 @@ public class UserServiceImpl implements UserService {
         try {
             dao.add(bean);
         } catch (Exception e) {
-            System.out.println("Error on adding: "+e.getMessage());
+            LOG.debug("Error on adding: "+e.getMessage());
         }
     }
 
@@ -39,7 +44,7 @@ public class UserServiceImpl implements UserService {
         try{
         dao.update(bean);
         } catch (Exception e) {
-            System.out.println("Error on updating"+e.getMessage());
+            LOG.debug("Error on updating"+e.getMessage());
         }
     }
 
@@ -47,7 +52,7 @@ public class UserServiceImpl implements UserService {
         try{
         dao.delete(id);
         } catch (Exception e) {
-            System.out.println("Error on deleting"+e.getMessage());
+            LOG.debug("Error on deleting"+e.getMessage());
         }
     }
 

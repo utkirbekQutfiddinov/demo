@@ -9,6 +9,11 @@ public class TrainingType extends BaseIdBean{
     public TrainingType() {
     }
 
+    public TrainingType(int id, String name){
+        super(id);
+        this.name=name;
+    }
+
     public String getName() {
         return name;
     }

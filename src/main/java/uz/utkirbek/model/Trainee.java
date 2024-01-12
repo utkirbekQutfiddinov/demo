@@ -13,6 +13,13 @@ public class Trainee extends BaseIdBean{
     public Trainee() {
     }
 
+    public Trainee(int id, Integer userId, String address, Date birthdate) {
+        super(id);
+        this.userId = userId;
+        this.address = address;
+        this.birthdate = birthdate;
+    }
+
     public Integer getUserId() {
         return userId;
     }

@@ -3,14 +3,17 @@ package uz.utkirbek.dao.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import uz.utkirbek.dao.UserDao;
+import uz.utkirbek.dao.BaseDao;
+import uz.utkirbek.enums.TABLE;
+import uz.utkirbek.model.BaseIdBean;
 import uz.utkirbek.model.User;
 import uz.utkirbek.storage.StorageBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl implements BaseDao<User> {
     static final Logger LOG = LoggerFactory.getLogger(UserDaoImpl.class);
     private final StorageBean storageBean;
 
@@ -19,16 +22,24 @@ public class UserDaoImpl implements UserDao {
     }
 
     public List<User> getAll() {
-        LOG.info("getAll: ");
+        LOG.debug("getAll: ");
+        List<? extends BaseIdBean> baseIdBeans = storageBean.getList(TABLE.USERS);
 
-        return storageBean.getList("users");
+        List<User> users = new ArrayList<>();
+        for (BaseIdBean baseIdBean : baseIdBeans) {
+            if (baseIdBean instanceof User) {
+                users.add((User) baseIdBean);
+            }
+        }
+
+        return users;
     }
 
     public User getOne(Integer id) {
-        LOG.info("getOne: "+id);
+        LOG.debug("getOne: "+id);
 
         for(User user: getAll()){
-            if(user.getId().equals(id)){
+            if(user.getId()==id){
                 return user;
             }
         }
@@ -37,15 +48,16 @@ public class UserDaoImpl implements UserDao {
     }
 
     public void add(User bean) throws Exception {
-        LOG.info("add: "+bean);
+        LOG.debug(String.format("add: %s",bean));
 
         List<User> list=getAll();
+        bean.setId(bean.getId()==0?list.size():bean.getId());
         list.add(bean);
-        storageBean.setList("users",list);
+        storageBean.setList(TABLE.USERS,new ArrayList<>(list));
     }
 
     public void update(User bean) throws Exception {
-        LOG.info("update: "+bean);
+        LOG.debug("update: "+bean);
 
         User user=getOne(bean.getId());
         user.setActive(bean.getActive());
@@ -57,10 +69,11 @@ public class UserDaoImpl implements UserDao {
     }
 
     public void delete(Integer id) throws Exception {
-        LOG.info("delete: "+id);
+        LOG.debug("delete: "+id);
 
         List<User> list=getAll();
 
-        list.removeIf(t -> t.getId().equals(id));
+        list.removeIf(t -> t.getId()==id);
+        storageBean.setList(TABLE.USERS,new ArrayList<>(list));
     }
 }

@@ -1,18 +1,23 @@
 package uz.utkirbek.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import uz.utkirbek.dao.TrainerDao;
+import uz.utkirbek.dao.BaseDao;
 import uz.utkirbek.model.Trainer;
-import uz.utkirbek.service.TrainerService;
+import uz.utkirbek.service.BaseService;
 
 import java.util.List;
 
 @Service
-public class TrainerServiceImpl implements TrainerService {
+public class TrainerServiceImpl implements BaseService<Trainer> {
+    static final Logger LOG = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
     @Autowired
-    private TrainerDao dao;
+    @Qualifier(value = "trainerDaoImpl")
+    private BaseDao<Trainer> dao;
 
 
     public List<Trainer> getAll() {
@@ -27,7 +32,7 @@ public class TrainerServiceImpl implements TrainerService {
         try {
             dao.add(newBean);
         } catch (Exception e) {
-            System.out.println("Error on adding");
+            LOG.debug("Error on adding");
         }
     }
 
@@ -35,7 +40,7 @@ public class TrainerServiceImpl implements TrainerService {
         try{
             dao.update(bean);
         } catch (Exception e) {
-            System.out.println("Error on updating");
+            LOG.debug("Error on updating");
         }
     }
 

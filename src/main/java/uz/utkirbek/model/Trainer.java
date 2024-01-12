@@ -10,6 +10,11 @@ public class Trainer extends BaseIdBean{
     public Trainer() {
     }
 
+    public Trainer(int userId, String spec) {
+        super(userId);
+        this.specialization=spec;
+    }
+
     public Integer getUserId() {
         return userId;
     }

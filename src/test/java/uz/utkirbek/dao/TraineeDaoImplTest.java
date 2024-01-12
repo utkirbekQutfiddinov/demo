@@ -3,14 +3,13 @@ package uz.utkirbek.dao;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import uz.utkirbek.dao.impl.TraineeDaoImpl;
 import uz.utkirbek.model.Trainee;
-import uz.utkirbek.storage.StorageBean;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -18,30 +17,32 @@ import static org.junit.Assert.assertNotNull;
 
 public class TraineeDaoImplTest {
 
-    private TraineeDao traineeDao;
+    private BaseDao<Trainee> dao;
 
     @Before
-    public void setUp() {
-        StorageBean storageBean = new StorageBean(new HashMap<>());
-        traineeDao = new TraineeDaoImpl(storageBean);
+    public void setUp(){
+        AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext("uz.utkirbek");
+        this.dao=context.getBean(TraineeDaoImpl.class);
     }
 
     @Test
     public void testGetAll() {
-        List<Trainee> trainees = traineeDao.getAll();
+        List<Trainee> trainees = dao.getAll();
         assertNotNull(trainees);
         assertEquals(0, trainees.size());
     }
 
     @Test
     public void testAddAndGetOne() throws Exception {
-        Trainee traineeToAdd = createTrainee(1, "Utkirbek", "Tashkent", "1998-01-01");
-        traineeDao.add(traineeToAdd);
+        final int userId=1;
+        final int traineeId=1;
+        Trainee traineeToAdd = createTrainee(traineeId, userId, "Tashkent", "1998-01-01");
+        dao.add(traineeToAdd);
 
-        List<Trainee> trainees = traineeDao.getAll();
-        assertEquals(1, trainees.size());
+        List<Trainee> trainees = dao.getAll();
+        assertEquals(userId, trainees.size());
 
-        Trainee retrievedTrainee = traineeDao.getOne(1);
+        Trainee retrievedTrainee = dao.getOne(userId);
         assertNotNull(retrievedTrainee);
         assertEquals(traineeToAdd.getUserId(), retrievedTrainee.getUserId());
         assertEquals(traineeToAdd.getAddress(), retrievedTrainee.getAddress());
@@ -50,13 +51,14 @@ public class TraineeDaoImplTest {
 
     @Test
     public void testUpdate() throws Exception {
-        Trainee initialTrainee = createTrainee(1, "Utkirbek", "Tashkent", "1998-01-01");
-        traineeDao.add(initialTrainee);
+        final int userId=1;
+        Trainee initialTrainee = createTrainee(1, userId, "Tashkent", "1998-01-01");
+        dao.add(initialTrainee);
 
-        Trainee updatedTrainee = createTrainee(1, "Updated Name", "Updated Address", "1998-01-01");
-        traineeDao.update(updatedTrainee);
+        Trainee updatedTrainee = createTrainee(1, userId, "Updated Address", "1998-01-01");
+        dao.update(updatedTrainee);
 
-        Trainee retrievedTrainee = traineeDao.getOne(1);
+        Trainee retrievedTrainee = dao.getOne(userId);
         assertNotNull(retrievedTrainee);
         assertEquals(updatedTrainee.getUserId(), retrievedTrainee.getUserId());
         assertEquals(updatedTrainee.getAddress(), retrievedTrainee.getAddress());
@@ -65,22 +67,23 @@ public class TraineeDaoImplTest {
 
     @Test
     public void testDelete() throws Exception {
-        Trainee traineeToDelete = createTrainee(1, "Utkirbek", "Tashkent", "1998-01-01");
-        traineeDao.add(traineeToDelete);
+        final int userId=1;
+        Trainee traineeToDelete = createTrainee(1, userId, "Tashkent", "1998-01-01");
+        dao.add(traineeToDelete);
 
-        List<Trainee> initialTrainees = traineeDao.getAll();
-        assertEquals(1, initialTrainees.size());
+        List<Trainee> initialTrainees = dao.getAll();
+        assertEquals(userId, initialTrainees.size());
 
-        traineeDao.delete(1);
+        dao.delete(userId);
 
-        List<Trainee> remainingTrainees = traineeDao.getAll();
+        List<Trainee> remainingTrainees = dao.getAll();
         assertEquals(0, remainingTrainees.size());
     }
 
-    private Trainee createTrainee(Integer id, String name, String address, String birthdate) throws ParseException {
+    private Trainee createTrainee(int id, int userId, String address, String birthdate) throws ParseException {
         Trainee trainee = new Trainee();
         trainee.setId(id);
-        trainee.setUserId(id);
+        trainee.setUserId(userId);
         trainee.setAddress(address);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
