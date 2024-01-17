@@ -1,7 +1,6 @@
 package uz.utkirbek.model;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
@@ -11,14 +10,11 @@ public class TrainingType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    @Column(nullable = false)
     private String name;
 
     public TrainingType() {
-    }
-
-    public TrainingType(Integer id, String name){
-        this.id=id;
-        this.name=name;
     }
 
     public Integer getId() {

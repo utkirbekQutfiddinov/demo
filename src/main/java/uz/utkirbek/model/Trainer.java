@@ -1,7 +1,6 @@
 package uz.utkirbek.model;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
@@ -12,15 +11,45 @@ public class Trainer implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(name = "user_id")
     private Integer userId;
-    private String specialization;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private TrainingType trainingType;
+
+    @Column(name = "training_type_id")
+    private Integer specialization;
 
     public Trainer() {
     }
 
-    public Trainer(int userId, String spec) {
-        this.id=id;
-        this.specialization=spec;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Integer getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(Integer specialization) {
+        this.specialization = specialization;
+    }
+
+    public TrainingType getTrainingType() {
+        return trainingType;
+    }
+
+    public void setTrainingType(TrainingType trainingType) {
+        this.trainingType = trainingType;
     }
 
     public Integer getId() {
@@ -37,14 +66,6 @@ public class Trainer implements Serializable {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
-    }
-
-    public String getSpecialization() {
-        return specialization;
-    }
-
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
     }
 
     @Override

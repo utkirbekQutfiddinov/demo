@@ -3,23 +3,23 @@ package uz.utkirbek.dao.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
-import uz.utkirbek.dao.UserRepository;
-import uz.utkirbek.model.User;
+import uz.utkirbek.dao.TrainerRepository;
+import uz.utkirbek.model.Trainer;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserRepositoryImpl implements UserRepository {
+public class TrainerRepositoryImpl implements TrainerRepository {
     private final EntityManager entityManager;
 
-    public UserRepositoryImpl(EntityManager entityManager) {
+    public TrainerRepositoryImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
 
     @Override
-    public Optional<User> create(User item) {
+    public Optional<Trainer> create(Trainer item) {
         try {
             entityManager.getTransaction().begin();
             if (item.getId() == null) {
@@ -38,25 +38,25 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> readOne(Integer key) {
-        User user = entityManager.find(User.class, key);
-        return user == null ? Optional.empty() : Optional.of(user);
+    public Optional<Trainer> readOne(Integer key) {
+        Trainer trainer = entityManager.find(Trainer.class, key);
+        return trainer == null ? Optional.empty() : Optional.of(trainer);
     }
 
     @Override
-    public List<User> readAll() {
-        String sql="select u.* from users u";
+    public List<Trainer> readAll() {
+        String sql="select u.* from trainers u";
         Query nativeQuery = entityManager.createNativeQuery(sql);
         return nativeQuery.getResultList();
     }
 
     @Override
-    public Optional<User> update(User item) {
+    public Optional<Trainer> update(Trainer item) {
         return create(item);
     }
 
     @Override
-    public void delete(User item) {
+    public void delete(Trainer item) {
         entityManager.getTransaction().begin();
 
         if (entityManager.contains(item)) {

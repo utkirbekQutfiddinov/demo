@@ -1,7 +1,6 @@
 package uz.utkirbek.model;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -13,15 +12,71 @@ public class Training implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    @Column(name = "trainer_id")
     private Integer trainerId;
+
+    @ManyToOne
+    @JoinColumn(name = "trainer_id", insertable = false, updatable = false)
+    private Trainer trainer;
+
+    @Column(name = "trainee_id")
     private Integer traineeId;
+
+    @ManyToOne
+    @JoinColumn(name = "trainee_id", insertable = false, updatable = false)
+    private Trainee trainee;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(name = "training_type_id")
     private Integer trainingTypeId;
-    private Date date;
+
+    @ManyToOne
+    @JoinColumn(name = "training_type_id", insertable = false, updatable = false)
+    private TrainingType trainingType;
+
+    @Column(name = "training_date", nullable = false)
+    private Date trainingDate;
+
+    @Column(nullable = false)
     private Integer duration;
 
 
     public Training() {
+    }
+
+    public Trainer getTrainer() {
+        return trainer;
+    }
+
+    public void setTrainer(Trainer trainer) {
+        this.trainer = trainer;
+    }
+
+    public Trainee getTrainee() {
+        return trainee;
+    }
+
+    public void setTrainee(Trainee trainee) {
+        this.trainee = trainee;
+    }
+
+    public TrainingType getTrainingType() {
+        return trainingType;
+    }
+
+    public void setTrainingType(TrainingType trainingType) {
+        this.trainingType = trainingType;
+    }
+
+    public Date getTrainingDate() {
+        return trainingDate;
+    }
+
+    public void setTrainingDate(Date trainingDate) {
+        this.trainingDate = trainingDate;
     }
 
     public Integer getId() {
@@ -64,14 +119,6 @@ public class Training implements Serializable {
         this.trainingTypeId = trainingTypeId;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
     public Integer getDuration() {
         return duration;
     }
@@ -84,11 +131,15 @@ public class Training implements Serializable {
     @Override
     public String toString() {
         return "Training{" +
-                "trainerId=" + trainerId +
+                "id=" + id +
+                ", trainerId=" + trainerId +
+                ", trainer=" + trainer +
                 ", traineeId=" + traineeId +
+                ", trainee=" + trainee +
                 ", name='" + name + '\'' +
                 ", trainingTypeId=" + trainingTypeId +
-                ", date=" + date +
+                ", trainingType=" + trainingType +
+                ", trainingDate=" + trainingDate +
                 ", duration=" + duration +
                 '}';
     }

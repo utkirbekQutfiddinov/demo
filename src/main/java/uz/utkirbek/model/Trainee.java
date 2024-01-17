@@ -1,7 +1,6 @@
 package uz.utkirbek.model;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,18 +13,28 @@ public class Trainee implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    private Integer userId;
+    @Column(length = 1000)
     private String address;
+
+    @Column(name = "birth_date")
     private Date birthdate;
+
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
 
     public Trainee() {
     }
 
-    public Trainee(int id, Integer userId, String address, Date birthdate) {
-        this.id=id;
-        this.userId = userId;
-        this.address = address;
-        this.birthdate = birthdate;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Integer getId() {

@@ -4,19 +4,24 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import uz.utkirbek.dao.impl.UserRepositoryImpl;
+import uz.utkirbek.model.User;
+
+import java.util.List;
 
 public class Main {
-
-
-    @PersistenceContext
-    EntityManager entityManager;
+    @Autowired
+    static EntityManager entityManager;
 
     public static void main(String[] args) {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("epamTask");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
 
 
-        entityManager.close();
-        entityManagerFactory.close();
+
+        UserRepositoryImpl repo=new UserRepositoryImpl(entityManager);
+
+        List<User> users=repo.readAll();
+        System.out.println(users.size());
+
     }
 }

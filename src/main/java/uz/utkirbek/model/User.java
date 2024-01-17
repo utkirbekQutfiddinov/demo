@@ -12,14 +12,21 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @SerializedName("firstname")
+    @Column(nullable = false)
     private String firstname;
 
-    @SerializedName("lastname")
+    @Column(nullable = false)
     private String lastname;
 
+    @Column(nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(name = "is_active",
+            nullable = false,
+            columnDefinition = "boolean DEFAULT true")
     private Boolean isActive;
 
     public User() {
@@ -32,7 +39,7 @@ public class User implements Serializable {
     }
 
     public User(int id, String firstname, String lastname) {
-        this.id=id;
+        this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
     }
