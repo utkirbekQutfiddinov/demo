@@ -1,15 +1,21 @@
 package uz.utkirbek.model;
 
 import com.google.gson.annotations.SerializedName;
-import org.springframework.stereotype.Component;
+import jakarta.persistence.*;
 
-@Component
-public class User extends BaseIdBean{
+import java.io.Serializable;
 
-    @SerializedName("firstName")
+@Entity
+@Table(name = "users")
+public class User implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    @SerializedName("firstname")
     private String firstname;
 
-    @SerializedName("lastName")
+    @SerializedName("lastname")
     private String lastname;
 
     private String username;
@@ -26,9 +32,17 @@ public class User extends BaseIdBean{
     }
 
     public User(int id, String firstname, String lastname) {
-        super(id);
+        this.id=id;
         this.firstname = firstname;
         this.lastname = lastname;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getFirstname() {
@@ -74,7 +88,7 @@ public class User extends BaseIdBean{
     @Override
     public String toString() {
         return "User{" +
-                "id='" + super.getId() + '\'' +
+                "id='" + this.getId() + '\'' +
                 ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", username='" + username + '\'' +

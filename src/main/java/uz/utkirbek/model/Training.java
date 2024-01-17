@@ -1,11 +1,18 @@
 package uz.utkirbek.model;
 
+import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.Date;
 
-@Component
-public class Training extends BaseIdBean{
+@Entity
+@Table(name = "trainings")
+public class Training implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
     private Integer trainerId;
     private Integer traineeId;
     private String name;
@@ -15,6 +22,14 @@ public class Training extends BaseIdBean{
 
 
     public Training() {
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getTrainerId() {

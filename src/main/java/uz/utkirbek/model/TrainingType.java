@@ -1,17 +1,32 @@
 package uz.utkirbek.model;
 
+import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
-@Component
-public class TrainingType extends BaseIdBean{
+import java.io.Serializable;
+
+@Entity
+@Table(name = "training_types")
+public class TrainingType implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
     private String name;
 
     public TrainingType() {
     }
 
-    public TrainingType(int id, String name){
-        super(id);
+    public TrainingType(Integer id, String name){
+        this.id=id;
         this.name=name;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {

@@ -1,14 +1,22 @@
 package uz.utkirbek;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import uz.utkirbek.service.ServiceFacade;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
 
 public class Main {
+
+
+    @PersistenceContext
+    EntityManager entityManager;
+
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("uz.utkirbek");
-        ServiceFacade service= context.getBean(ServiceFacade.class);
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("epamTask");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
 
-        service.getAllUsers().forEach(System.out::println);
 
+        entityManager.close();
+        entityManagerFactory.close();
     }
 }
