@@ -2,6 +2,8 @@ package uz.utkirbek.service.impl;
 
 import org.springframework.stereotype.Service;
 import uz.utkirbek.dao.TrainerRepository;
+import uz.utkirbek.dao.UserRepository;
+import uz.utkirbek.model.Trainee;
 import uz.utkirbek.model.Trainer;
 import uz.utkirbek.service.TrainerService;
 
@@ -11,9 +13,11 @@ import java.util.Optional;
 @Service
 public class TrainerServiceImpl implements TrainerService {
     private final TrainerRepository repository;
+    private final UserRepository userRepository;
 
-    public TrainerServiceImpl(TrainerRepository repository) {
+    public TrainerServiceImpl(TrainerRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -42,5 +46,34 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer trainer=getOne(id);
         if (trainer!=null)
             repository.delete(trainer);
+    }
+
+    @Override
+    public Trainer getByUserName(String username) {
+        return repository.findByUsername(username).orElse(null);
+    }
+
+    @Override
+    public Boolean changePassword(Integer trainerId, String password) {
+        Optional<Trainer> optional = repository.readOne(trainerId);
+        if (optional.isPresent()) {
+            Trainer trainer = optional.get();
+            Optional<Boolean> changed = userRepository.changePassword(trainer.getUserId(), password);
+            return changed.orElse(false);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean changeStatus(Integer trainerId) {
+        Optional<Trainer> optional = repository.readOne(trainerId);
+        if (optional.isPresent()) {
+            Trainer trainer = optional.get();
+            Optional<Boolean> changed = userRepository.changeStatus(trainer.getUserId());
+            return changed.orElse(false);
+        } else {
+            return false;
+        }
     }
 }

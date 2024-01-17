@@ -45,7 +45,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> readAll() {
-        String sql="select u.* from users u";
+        String sql = "select u.* from users u";
         Query nativeQuery = entityManager.createNativeQuery(sql);
         return nativeQuery.getResultList();
     }
@@ -64,5 +64,66 @@ public class UserRepositoryImpl implements UserRepository {
         }
         entityManager.getTransaction().commit();
 
+    }
+
+    @Override
+    public Optional<User> findByUserName(String username) {
+        try {
+            entityManager.getTransaction().begin();
+
+            String sql = "select u.* from users u where u.username=:username";
+            Query nativeQuery = entityManager.createNativeQuery(sql);
+            nativeQuery.setParameter("username", username);
+            User user = (User) nativeQuery.getSingleResult();
+            entityManager.getTransaction().commit();
+
+            return user != null ? Optional.of(user) : Optional.empty();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Boolean> changePassword(Integer id, String password) {
+        try {
+            entityManager.getTransaction().begin();
+
+            User user = entityManager.find(User.class, id);
+            user.setPassword(password);
+            entityManager.flush();
+
+            return Optional.of(true);
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            entityManager.getTransaction().commit();
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Boolean> changeStatus(Integer id) {
+        try {
+            entityManager.getTransaction().begin();
+
+            User user = entityManager.find(User.class, id);
+            boolean currentStatus = user.getActive();
+            user.setActive(!currentStatus);
+            entityManager.flush();
+
+            return Optional.of(currentStatus);
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            entityManager.getTransaction().commit();
+        }
+
+        return Optional.of(false);
     }
 }

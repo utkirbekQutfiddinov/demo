@@ -23,12 +23,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getOne(Integer id) {
-        Optional<User> optional=repository.readOne(id);
+        Optional<User> optional = repository.readOne(id);
         return optional.orElse(null);
     }
 
     @Override
     public void add(User bean) {
+        bean.setUsername(generateUsername(bean.getFirstname(), bean.getLastname()));
+        bean.setPassword(generatePassword());
         repository.create(bean);
     }
 
@@ -39,8 +41,43 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Integer id) {
-        User user=getOne(id);
-        if (user!=null)
+        User user = getOne(id);
+        if (user != null)
             repository.delete(user);
+    }
+
+    private String generateUsername(String firstname, String lastname) {
+        String baseUsername = firstname + lastname;
+        String username = baseUsername;
+
+        int serialNumber = 1;
+        while (usernameExists(username)) {
+            username = baseUsername + serialNumber;
+            serialNumber++;
+        }
+
+        return username;
+    }
+
+    private boolean usernameExists(String username) {
+        Optional<User> existingUser = repository.findByUserName(username);
+        return existingUser.isPresent();
+    }
+
+    private String generatePassword() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i < 10; i++) {
+            int index = (int) (Math.random() * characters.length());
+            password.append(characters.charAt(index));
+        }
+
+        return password.toString();
+    }
+
+    @Override
+    public Boolean changePassword(Integer id, String password) {
+        return repository.changePassword(id, password).orElse(false);
     }
 }

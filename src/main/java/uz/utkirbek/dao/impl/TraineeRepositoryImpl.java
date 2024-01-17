@@ -27,11 +27,12 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             } else {
                 item = entityManager.merge(item);
             }
-            entityManager.getTransaction().commit();
             return Optional.of(item);
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             e.printStackTrace();
+        } finally {
+            entityManager.getTransaction().commit();
         }
 
         return Optional.empty();
@@ -45,7 +46,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public List<Trainee> readAll() {
-        String sql="select u.* from trainees u";
+        String sql = "select u.* from trainees u";
         Query nativeQuery = entityManager.createNativeQuery(sql);
         return nativeQuery.getResultList();
     }
@@ -57,12 +58,37 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public void delete(Trainee item) {
-        entityManager.getTransaction().begin();
+        try {
+            entityManager.getTransaction().begin();
 
-        if (entityManager.contains(item)) {
-            entityManager.remove(item);
+            if (entityManager.contains(item)) {
+                entityManager.remove(item);
+            }
+        } finally {
+            entityManager.getTransaction().commit();
         }
-        entityManager.getTransaction().commit();
+    }
 
+    @Override
+    public Optional<Trainee> findByUsername(String username) {
+        try {
+            entityManager.getTransaction().begin();
+
+            String sql = "select t.* from trainees t" +
+                    "left join users u on t.user_id=u.id" +
+                    "where u.username=:username";
+            Query nativeQuery = entityManager.createNativeQuery(sql);
+            nativeQuery.setParameter("username", username);
+            Trainee trainee = (Trainee) nativeQuery.getSingleResult();
+
+            return trainee != null ? Optional.of(trainee) : Optional.empty();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            entityManager.getTransaction().commit();
+        }
+
+        return Optional.empty();
     }
 }

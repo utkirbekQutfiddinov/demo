@@ -5,6 +5,7 @@ import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.dao.TrainerRepository;
 import uz.utkirbek.model.Trainer;
+import uz.utkirbek.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,11 +28,12 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             } else {
                 item = entityManager.merge(item);
             }
-            entityManager.getTransaction().commit();
             return Optional.of(item);
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             e.printStackTrace();
+        } finally {
+            entityManager.getTransaction().commit();
         }
 
         return Optional.empty();
@@ -45,7 +47,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public List<Trainer> readAll() {
-        String sql="select u.* from trainers u";
+        String sql = "select u.* from trainers u";
         Query nativeQuery = entityManager.createNativeQuery(sql);
         return nativeQuery.getResultList();
     }
@@ -57,12 +59,37 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public void delete(Trainer item) {
-        entityManager.getTransaction().begin();
+        try {
+            entityManager.getTransaction().begin();
 
-        if (entityManager.contains(item)) {
-            entityManager.remove(item);
+            if (entityManager.contains(item)) {
+                entityManager.remove(item);
+            }
+        } finally {
+            entityManager.getTransaction().commit();
         }
-        entityManager.getTransaction().commit();
+    }
 
+    @Override
+    public Optional<Trainer> findByUsername(String username) {
+        try {
+            entityManager.getTransaction().begin();
+
+            String sql = "select t.* from trainers t" +
+                    "left join users u on t.user_id=u.id" +
+                    "where u.username=:username";
+            Query nativeQuery = entityManager.createNativeQuery(sql);
+            nativeQuery.setParameter("username", username);
+            Trainer trainer = (Trainer) nativeQuery.getSingleResult();
+
+            return trainer != null ? Optional.of(trainer) : Optional.empty();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            entityManager.getTransaction().commit();
+        }
+
+        return Optional.empty();
     }
 }

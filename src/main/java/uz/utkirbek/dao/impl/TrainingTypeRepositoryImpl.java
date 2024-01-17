@@ -28,13 +28,13 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
                 item = entityManager.merge(item);
             }
 
-            entityManager.getTransaction().commit();
-
             return Optional.of(item);
 
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             e.printStackTrace();
+        } finally {
+            entityManager.getTransaction().commit();
         }
         return Optional.empty();
     }
@@ -59,12 +59,14 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
 
     @Override
     public void delete(TrainingType item) {
-        entityManager.getTransaction().begin();
+       try {
+           entityManager.getTransaction().begin();
 
-        if (entityManager.contains(item)) {
-            entityManager.remove(item);
-        }
-        
-        entityManager.getTransaction().commit();
+           if (entityManager.contains(item)) {
+               entityManager.remove(item);
+           }
+       } finally {
+           entityManager.getTransaction().commit();
+       }
     }
 }

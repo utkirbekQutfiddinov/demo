@@ -27,11 +27,12 @@ public class TrainingRepositoryImpl implements TrainingRepository {
             } else {
                 item = entityManager.merge(item);
             }
-            entityManager.getTransaction().commit();
             return Optional.of(item);
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             e.printStackTrace();
+        } finally {
+            entityManager.getTransaction().commit();
         }
 
         return Optional.empty();
@@ -45,7 +46,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public List<Training> readAll() {
-        String sql="select u.* from trainings u";
+        String sql = "select u.* from trainings u";
         Query nativeQuery = entityManager.createNativeQuery(sql);
         return nativeQuery.getResultList();
     }
@@ -57,12 +58,14 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public void delete(Training item) {
-        entityManager.getTransaction().begin();
+        try {
+            entityManager.getTransaction().begin();
 
-        if (entityManager.contains(item)) {
-            entityManager.remove(item);
+            if (entityManager.contains(item)) {
+                entityManager.remove(item);
+            }
+        } finally {
+            entityManager.getTransaction().commit();
         }
-        entityManager.getTransaction().commit();
-
     }
 }
