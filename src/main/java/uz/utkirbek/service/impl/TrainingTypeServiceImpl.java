@@ -32,15 +32,4 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
         repository.create(bean);
     }
 
-    @Override
-    public void update(TrainingType bean) {
-        repository.update(bean);
-    }
-
-    @Override
-    public void delete(Integer id) {
-        TrainingType type=getOne(id);
-        if (type!=null)
-            repository.delete(type);
-    }
 }

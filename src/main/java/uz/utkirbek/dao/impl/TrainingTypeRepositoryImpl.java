@@ -51,22 +51,4 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
         Query nativeQuery = entityManager.createNativeQuery(sql);
         return nativeQuery.getResultList();
     }
-
-    @Override
-    public Optional<TrainingType> update(TrainingType item) {
-        return create(item);
-    }
-
-    @Override
-    public void delete(TrainingType item) {
-       try {
-           entityManager.getTransaction().begin();
-
-           if (entityManager.contains(item)) {
-               entityManager.remove(item);
-           }
-       } finally {
-           entityManager.getTransaction().commit();
-       }
-    }
 }

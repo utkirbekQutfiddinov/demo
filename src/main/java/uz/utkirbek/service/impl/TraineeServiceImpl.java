@@ -36,15 +36,18 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public void update(Trainee bean) {
-        repository.update(bean);
+    public Trainee update(Trainee bean) {
+        return repository.update(bean).orElse(null);
     }
 
     @Override
-    public void delete(Integer id) {
+    public Boolean delete(Integer id) {
         Trainee trainee = getOne(id);
-        if (trainee != null)
-            repository.delete(trainee);
+        if (trainee == null){
+            return false;
+        }
+        repository.delete(trainee);
+        return true;
     }
 
     @Override

@@ -6,6 +6,7 @@ import uz.utkirbek.dao.impl.UserRepositoryImpl;
 import uz.utkirbek.model.User;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Main {
 //    @Autowired
@@ -18,7 +19,9 @@ public class Main {
         UserRepositoryImpl repo=new UserRepositoryImpl(entityManager);
 
         List<User> users=repo.readAll();
-        System.out.println(users.size());
+        for (User user: users) {
+            System.out.println(Objects.toString(user));
+        }
 
     }
 }

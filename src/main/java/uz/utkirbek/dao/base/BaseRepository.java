@@ -1,4 +1,4 @@
-package uz.utkirbek.dao;
+package uz.utkirbek.dao.base;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,8 +9,4 @@ public interface BaseRepository<T, K> {
     Optional<T> readOne(K key);
 
     List<T> readAll();
-
-    Optional<T> update(T item);
-
-    void delete(T item);
 }

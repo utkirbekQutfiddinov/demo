@@ -1,10 +1,9 @@
 package uz.utkirbek.service;
 
 import uz.utkirbek.model.Trainer;
+import uz.utkirbek.service.base.BaseUpdateService;
 
-import java.util.Optional;
-
-public interface TrainerService extends BaseService<Trainer>{
+public interface TrainerService extends BaseUpdateService<Trainer, Integer> {
     Trainer getByUserName(String username);
     Boolean changePassword(Integer trainerId, String password);
     Boolean changeStatus(Integer trainerId);

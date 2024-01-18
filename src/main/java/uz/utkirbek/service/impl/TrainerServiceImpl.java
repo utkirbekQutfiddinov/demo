@@ -3,7 +3,6 @@ package uz.utkirbek.service.impl;
 import org.springframework.stereotype.Service;
 import uz.utkirbek.dao.TrainerRepository;
 import uz.utkirbek.dao.UserRepository;
-import uz.utkirbek.model.Trainee;
 import uz.utkirbek.model.Trainer;
 import uz.utkirbek.service.TrainerService;
 
@@ -37,15 +36,8 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public void update(Trainer bean) {
-        repository.update(bean);
-    }
-
-    @Override
-    public void delete(Integer id) {
-        Trainer trainer=getOne(id);
-        if (trainer!=null)
-            repository.delete(trainer);
+    public Trainer update(Trainer bean) {
+        return repository.update(bean).orElse(null);
     }
 
     @Override

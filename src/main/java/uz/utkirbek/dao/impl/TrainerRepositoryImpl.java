@@ -5,7 +5,6 @@ import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.dao.TrainerRepository;
 import uz.utkirbek.model.Trainer;
-import uz.utkirbek.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,19 +54,6 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public Optional<Trainer> update(Trainer item) {
         return create(item);
-    }
-
-    @Override
-    public void delete(Trainer item) {
-        try {
-            entityManager.getTransaction().begin();
-
-            if (entityManager.contains(item)) {
-                entityManager.remove(item);
-            }
-        } finally {
-            entityManager.getTransaction().commit();
-        }
     }
 
     @Override

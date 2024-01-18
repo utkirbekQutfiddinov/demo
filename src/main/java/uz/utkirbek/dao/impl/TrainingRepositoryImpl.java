@@ -51,21 +51,4 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         return nativeQuery.getResultList();
     }
 
-    @Override
-    public Optional<Training> update(Training item) {
-        return create(item);
-    }
-
-    @Override
-    public void delete(Training item) {
-        try {
-            entityManager.getTransaction().begin();
-
-            if (entityManager.contains(item)) {
-                entityManager.remove(item);
-            }
-        } finally {
-            entityManager.getTransaction().commit();
-        }
-    }
 }

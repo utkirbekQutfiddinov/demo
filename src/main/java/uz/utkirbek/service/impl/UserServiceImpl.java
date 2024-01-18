@@ -35,15 +35,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void update(User bean) {
-        repository.update(bean);
+    public User update(User bean) {
+        return repository.update(bean).orElse(null);
     }
 
     @Override
-    public void delete(Integer id) {
+    public Boolean delete(Integer id) {
         User user = getOne(id);
-        if (user != null)
-            repository.delete(user);
+        if (user == null){
+            return false;
+        }
+        repository.delete(user);
+        return true;
     }
 
     private String generateUsername(String firstname, String lastname) {
