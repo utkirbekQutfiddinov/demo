@@ -1,23 +1,20 @@
 package uz.utkirbek.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import uz.utkirbek.dao.BaseDao;
+import uz.utkirbek.dao.BaseDeleteDao;
 import uz.utkirbek.model.User;
-import uz.utkirbek.service.BaseService;
+import uz.utkirbek.service.BaseDeleteService;
 
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements BaseService<User> {
-    static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
+public class UserServiceImpl implements BaseDeleteService<User> {
 
     @Autowired
     @Qualifier(value = "userDaoImpl")
-    private BaseDao<User> dao;
+    private BaseDeleteDao<User> dao;
 
     public List<User> getAll() {
         return dao.getAll();
@@ -33,27 +30,15 @@ public class UserServiceImpl implements BaseService<User> {
         bean.setPassword(generatePassword());
         bean.setActive(true);
 
-        try {
-            dao.add(bean);
-        } catch (Exception e) {
-            LOG.debug("Error on adding: "+e.getMessage());
-        }
+        dao.add(bean);
     }
 
     public void update(User bean) {
-        try{
         dao.update(bean);
-        } catch (Exception e) {
-            LOG.debug("Error on updating"+e.getMessage());
-        }
     }
 
     public void delete(Integer id) {
-        try{
         dao.delete(id);
-        } catch (Exception e) {
-            LOG.debug("Error on deleting"+e.getMessage());
-        }
     }
 
     public User getByUsername(String username) {

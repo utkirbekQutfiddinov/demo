@@ -1,23 +1,20 @@
 package uz.utkirbek.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import uz.utkirbek.dao.BaseDao;
+import uz.utkirbek.dao.BaseDeleteDao;
 import uz.utkirbek.model.Trainee;
-import uz.utkirbek.service.BaseService;
+import uz.utkirbek.service.BaseDeleteService;
 
 import java.util.List;
 
 @Service
-public class TraineeServiceImpl implements BaseService<Trainee> {
-    static final Logger LOG = LoggerFactory.getLogger(TraineeServiceImpl.class);
+public class TraineeServiceImpl implements BaseDeleteService<Trainee> {
 
     @Autowired
     @Qualifier(value = "traineeDaoImpl")
-    private BaseDao<Trainee> dao;
+    private BaseDeleteDao<Trainee> dao;
 
     public List<Trainee> getAll() {
         return dao.getAll();
@@ -28,26 +25,14 @@ public class TraineeServiceImpl implements BaseService<Trainee> {
     }
 
     public void add(Trainee newBean) {
-        try {
-            dao.add(newBean);
-        } catch (Exception e) {
-            LOG.debug("Error on adding");
-        }
+        dao.add(newBean);
     }
 
     public void update(Trainee bean) {
-        try{
-            dao.update(bean);
-        } catch (Exception e) {
-            LOG.debug("Error on updating");
-        }
+        dao.update(bean);
     }
 
     public void delete(Integer id) {
-        try{
-            dao.delete(id);
-        } catch (Exception e) {
-            LOG.debug("Error on deleting");
-        }
+        dao.delete(id);
     }
 }

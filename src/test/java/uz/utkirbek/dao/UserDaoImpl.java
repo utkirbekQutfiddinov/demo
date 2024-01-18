@@ -3,21 +3,19 @@ package uz.utkirbek.dao;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import uz.utkirbek.dao.impl.UserDaoImpl;
 import uz.utkirbek.model.User;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-public class UserDaoImplTest {
-    private BaseDao<User> userDao;
+public class UserDaoImpl {
+    private BaseDeleteDao<User> userDao;
 
     @Before
     public void setUp(){
         AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext("uz.utkirbek");
-        this.userDao=context.getBean(UserDaoImpl.class);
+        this.userDao=context.getBean(uz.utkirbek.dao.impl.UserDaoImpl.class);
     }
 
     @Test
@@ -28,7 +26,7 @@ public class UserDaoImplTest {
     }
 
     @Test
-    public void testAddAndGetOne() throws Exception {
+    public void testAddAndGetOne() {
         final int userId=100;
         User userToAdd = new User(userId, "Utkirbek", "Qutfiddinov");
         userDao.add(userToAdd);
@@ -39,7 +37,13 @@ public class UserDaoImplTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testGetOneWhichIsNotExists(){
+        User retrievedUser = userDao.getOne(Integer.MAX_VALUE);
+        assertNull(retrievedUser);
+    }
+
+    @Test
+    public void testUpdate() {
         final int userId=100;
         User initialUser = new User(userId, "Utkirbek", "Qutfiddinov");
         userDao.add(initialUser);
@@ -54,7 +58,7 @@ public class UserDaoImplTest {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() {
         final int userId=100;
         User userToDelete = new User(userId, "Utkirbek", "Qutfiddinov");
         userDao.add(userToDelete);

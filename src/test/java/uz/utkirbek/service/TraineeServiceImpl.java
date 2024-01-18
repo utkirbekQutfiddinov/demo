@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TraineeServiceImplTest {
+public class TraineeServiceImpl {
 
     private ServiceFacade serviceFacade;
 
@@ -49,7 +49,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testAdd() {
+    public void testAdd() throws ParseException {
         final int traineeId = 100;
 
         Trainee testTrainee = createTrainee(traineeId, traineeId, "Tashkent", "1998-01-01");
@@ -64,7 +64,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testUpdate() {
+    public void testUpdate() throws ParseException {
 
         final int traineeId = 100;
 
@@ -81,7 +81,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testDelete() {
+    public void testDelete() throws ParseException {
         final int traineeId=100;
         Trainee testTrainee = createTrainee(traineeId, traineeId, "Tashkent", "1998-01-01");
         testTrainee.setId(traineeId);
@@ -96,7 +96,7 @@ public class TraineeServiceImplTest {
         assertNull(trainee2);
     }
 
-    private Trainee createTrainee(int id, int traineeId, String address, String birthdate){
+    private Trainee createTrainee(int id, int traineeId, String address, String birthdate) throws ParseException {
         Trainee trainee = new Trainee();
         trainee.setId(id);
         trainee.setUserId(traineeId);
@@ -104,11 +104,8 @@ public class TraineeServiceImplTest {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date parsedBirthdate = null;
-        try {
-            parsedBirthdate = dateFormat.parse(birthdate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        parsedBirthdate = dateFormat.parse(birthdate);
+
         trainee.setBirthdate(parsedBirthdate);
 
         return trainee;

@@ -3,23 +3,21 @@ package uz.utkirbek.dao;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import uz.utkirbek.dao.impl.TrainerDaoImpl;
+import uz.utkirbek.model.Trainee;
 import uz.utkirbek.model.Trainer;
-import uz.utkirbek.model.User;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-public class TrainerDaoImplTest {
+public class TrainerDaoImpl {
 
-    private BaseDao<Trainer> dao;
+    private BaseUpdateDao<Trainer> dao;
 
     @Before
     public void setUp(){
         AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext("uz.utkirbek");
-        this.dao=context.getBean(TrainerDaoImpl.class);
+        this.dao=context.getBean(uz.utkirbek.dao.impl.TrainerDaoImpl.class);
     }
 
     @Test
@@ -30,7 +28,7 @@ public class TrainerDaoImplTest {
     }
 
     @Test
-    public void testAddAndGetOne() throws Exception {
+    public void testAddAndGetOne() {
         final int userId=1;
         Trainer trainerToAdd = new Trainer(userId, "Java");
         dao.add(trainerToAdd);
@@ -45,7 +43,13 @@ public class TrainerDaoImplTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testGetOneWhichIsNotExists(){
+        Trainer retrievedTrainer = dao.getOne(Integer.MAX_VALUE);
+        assertNull(retrievedTrainer);
+    }
+
+    @Test
+    public void testUpdate() {
         final int userId=1;
         Trainer initialTrainer = new Trainer(userId, "Java");
         dao.add(initialTrainer);
@@ -59,18 +63,4 @@ public class TrainerDaoImplTest {
         assertEquals(updatedTrainer.getSpecialization(), retrievedTrainer.getSpecialization());
     }
 
-    @Test
-    public void testDelete() throws Exception {
-        final int userId=1;
-        Trainer trainerToDelete = new Trainer(userId, "Java");
-        dao.add(trainerToDelete);
-
-        List<Trainer> initialTrainers = dao.getAll();
-        assertEquals(userId, initialTrainers.size());
-
-        dao.delete(userId);
-
-        List<Trainer> remainingTrainers = dao.getAll();
-        assertEquals(0, remainingTrainers.size());
-    }
 }

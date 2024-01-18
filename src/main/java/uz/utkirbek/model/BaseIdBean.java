@@ -6,8 +6,8 @@ public class BaseIdBean {
     public BaseIdBean() {
     }
 
-    public BaseIdBean(int id){
-        this.id=id;
+    public BaseIdBean(int id) {
+        this.id = id;
     }
 
     public int getId() {

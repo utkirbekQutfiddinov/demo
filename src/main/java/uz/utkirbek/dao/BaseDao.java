@@ -7,9 +7,5 @@ public interface BaseDao<T> {
 
     T getOne(Integer id);
 
-    void add(T bean) throws Exception;
-
-    void update(T bean) throws Exception;
-
-    void delete(Integer id) throws Exception;
+    void add(T bean);
 }

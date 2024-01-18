@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import org.springframework.stereotype.Component;
 
 @Component
-public class User extends BaseIdBean{
+public class User extends BaseIdBean {
 
     @SerializedName("firstName")
     private String firstname;

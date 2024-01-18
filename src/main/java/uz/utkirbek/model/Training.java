@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public class Training extends BaseIdBean{
+public class Training extends BaseIdBean {
     private Integer trainerId;
     private Integer traineeId;
     private String name;

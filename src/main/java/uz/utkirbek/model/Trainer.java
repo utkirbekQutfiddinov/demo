@@ -3,7 +3,7 @@ package uz.utkirbek.model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Trainer extends BaseIdBean{
+public class Trainer extends BaseIdBean {
     private Integer userId;
     private String specialization;
 
@@ -12,7 +12,7 @@ public class Trainer extends BaseIdBean{
 
     public Trainer(int userId, String spec) {
         super(userId);
-        this.specialization=spec;
+        this.specialization = spec;
     }
 
     public Integer getUserId() {

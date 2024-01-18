@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TrainerServiceImplTest {
+public class TrainerServiceImpl {
 
     private ServiceFacade serviceFacade;
 

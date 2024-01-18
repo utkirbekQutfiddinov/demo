@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TrainingTypeServiceImplTest {
+public class TrainingTypeServiceImpl {
 
     private ServiceFacade serviceFacade;
 
@@ -59,37 +59,6 @@ public class TrainingTypeServiceImplTest {
         assertNotNull(trainingType);
         assertNotNull(trainingType.getName());
 
-    }
-
-    @Test
-    public void testUpdate() {
-
-        final int userId = 100;
-
-        TrainingType testTrainingType = new TrainingType(userId,"Remote");
-
-        serviceFacade.addTrainingType(testTrainingType);
-
-        testTrainingType.setName("Onsite");
-
-        serviceFacade.updateTrainingType(testTrainingType);
-
-        assertEquals("Onsite", serviceFacade.getTrainingType(userId).getName());
-    }
-
-    @Test
-    public void testDelete() {
-        final int userId=100;
-        TrainingType testTrainingType = new TrainingType(userId,"Remote");
-
-        serviceFacade.addTrainingType(testTrainingType);
-
-        TrainingType trainingType1=serviceFacade.getTrainingType(userId);
-        assertNotNull(trainingType1);
-
-        serviceFacade.deleteTrainingType(userId);
-        TrainingType trainingType2=serviceFacade.getTrainingType(userId);
-        assertNull(trainingType2);
     }
 
 }

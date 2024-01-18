@@ -4,25 +4,24 @@ package uz.utkirbek.dao;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import uz.utkirbek.dao.impl.TraineeDaoImpl;
 import uz.utkirbek.model.Trainee;
+import uz.utkirbek.model.TrainingType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-public class TraineeDaoImplTest {
+public class TraineeDaoImpl {
 
-    private BaseDao<Trainee> dao;
+    private BaseDeleteDao<Trainee> dao;
 
     @Before
     public void setUp(){
         AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext("uz.utkirbek");
-        this.dao=context.getBean(TraineeDaoImpl.class);
+        this.dao=context.getBean(uz.utkirbek.dao.impl.TraineeDaoImpl.class);
     }
 
     @Test
@@ -47,6 +46,12 @@ public class TraineeDaoImplTest {
         assertEquals(traineeToAdd.getUserId(), retrievedTrainee.getUserId());
         assertEquals(traineeToAdd.getAddress(), retrievedTrainee.getAddress());
         assertEquals(traineeToAdd.getBirthdate(), retrievedTrainee.getBirthdate());
+    }
+
+    @Test
+    public void testGetOneWhichIsNotExists(){
+        Trainee retrievedTrainee = dao.getOne(Integer.MAX_VALUE);
+        assertNull(retrievedTrainee);
     }
 
     @Test

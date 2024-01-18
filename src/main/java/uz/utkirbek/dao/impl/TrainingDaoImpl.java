@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.dao.BaseDao;
-import uz.utkirbek.enums.TABLE;
+import uz.utkirbek.enums.Table;
 import uz.utkirbek.model.BaseIdBean;
 import uz.utkirbek.model.Training;
 import uz.utkirbek.storage.StorageBean;
@@ -23,7 +23,7 @@ public class TrainingDaoImpl implements BaseDao<Training> {
 
     public List<Training> getAll() {
         LOG.debug("getAll: ");
-        List<? extends BaseIdBean> baseIdBeans = storageBean.getList(TABLE.TRAININGS);
+        List<? extends BaseIdBean> baseIdBeans = storageBean.getList(Table.TRAININGS);
 
         List<Training> trainings = new ArrayList<>();
         for (BaseIdBean baseIdBean : baseIdBeans) {
@@ -36,10 +36,10 @@ public class TrainingDaoImpl implements BaseDao<Training> {
     }
 
     public Training getOne(Integer id) {
-        LOG.debug("getOne: "+id);
+        LOG.debug("getOne: " + id);
 
-        for(Training training: getAll()){
-            if(training.getId()==id){
+        for (Training training : getAll()) {
+            if (training.getId() == id) {
                 return training;
             }
         }
@@ -47,34 +47,12 @@ public class TrainingDaoImpl implements BaseDao<Training> {
         return null;
     }
 
-    public void add(Training bean) throws Exception {
-        LOG.debug("add: "+bean);
+    public void add(Training bean) {
+        LOG.debug("add: " + bean);
 
-        List<Training> list=getAll();
-        bean.setId(bean.getId()==0?list.size():bean.getId());
+        List<Training> list = getAll();
+        bean.setId(bean.getId() == 0 ? list.size() : bean.getId());
         list.add(bean);
-        storageBean.setList(TABLE.TRAININGS,new ArrayList<>(list));
-    }
-
-    public void update(Training bean) throws Exception {
-        LOG.debug("update: "+bean);
-
-        Training training=getOne(bean.getId());
-        training.setTrainingTypeId(bean.getTrainingTypeId());
-        training.setDuration(bean.getDuration());
-        training.setDate(bean.getDate());
-        training.setTrainerId(bean.getTrainerId());
-        training.setTraineeId(bean.getTraineeId());
-        training.setName(bean.getName());
-
-    }
-
-    public void delete(Integer id) throws Exception {
-        LOG.debug("delete: "+id);
-
-        List<Training> list=getAll();
-
-        list.removeIf(t -> t.getId()==id);
-        storageBean.setList(TABLE.TRAININGS,new ArrayList<>(list));
+        storageBean.setList(Table.TRAININGS, new ArrayList<>(list));
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TrainingServiceImplTest {
+public class TrainingServiceImpl {
 
     private ServiceFacade serviceFacade;
 
@@ -23,7 +23,7 @@ public class TrainingServiceImplTest {
     }
 
     @Test
-    public void testGetAll() {
+    public void testGetAll() throws ParseException {
 
         for (int i = 0; i < 10; i++) {
             Training newTraining = createTraining(i, i*2,i*3,
@@ -37,7 +37,7 @@ public class TrainingServiceImplTest {
     }
 
     @Test
-    public void testGetOne() {
+    public void testGetOne() throws ParseException {
         final int userId = 100;
         Training testTraining = createTraining(userId, userId*2,userId*3,
                 "Java",userId,"2024-01-20",15);
@@ -69,7 +69,7 @@ public class TrainingServiceImplTest {
     }
 
     private Training createTraining(Integer id, Integer trainerId, Integer traineeId,
-                                    String name, Integer trainingTypeId, String date, Integer duration) {
+                                    String name, Integer trainingTypeId, String date, Integer duration) throws ParseException {
         Training training = new Training();
         training.setId(id);
         training.setTrainerId(trainerId);
@@ -79,11 +79,8 @@ public class TrainingServiceImplTest {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date parsedDate = null;
-        try {
-            parsedDate = dateFormat.parse(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        parsedDate = dateFormat.parse(date);
+
         training.setDate(parsedDate);
         training.setDuration(duration);
 
