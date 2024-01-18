@@ -1,7 +1,7 @@
 package uz.utkirbek.service.impl;
 
 import org.springframework.stereotype.Service;
-import uz.utkirbek.dao.UserRepository;
+import uz.utkirbek.repository.UserRepository;
 import uz.utkirbek.model.User;
 import uz.utkirbek.service.UserService;
 
@@ -28,10 +28,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void add(User bean) {
+    public User add(User bean) {
         bean.setUsername(generateUsername(bean.getFirstname(), bean.getLastname()));
         bean.setPassword(generatePassword());
-        repository.create(bean);
+        return repository.create(bean).orElse(null);
     }
 
     @Override

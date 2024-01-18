@@ -1,9 +1,10 @@
-package uz.utkirbek.dao.impl;
+package uz.utkirbek.repository.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
-import uz.utkirbek.dao.TrainingTypeRepository;
+import uz.utkirbek.repository.TrainingTypeRepository;
 import uz.utkirbek.model.TrainingType;
 
 import java.util.List;
@@ -19,8 +20,14 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
 
     @Override
     public Optional<TrainingType> create(TrainingType item) {
+        EntityTransaction transaction=entityManager.getTransaction();
+
+        if (item.getName() == null) {
+            return Optional.empty();
+        }
+
         try {
-            entityManager.getTransaction().begin();
+            transaction.begin();
 
             if (item.getId() == null) {
                 entityManager.persist(item);
@@ -31,10 +38,10 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
             return Optional.of(item);
 
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            transaction.rollback();
             e.printStackTrace();
         } finally {
-            entityManager.getTransaction().commit();
+            transaction.commit();
         }
         return Optional.empty();
     }

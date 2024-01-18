@@ -1,8 +1,11 @@
 package uz.utkirbek.service.impl;
 
+import org.hibernate.Criteria;
 import org.springframework.stereotype.Service;
-import uz.utkirbek.dao.TrainerRepository;
-import uz.utkirbek.dao.UserRepository;
+import uz.utkirbek.model.Training;
+import uz.utkirbek.repository.TrainerRepository;
+import uz.utkirbek.repository.TrainingRepository;
+import uz.utkirbek.repository.UserRepository;
 import uz.utkirbek.model.Trainer;
 import uz.utkirbek.service.TrainerService;
 
@@ -13,10 +16,12 @@ import java.util.Optional;
 public class TrainerServiceImpl implements TrainerService {
     private final TrainerRepository repository;
     private final UserRepository userRepository;
+    private final TrainingRepository trainingRepository;
 
-    public TrainerServiceImpl(TrainerRepository repository, UserRepository userRepository) {
+    public TrainerServiceImpl(TrainerRepository repository, UserRepository userRepository, TrainingRepository trainingRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.trainingRepository = trainingRepository;
     }
 
     @Override
@@ -26,13 +31,13 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public Trainer getOne(Integer id) {
-        Optional<Trainer> optional=repository.readOne(id);
+        Optional<Trainer> optional = repository.readOne(id);
         return optional.orElse(null);
     }
 
     @Override
-    public void add(Trainer bean) {
-        repository.create(bean);
+    public Trainer add(Trainer bean) {
+        return repository.create(bean).orElse(null);
     }
 
     @Override
@@ -67,5 +72,15 @@ public class TrainerServiceImpl implements TrainerService {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public List<Trainer> getNotAssignedAndActive() {
+        return repository.getNotAssignedAndActive();
+    }
+
+    @Override
+    public List<Training> getTrainingsByUsernameAndCriteria(String username) {
+        return trainingRepository.getByUsernameAndCriteria(username);
     }
 }

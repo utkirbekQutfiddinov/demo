@@ -7,5 +7,5 @@ public interface BaseService<T, K> {
 
     T getOne(K key);
 
-    void add(T bean);
+    T add(T bean);
 }

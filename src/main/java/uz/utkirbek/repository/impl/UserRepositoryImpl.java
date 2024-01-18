@@ -1,9 +1,10 @@
-package uz.utkirbek.dao.impl;
+package uz.utkirbek.repository.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
-import uz.utkirbek.dao.UserRepository;
+import uz.utkirbek.repository.UserRepository;
 import uz.utkirbek.model.User;
 
 import java.util.List;
@@ -20,17 +21,24 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> create(User item) {
+        if (item.getFirstname() == null || item.getLastname() == null || item.getUsername() == null
+                || item.getPassword() == null) {
+            return Optional.empty();
+        }
+
+        EntityTransaction transaction=entityManager.getTransaction();
+
         try {
-            entityManager.getTransaction().begin();
+            transaction.begin();
             if (item.getId() == null) {
                 entityManager.persist(item);
             } else {
                 item = entityManager.merge(item);
             }
-            entityManager.getTransaction().commit();
+            transaction.commit();
             return Optional.of(item);
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            transaction.rollback();
             e.printStackTrace();
         }
 
@@ -57,29 +65,31 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(User item) {
-        entityManager.getTransaction().begin();
+        EntityTransaction transaction=entityManager.getTransaction();
+        transaction.begin();
 
         if (entityManager.contains(item)) {
             entityManager.remove(item);
         }
-        entityManager.getTransaction().commit();
+        transaction.commit();
 
     }
 
     @Override
     public Optional<User> findByUserName(String username) {
+        EntityTransaction transaction=entityManager.getTransaction();
         try {
-            entityManager.getTransaction().begin();
+            transaction.begin();
 
             String sql = "select u.* from users u where u.username=:username";
             Query nativeQuery = entityManager.createNativeQuery(sql);
             nativeQuery.setParameter("username", username);
             User user = (User) nativeQuery.getSingleResult();
-            entityManager.getTransaction().commit();
+            transaction.commit();
 
             return user != null ? Optional.of(user) : Optional.empty();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            transaction.rollback();
             e.printStackTrace();
         }
 
@@ -88,8 +98,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<Boolean> changePassword(Integer id, String password) {
+        EntityTransaction transaction=entityManager.getTransaction();
         try {
-            entityManager.getTransaction().begin();
+            transaction.begin();
 
             User user = entityManager.find(User.class, id);
             user.setPassword(password);
@@ -97,10 +108,10 @@ public class UserRepositoryImpl implements UserRepository {
 
             return Optional.of(true);
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            transaction.rollback();
             e.printStackTrace();
         } finally {
-            entityManager.getTransaction().commit();
+            transaction.commit();
         }
 
         return Optional.empty();
@@ -108,8 +119,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<Boolean> changeStatus(Integer id) {
+        EntityTransaction transaction=entityManager.getTransaction();
         try {
-            entityManager.getTransaction().begin();
+            transaction.begin();
 
             User user = entityManager.find(User.class, id);
             boolean currentStatus = user.getActive();
@@ -118,10 +130,10 @@ public class UserRepositoryImpl implements UserRepository {
 
             return Optional.of(currentStatus);
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            transaction.rollback();
             e.printStackTrace();
         } finally {
-            entityManager.getTransaction().commit();
+            transaction.commit();
         }
 
         return Optional.of(false);

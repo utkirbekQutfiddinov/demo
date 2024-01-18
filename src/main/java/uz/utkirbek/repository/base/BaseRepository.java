@@ -1,4 +1,4 @@
-package uz.utkirbek.dao.base;
+package uz.utkirbek.repository.base;
 
 import java.util.List;
 import java.util.Optional;

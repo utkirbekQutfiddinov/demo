@@ -1,7 +1,7 @@
 package uz.utkirbek.service.impl;
 
 import org.springframework.stereotype.Service;
-import uz.utkirbek.dao.TrainingTypeRepository;
+import uz.utkirbek.repository.TrainingTypeRepository;
 import uz.utkirbek.model.TrainingType;
 import uz.utkirbek.service.TrainingTypeService;
 
@@ -28,8 +28,8 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
     }
 
     @Override
-    public void add(TrainingType bean) {
-        repository.create(bean);
+    public TrainingType add(TrainingType bean) {
+        return repository.create(bean).orElse(null);
     }
 
 }

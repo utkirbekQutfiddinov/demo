@@ -1,6 +1,6 @@
-package uz.utkirbek.dao;
+package uz.utkirbek.repository;
 
-import uz.utkirbek.dao.base.BaseDeleteRepository;
+import uz.utkirbek.repository.base.BaseDeleteRepository;
 import uz.utkirbek.model.Trainee;
 
 import java.util.Optional;

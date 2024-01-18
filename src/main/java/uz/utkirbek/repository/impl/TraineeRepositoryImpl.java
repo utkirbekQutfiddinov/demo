@@ -1,9 +1,10 @@
-package uz.utkirbek.dao.impl;
+package uz.utkirbek.repository.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
-import uz.utkirbek.dao.TraineeRepository;
+import uz.utkirbek.repository.TraineeRepository;
 import uz.utkirbek.model.Trainee;
 
 import java.util.List;
@@ -20,8 +21,14 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Optional<Trainee> create(Trainee item) {
+
+        if (item.getUserId() == null) {
+            return Optional.empty();
+        }
+        EntityTransaction transaction=entityManager.getTransaction();
+
         try {
-            entityManager.getTransaction().begin();
+            transaction.begin();
             if (item.getId() == null) {
                 entityManager.persist(item);
             } else {
@@ -29,10 +36,10 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             }
             return Optional.of(item);
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            transaction.rollback();
             e.printStackTrace();
         } finally {
-            entityManager.getTransaction().commit();
+            transaction.commit();
         }
 
         return Optional.empty();
@@ -53,26 +60,32 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Optional<Trainee> update(Trainee item) {
+        if (item.getUserId() == null) {
+            return Optional.empty();
+        }
+
         return create(item);
     }
 
     @Override
     public void delete(Trainee item) {
+        EntityTransaction transaction=entityManager.getTransaction();
         try {
-            entityManager.getTransaction().begin();
+            transaction.begin();
 
             if (entityManager.contains(item)) {
                 entityManager.remove(item);
             }
         } finally {
-            entityManager.getTransaction().commit();
+            transaction.commit();
         }
     }
 
     @Override
     public Optional<Trainee> findByUsername(String username) {
+        EntityTransaction transaction=entityManager.getTransaction();
         try {
-            entityManager.getTransaction().begin();
+            transaction.begin();
 
             String sql = "select t.* from trainees t" +
                     "left join users u on t.user_id=u.id" +
@@ -83,10 +96,10 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
             return trainee != null ? Optional.of(trainee) : Optional.empty();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            transaction.rollback();
             e.printStackTrace();
         } finally {
-            entityManager.getTransaction().commit();
+            transaction.commit();
         }
 
         return Optional.empty();

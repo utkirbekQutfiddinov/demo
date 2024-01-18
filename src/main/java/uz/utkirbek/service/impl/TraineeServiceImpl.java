@@ -1,9 +1,11 @@
 package uz.utkirbek.service.impl;
 
 import org.springframework.stereotype.Service;
-import uz.utkirbek.dao.TraineeRepository;
-import uz.utkirbek.dao.UserRepository;
 import uz.utkirbek.model.Trainee;
+import uz.utkirbek.model.Training;
+import uz.utkirbek.repository.TraineeRepository;
+import uz.utkirbek.repository.TrainingRepository;
+import uz.utkirbek.repository.UserRepository;
 import uz.utkirbek.service.TraineeService;
 
 import java.util.List;
@@ -13,10 +15,12 @@ import java.util.Optional;
 public class TraineeServiceImpl implements TraineeService {
     private final TraineeRepository repository;
     private final UserRepository userRepository;
+    private final TrainingRepository trainingRepository;
 
-    public TraineeServiceImpl(TraineeRepository repository, UserRepository userRepository) {
+    public TraineeServiceImpl(TraineeRepository repository, UserRepository userRepository, TrainingRepository trainingRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.trainingRepository = trainingRepository;
     }
 
     @Override
@@ -31,8 +35,8 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public void add(Trainee bean) {
-        repository.create(bean);
+    public Trainee add(Trainee bean) {
+        return repository.create(bean).orElse(null);
     }
 
     @Override
@@ -77,6 +81,21 @@ public class TraineeServiceImpl implements TraineeService {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public Boolean deleteByUsername(String username) {
+        Trainee trainee = getByUsername(username);
+        if (trainee == null){
+            return false;
+        }
+        repository.delete(trainee);
+        return true;
+    }
+
+    @Override
+    public List<Training> getTrainingsByUsernameAndCriteria(String username) {
+        return trainingRepository.getByUsernameAndCriteria(username);
     }
 
 

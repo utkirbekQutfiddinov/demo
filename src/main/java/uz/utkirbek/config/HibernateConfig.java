@@ -12,7 +12,6 @@ public class HibernateConfig {
     @Bean
     public EntityManager getEntityManager() {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("epamTask");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return entityManager;
+        return entityManagerFactory.createEntityManager();
     }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "trainees")
@@ -26,7 +27,19 @@ public class Trainee implements Serializable {
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "trainee_id", updatable = false, insertable = false)
+    private List<Training> trainings;
+
     public Trainee() {
+    }
+
+    public List<Training> getTrainings() {
+        return trainings;
+    }
+
+    public void setTrainings(List<Training> trainings) {
+        this.trainings = trainings;
     }
 
     public User getUser() {
