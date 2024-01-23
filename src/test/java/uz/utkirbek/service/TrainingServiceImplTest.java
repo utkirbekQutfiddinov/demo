@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TrainingServiceImpl {
+public class TrainingServiceImplTest {
 
     private ServiceFacade serviceFacade;
 
@@ -23,7 +23,7 @@ public class TrainingServiceImpl {
     }
 
     @Test
-    public void testGetAll() throws ParseException {
+    public void getAll() throws ParseException {
 
         for (int i = 0; i < 10; i++) {
             Training newTraining = createTraining(i, i*2,i*3,
@@ -37,7 +37,7 @@ public class TrainingServiceImpl {
     }
 
     @Test
-    public void testGetOne() throws ParseException {
+    public void getOne() throws ParseException {
         final int userId = 100;
         Training testTraining = createTraining(userId, userId*2,userId*3,
                 "Java",userId,"2024-01-20",15);
@@ -51,7 +51,7 @@ public class TrainingServiceImpl {
     }
 
     @Test
-    public void testAdd() {
+    public void add() {
         final int userId = 100;
 
         Training testTraining = new Training();

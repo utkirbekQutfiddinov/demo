@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TrainerDaoImpl {
+public class TrainerDaoImplTest {
 
     private BaseUpdateDao<Trainer> dao;
 
@@ -21,14 +21,14 @@ public class TrainerDaoImpl {
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         List<Trainer> trainers = dao.getAll();
         assertNotNull(trainers);
         assertEquals(0, trainers.size());
     }
 
     @Test
-    public void testAddAndGetOne() {
+    public void addAndGetOne() {
         final int userId=1;
         Trainer trainerToAdd = new Trainer(userId, "Java");
         dao.add(trainerToAdd);
@@ -43,13 +43,13 @@ public class TrainerDaoImpl {
     }
 
     @Test
-    public void testGetOneWhichIsNotExists(){
+    public void getOneWhichIsNotExists(){
         Trainer retrievedTrainer = dao.getOne(Integer.MAX_VALUE);
         assertNull(retrievedTrainer);
     }
 
     @Test
-    public void testUpdate() {
+    public void update() {
         final int userId=1;
         Trainer initialTrainer = new Trainer(userId, "Java");
         dao.add(initialTrainer);

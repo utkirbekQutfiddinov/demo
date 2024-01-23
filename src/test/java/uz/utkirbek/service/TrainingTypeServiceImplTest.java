@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TrainingTypeServiceImpl {
+public class TrainingTypeServiceImplTest {
 
     private ServiceFacade serviceFacade;
 
@@ -20,7 +20,7 @@ public class TrainingTypeServiceImpl {
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
 
         for (int i = 0; i < 10; i++) {
             TrainingType newTrainingType = new TrainingType(i, String.valueOf(i * 456));
@@ -33,7 +33,7 @@ public class TrainingTypeServiceImpl {
     }
 
     @Test
-    public void testGetOne() {
+    public void getOne() {
         final int userId = 100;
         TrainingType testTrainingType = new TrainingType(userId, "Onsite");
         testTrainingType.setId(userId);
@@ -46,7 +46,7 @@ public class TrainingTypeServiceImpl {
     }
 
     @Test
-    public void testAdd() {
+    public void add() {
         final int userId = 100;
 
         TrainingType testTrainingType = new TrainingType();

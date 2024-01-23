@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class UserServiceImpl {
+public class UserServiceImplTest {
 
     private ServiceFacade serviceFacade;
 
@@ -20,7 +20,7 @@ public class UserServiceImpl {
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
 
         for (int i = 0; i < 10; i++) {
             User newUser = new User(String.valueOf(i * 123), String.valueOf(i * 456));
@@ -33,7 +33,7 @@ public class UserServiceImpl {
     }
 
     @Test
-    public void testGetOne() {
+    public void getOne() {
         final int userId = 100;
         User testUser = new User("Utkirbek", "Qutfiddinov");
         testUser.setId(userId);
@@ -46,7 +46,7 @@ public class UserServiceImpl {
     }
 
     @Test
-    public void testAdd() {
+    public void add() {
         final int userId = 100;
 
         User testUser = new User();
@@ -64,7 +64,7 @@ public class UserServiceImpl {
     }
 
     @Test
-    public void testUpdate() {
+    public void update() {
 
         final int userId = 100;
 
@@ -81,7 +81,7 @@ public class UserServiceImpl {
     }
 
     @Test
-    public void testDelete() {
+    public void delete() {
         final int userId=100;
         User testUser = new User("Utkirbek","Qutfiddinov");
         testUser.setId(userId);

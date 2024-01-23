@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class UserDaoImpl {
+public class UserDaoImplTest {
     private BaseDeleteDao<User> userDao;
 
     @Before
@@ -19,14 +19,14 @@ public class UserDaoImpl {
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         List<User> users = userDao.getAll();
         assertNotNull(users);
         assertEquals(3, users.size());
     }
 
     @Test
-    public void testAddAndGetOne() {
+    public void addAndGetOne() {
         final int userId=100;
         User userToAdd = new User(userId, "Utkirbek", "Qutfiddinov");
         userDao.add(userToAdd);
@@ -37,13 +37,13 @@ public class UserDaoImpl {
     }
 
     @Test
-    public void testGetOneWhichIsNotExists(){
+    public void getOneWhichIsNotExists(){
         User retrievedUser = userDao.getOne(Integer.MAX_VALUE);
         assertNull(retrievedUser);
     }
 
     @Test
-    public void testUpdate() {
+    public void update() {
         final int userId=100;
         User initialUser = new User(userId, "Utkirbek", "Qutfiddinov");
         userDao.add(initialUser);
@@ -58,7 +58,7 @@ public class UserDaoImpl {
     }
 
     @Test
-    public void testDelete() {
+    public void delete() {
         final int userId=100;
         User userToDelete = new User(userId, "Utkirbek", "Qutfiddinov");
         userDao.add(userToDelete);

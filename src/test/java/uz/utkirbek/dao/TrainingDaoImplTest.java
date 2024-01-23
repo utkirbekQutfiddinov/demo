@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TrainingDaoImpl {
+public class TrainingDaoImplTest {
 
     private BaseDao<Training> dao;
 
@@ -22,14 +22,14 @@ public class TrainingDaoImpl {
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         List<Training> trainings = dao.getAll();
         assertNotNull(trainings);
         assertEquals(0, trainings.size());
     }
 
     @Test
-    public void testAddAndGetOne() {
+    public void addAndGetOne() {
         Training trainingToAdd = createTraining(1, 1, 2, "Java Basics", 1, new Date(), 60);
         dao.add(trainingToAdd);
 
@@ -42,7 +42,7 @@ public class TrainingDaoImpl {
     }
 
     @Test
-    public void testGetOneWhichIsNotExists(){
+    public void getOneWhichIsNotExists(){
 
         Training retrievedTraining = dao.getOne(Integer.MAX_VALUE);
         assertNull(retrievedTraining);

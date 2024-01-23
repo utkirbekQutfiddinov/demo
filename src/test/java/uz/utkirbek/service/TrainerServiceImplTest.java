@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TrainerServiceImpl {
+public class TrainerServiceImplTest {
 
     private ServiceFacade serviceFacade;
 
@@ -20,7 +20,7 @@ public class TrainerServiceImpl {
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
 
         for (int i = 0; i < 10; i++) {
             Trainer newTrainer = new Trainer(i, String.valueOf(i * 123));
@@ -33,7 +33,7 @@ public class TrainerServiceImpl {
     }
 
     @Test
-    public void testGetOne() {
+    public void getOne() {
         final int userId = 100;
         Trainer testTrainer = new Trainer(userId, "Java");
         testTrainer.setId(userId);
@@ -46,7 +46,7 @@ public class TrainerServiceImpl {
     }
 
     @Test
-    public void testAdd() {
+    public void add() {
         final int userId = 100;
 
         Trainer testTrainer = new Trainer();
@@ -63,7 +63,7 @@ public class TrainerServiceImpl {
     }
 
     @Test
-    public void testUpdate() {
+    public void update() {
 
         final int userId = 100;
 

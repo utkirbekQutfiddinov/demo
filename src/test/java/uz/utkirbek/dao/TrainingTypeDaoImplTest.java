@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TrainingTypeDaoImpl {
+public class TrainingTypeDaoImplTest {
 
     private BaseDao<TrainingType> dao;
 
@@ -20,14 +20,14 @@ public class TrainingTypeDaoImpl {
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         List<TrainingType> trainingTypes = dao.getAll();
         assertNotNull(trainingTypes);
         assertEquals(0, trainingTypes.size());
     }
 
     @Test
-    public void testAdd(){
+    public void add(){
         int beforeAdding = dao.getAll().size();
 
         TrainingType trainingTypeToAdd = createTrainingType(1, "Java Programming");
@@ -40,7 +40,7 @@ public class TrainingTypeDaoImpl {
     }
 
     @Test
-    public void testAddAndGetOne(){
+    public void addAndGetOne(){
         TrainingType trainingTypeToAdd = createTrainingType(1, "Java Programming");
         dao.add(trainingTypeToAdd);
 
@@ -53,7 +53,7 @@ public class TrainingTypeDaoImpl {
     }
 
     @Test
-    public void testGetOneWhichIsNotExists(){
+    public void getOneWhichIsNotExists(){
         TrainingType retrievedTrainingType = dao.getOne(Integer.MAX_VALUE);
         assertNull(retrievedTrainingType);
     }

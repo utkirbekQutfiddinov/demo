@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TraineeDaoImpl {
+public class TraineeDaoImplTest {
 
     private BaseDeleteDao<Trainee> dao;
 
@@ -25,14 +25,14 @@ public class TraineeDaoImpl {
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         List<Trainee> trainees = dao.getAll();
         assertNotNull(trainees);
         assertEquals(0, trainees.size());
     }
 
     @Test
-    public void testAddAndGetOne() throws Exception {
+    public void addAndGetOne() throws Exception {
         final int userId=1;
         final int traineeId=1;
         Trainee traineeToAdd = createTrainee(traineeId, userId, "Tashkent", "1998-01-01");
@@ -49,13 +49,13 @@ public class TraineeDaoImpl {
     }
 
     @Test
-    public void testGetOneWhichIsNotExists(){
+    public void getOneWhichIsNotExists(){
         Trainee retrievedTrainee = dao.getOne(Integer.MAX_VALUE);
         assertNull(retrievedTrainee);
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void update() throws Exception {
         final int userId=1;
         Trainee initialTrainee = createTrainee(1, userId, "Tashkent", "1998-01-01");
         dao.add(initialTrainee);
@@ -71,7 +71,7 @@ public class TraineeDaoImpl {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void delete() throws Exception {
         final int userId=1;
         Trainee traineeToDelete = createTrainee(1, userId, "Tashkent", "1998-01-01");
         dao.add(traineeToDelete);

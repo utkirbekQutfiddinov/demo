@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TraineeServiceImpl {
+public class TraineeServiceImplTest {
 
     private ServiceFacade serviceFacade;
 
@@ -23,7 +23,7 @@ public class TraineeServiceImpl {
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
 
         for (int i = 0; i < 10; i++) {
             Trainee newTrainee = new Trainee();
@@ -36,7 +36,7 @@ public class TraineeServiceImpl {
     }
 
     @Test
-    public void testGetOne() {
+    public void getOne() {
         final int traineeId = 100;
         Trainee testTrainee = new Trainee();
         testTrainee.setId(traineeId);
@@ -49,7 +49,7 @@ public class TraineeServiceImpl {
     }
 
     @Test
-    public void testAdd() throws ParseException {
+    public void add() throws ParseException {
         final int traineeId = 100;
 
         Trainee testTrainee = createTrainee(traineeId, traineeId, "Tashkent", "1998-01-01");
@@ -64,7 +64,7 @@ public class TraineeServiceImpl {
     }
 
     @Test
-    public void testUpdate() throws ParseException {
+    public void update() throws ParseException {
 
         final int traineeId = 100;
 
@@ -81,7 +81,7 @@ public class TraineeServiceImpl {
     }
 
     @Test
-    public void testDelete() throws ParseException {
+    public void delete() throws ParseException {
         final int traineeId=100;
         Trainee testTrainee = createTrainee(traineeId, traineeId, "Tashkent", "1998-01-01");
         testTrainee.setId(traineeId);
