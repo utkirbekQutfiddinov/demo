@@ -35,14 +35,10 @@ public class UserRepositoryImpl implements UserRepository {
             } else {
                 item = entityManager.merge(item);
             }
-            transaction.commit();
             return Optional.of(item);
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
+        }finally {
+            transaction.commit();
         }
-
-        return Optional.empty();
     }
 
     @Override
@@ -107,14 +103,10 @@ public class UserRepositoryImpl implements UserRepository {
             entityManager.flush();
 
             return Optional.of(true);
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-        } finally {
+        }finally {
             transaction.commit();
         }
 
-        return Optional.empty();
     }
 
     @Override
@@ -124,18 +116,14 @@ public class UserRepositoryImpl implements UserRepository {
             transaction.begin();
 
             User user = entityManager.find(User.class, id);
-            boolean currentStatus = user.getActive();
-            user.setActive(!currentStatus);
+            boolean currentStatus = user.getIsActive();
+            user.setIsActive(!currentStatus);
             entityManager.flush();
 
             return Optional.of(currentStatus);
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
         } finally {
             transaction.commit();
         }
 
-        return Optional.of(false);
     }
 }

@@ -5,10 +5,12 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.model.Trainer;
 import uz.utkirbek.model.Training;
+import uz.utkirbek.model.User;
 import uz.utkirbek.repository.TrainingRepository;
 
 import java.util.List;
@@ -25,28 +27,26 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public Optional<Training> create(Training item) {
-        EntityTransaction transaction=entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
 
+        transaction.begin();
         if (item.getName() == null || item.getTrainingDate() == null || item.getDuration() == null) {
+            transaction.rollback();
             return Optional.empty();
         }
 
         try {
-            transaction.begin();
             if (item.getId() == null) {
                 entityManager.persist(item);
             } else {
-                item = entityManager.merge(item);
+                transaction.rollback();
+                return Optional.empty();
             }
             return Optional.of(item);
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
         } finally {
             transaction.commit();
         }
 
-        return Optional.empty();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public Optional<Boolean> updateTrainer(Integer trainingId, Trainer trainer) {
-        EntityTransaction transaction=entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
 
         transaction.begin();
         Optional<Training> trainerOptional = readOne(trainingId);
@@ -84,14 +84,14 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public List<Training> getByUsernameAndCriteria(String username) {
-        CriteriaBuilder cb=entityManager.getCriteriaBuilder();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Training> cr = cb.createQuery(Training.class);
         Root<Training> root = cr.from(Training.class);
 
 
-        List<Training> trainings=entityManager.createQuery(
-          cr.select(root)
-                .where(cb.equal(root.get("username"),username))
+        List<Training> trainings = entityManager.createQuery(
+                cr.select(root)
+                        .where(cb.equal(root.get("username"), username))
         ).getResultList();
 
         return trainings;

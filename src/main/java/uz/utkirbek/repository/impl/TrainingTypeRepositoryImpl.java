@@ -20,30 +20,22 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
 
     @Override
     public Optional<TrainingType> create(TrainingType item) {
-        EntityTransaction transaction=entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
 
-        if (item.getName() == null) {
+        if (item.getName() == null || item.getId() != null) {
             return Optional.empty();
         }
 
         try {
             transaction.begin();
 
-            if (item.getId() == null) {
-                entityManager.persist(item);
-            } else {
-                item = entityManager.merge(item);
-            }
+            entityManager.persist(item);
 
             return Optional.of(item);
 
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
         } finally {
             transaction.commit();
         }
-        return Optional.empty();
     }
 
     @Override

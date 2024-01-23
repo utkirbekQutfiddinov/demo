@@ -1,9 +1,13 @@
 package uz.utkirbek.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "trainers")
 public class Trainer implements Serializable {
@@ -25,54 +29,4 @@ public class Trainer implements Serializable {
     @Column(name = "training_type_id")
     private Integer specialization;
 
-    public Trainer() {
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Integer getSpecialization() {
-        return specialization;
-    }
-
-    public void setSpecialization(Integer specialization) {
-        this.specialization = specialization;
-    }
-
-    public TrainingType getTrainingType() {
-        return trainingType;
-    }
-
-    public void setTrainingType(TrainingType trainingType) {
-        this.trainingType = trainingType;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    @Override
-    public String toString() {
-        return "Trainer{" +
-                "userId=" + userId +
-                ", specialization='" + specialization + '\'' +
-                '}';
-    }
 }

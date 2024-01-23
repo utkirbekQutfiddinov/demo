@@ -21,55 +21,59 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Optional<Trainee> create(Trainee item) {
+        EntityTransaction transaction = entityManager.getTransaction();
+
+        try {
+            transaction.begin();
 
         if (item.getUserId() == null) {
             return Optional.empty();
         }
-        EntityTransaction transaction=entityManager.getTransaction();
 
-        try {
-            transaction.begin();
             if (item.getId() == null) {
                 entityManager.persist(item);
             } else {
                 item = entityManager.merge(item);
             }
             return Optional.of(item);
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
         } finally {
             transaction.commit();
         }
-
-        return Optional.empty();
     }
 
     @Override
     public Optional<Trainee> readOne(Integer key) {
-        Trainee trainee = entityManager.find(Trainee.class, key);
-        return trainee == null ? Optional.empty() : Optional.of(trainee);
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+            Trainee trainee = entityManager.find(Trainee.class, key);
+            return trainee == null ? Optional.empty() : Optional.of(trainee);
+        } finally {
+            transaction.commit();
+        }
     }
 
     @Override
     public List<Trainee> readAll() {
-        String sql = "select u.* from trainees u";
-        Query nativeQuery = entityManager.createNativeQuery(sql);
-        return nativeQuery.getResultList();
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+            String sql = "select u.* from trainees u";
+            Query nativeQuery = entityManager.createNativeQuery(sql);
+            return nativeQuery.getResultList();
+        } finally {
+            transaction.commit();
+        }
     }
 
     @Override
     public Optional<Trainee> update(Trainee item) {
-        if (item.getUserId() == null) {
-            return Optional.empty();
-        }
-
-        return create(item);
+            return create(item);
     }
 
     @Override
     public void delete(Trainee item) {
-        EntityTransaction transaction=entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
 
@@ -83,7 +87,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Optional<Trainee> findByUsername(String username) {
-        EntityTransaction transaction=entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
 
@@ -95,13 +99,9 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             Trainee trainee = (Trainee) nativeQuery.getSingleResult();
 
             return trainee != null ? Optional.of(trainee) : Optional.empty();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
         } finally {
             transaction.commit();
         }
 
-        return Optional.empty();
     }
 }
