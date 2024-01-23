@@ -26,11 +26,11 @@ public class TrainingTypeServiceImplTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         List<TrainingType> trainingTypeList = mock(List.class);
         when(trainingTypeRepository.readAll()).thenReturn(trainingTypeList);
 
@@ -40,7 +40,7 @@ public class TrainingTypeServiceImplTest {
     }
 
     @Test
-    public void testGetOneTrainingTypeFound() {
+    public void getOneTrainingTypeFound() {
         TrainingType trainingType = new TrainingType();
         when(trainingTypeRepository.readOne(1)).thenReturn(Optional.of(trainingType));
 
@@ -50,14 +50,14 @@ public class TrainingTypeServiceImplTest {
     }
 
     @Test
-    public void testGetOneTrainingTypeNotFound() {
+    public void getOneTrainingTypeNotFound() {
         when(trainingTypeRepository.readOne(1)).thenReturn(Optional.empty());
 
         assertNull(trainingTypeService.getOne(1));
     }
 
     @Test
-    public void testAddTrainingTypeCreated() {
+    public void addTrainingTypeCreated() {
         TrainingType trainingType = new TrainingType();
         when(trainingTypeRepository.create(trainingType)).thenReturn(Optional.of(trainingType));
 
@@ -67,7 +67,7 @@ public class TrainingTypeServiceImplTest {
     }
 
     @Test
-    public void testAddTrainingTypeCreationFailed() {
+    public void addTrainingTypeCreationFailed() {
         TrainingType trainingType = new TrainingType();
         when(trainingTypeRepository.create(trainingType)).thenReturn(Optional.empty());
 

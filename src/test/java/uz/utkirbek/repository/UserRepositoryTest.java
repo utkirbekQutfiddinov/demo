@@ -27,7 +27,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    void testCreateUser() {
+    void createUser() {
         User user = new User();
         user.setFirstname("testUser");
         user.setLastname("testPassword");
@@ -50,8 +50,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    void testCreateUserWithRequiredFieldsMissing() {
-        // Arrange
+    void createUserWithRequiredFieldsMissing() {
         User user = new User();
         user.setFirstname("testUser");
         user.setLastname("testPassword");
@@ -69,7 +68,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    void testCreateUserWithNullFields() {
+    void createUserWithNullFields() {
         User user = new User();
 
         Optional<User> result = userRepository.create(user);
@@ -81,7 +80,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    void testUpdateUser() {
+    void updateUser() {
         User existingUser = new User();
         existingUser.setId(1);
         existingUser.setUsername("existingUser");
@@ -108,8 +107,9 @@ class UserRepositoryTest {
         verify(transaction).begin();
         verify(transaction).commit();
     }
+
     @Test
-    void testReadOneUser() {
+    void readOneUser() {
         int userId = 1;
         User expectedUser = new User();
         when(entityManager.find(User.class, userId)).thenReturn(expectedUser);
@@ -121,8 +121,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    void testReadAllUsers() {
-        // Arrange
+    void readAllUsers() {
         String sql = "select u.* from users u";
         Query nativeQuery = mock(Query.class);
         List<User> expectedUsers = new ArrayList<>();
@@ -136,9 +135,9 @@ class UserRepositoryTest {
 
         assertEquals(expectedUsers, result);
     }
+
     @Test
-    void testDeleteUser() {
-        // Arrange
+    void deleteUser() {
         User userToDelete = new User();
         userToDelete.setId(1);
         userToDelete.setUsername("userToDelete");
@@ -157,8 +156,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    void testDeleteNonExistingUser() {
-        // Arrange
+    void deleteNonExistingUser() {
         User userToDelete = new User();
         userToDelete.setId(1);
 
@@ -176,17 +174,17 @@ class UserRepositoryTest {
     }
 
     @Test
-    void testGetByUsername(){
+    void getByUsername() {
 
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(entityManager.getTransaction()).thenReturn(transaction);
 
         String sql = "select u.* from users u where u.username=:username";
-        Query query=mock(Query.class);
+        Query query = mock(Query.class);
 
         when(entityManager.createNativeQuery(sql)).thenReturn(query);
 
-        Optional<User> result=userRepository.findByUserName("someRandomText");
+        Optional<User> result = userRepository.findByUserName("someRandomText");
 
         assertFalse(result.isPresent());
 
@@ -194,9 +192,9 @@ class UserRepositoryTest {
         verify(transaction).commit();
 
     }
+
     @Test
-    void testChangePassword() {
-        // Arrange
+    void changePassword() {
         int userId = 1;
         String newPassword = "newPassword";
 
@@ -220,8 +218,9 @@ class UserRepositoryTest {
         verify(transaction).begin();
         verify(transaction).commit();
     }
+
     @Test
-    void testChangeStatus() {
+    void changeStatus() {
         int userId = 1;
 
         User existingUser = new User();

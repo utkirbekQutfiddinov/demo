@@ -27,11 +27,11 @@ public class TrainingServiceImplTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         List<Training> trainingList = mock(List.class);
         when(trainingRepository.readAll()).thenReturn(trainingList);
 
@@ -41,7 +41,7 @@ public class TrainingServiceImplTest {
     }
 
     @Test
-    public void testGetOneTrainingFound() {
+    public void getOneTrainingFound() {
         Training training = new Training();
         when(trainingRepository.readOne(1)).thenReturn(Optional.of(training));
 
@@ -51,14 +51,14 @@ public class TrainingServiceImplTest {
     }
 
     @Test
-    public void testGetOneTrainingNotFound() {
+    public void getOneTrainingNotFound() {
         when(trainingRepository.readOne(1)).thenReturn(Optional.empty());
 
         assertNull(trainingService.getOne(1));
     }
 
     @Test
-    public void testAddTrainingCreated() {
+    public void addTrainingCreated() {
         Training training = new Training();
         when(trainingRepository.create(training)).thenReturn(Optional.of(training));
 
@@ -68,7 +68,7 @@ public class TrainingServiceImplTest {
     }
 
     @Test
-    public void testAddTrainingCreationFailed() {
+    public void addTrainingCreationFailed() {
         Training training = new Training();
         when(trainingRepository.create(training)).thenReturn(Optional.empty());
 
@@ -76,7 +76,7 @@ public class TrainingServiceImplTest {
     }
 
     @Test
-    public void testGetByUsernameAndCriteria() {
+    public void getByUsernameAndCriteria() {
         String username = "testUser";
         List<Training> trainingList = mock(List.class);
         when(trainingRepository.getByUsernameAndCriteria(username)).thenReturn(trainingList);
@@ -87,7 +87,7 @@ public class TrainingServiceImplTest {
     }
 
     @Test
-    public void testUpdateTrainerSuccess() {
+    public void updateTrainerSuccess() {
         int trainingId = 1;
         Trainer trainer = new Trainer();
         when(trainingRepository.updateTrainer(trainingId, trainer)).thenReturn(Optional.of(true));
@@ -98,7 +98,7 @@ public class TrainingServiceImplTest {
     }
 
     @Test
-    public void testUpdateTrainerFailure() {
+    public void updateTrainerFailure() {
         int trainingId = 1;
         Trainer trainer = new Trainer();
         when(trainingRepository.updateTrainer(trainingId, trainer)).thenReturn(Optional.empty());

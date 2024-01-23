@@ -1,20 +1,16 @@
 package uz.utkirbek.repository;
 
-import org.junit.jupiter.api.AfterEach;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import uz.utkirbek.model.Trainee;
-import uz.utkirbek.model.Trainer;
-import uz.utkirbek.model.Training;
 import uz.utkirbek.model.User;
 import uz.utkirbek.repository.impl.TraineeRepositoryImpl;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Query;
 
 import java.util.*;
 
@@ -43,7 +39,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    void testCreate() {
+    void create() {
         Trainee trainee = new Trainee();
         trainee.setUserId(1);
         trainee.setBirthdate(new Date());
@@ -63,7 +59,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    void testCreateWithoutUserId() {
+    void createWithoutUserId() {
         Trainee trainee = new Trainee();
 
         Optional<Trainee> result = traineeRepository.create(trainee);
@@ -73,7 +69,7 @@ class TraineeRepositoryImplTest {
 
 
     @Test
-    void testReadOne() {
+    void readOne() {
         Trainee trainee = new Trainee();
         trainee.setId(1);
 
@@ -86,7 +82,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    void testReadOne_NotFound() {
+    void readOne_NotFound() {
         when(entityManager.find(Trainee.class, 1)).thenReturn(null);
 
         Optional<Trainee> result = traineeRepository.readOne(1);
@@ -95,7 +91,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    void testReadAll() {
+    void readAll() {
         String sql = "select u.* from trainees u";
         Query query = mock(Query.class);
 
@@ -109,7 +105,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    public void testUpdateWithNullUserId() {
+    public void updateWithNullUserId() {
         Trainee trainee = new Trainee();
 
         when(entityManager.getTransaction()).thenReturn(transaction);
@@ -121,7 +117,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    public void testUpdateWithValidUserId() {
+    public void updateWithValidUserId() {
         Trainee existingTrainee = new Trainee();
         existingTrainee.setId(1);
         existingTrainee.setUserId(1);
@@ -145,7 +141,7 @@ class TraineeRepositoryImplTest {
 
 
     @Test
-    public void testDeleteWhenEntityIsManaged() {
+    public void deleteWhenEntityIsManaged() {
         Trainee managedTrainee = new Trainee();
         when(entityManager.getTransaction()).thenReturn(transaction);
         when(entityManager.contains(managedTrainee)).thenReturn(true);
@@ -158,7 +154,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    public void testDeleteWhenEntityIsNotManaged() {
+    public void deleteWhenEntityIsNotManaged() {
         Trainee unmanagedTrainee = new Trainee();
         when(entityManager.getTransaction()).thenReturn(transaction);
         when(entityManager.contains(unmanagedTrainee)).thenReturn(false);
@@ -170,7 +166,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    void testFindByUsername() {
+    void findByUsername() {
         String username = "testUsername";
         Trainee expectedTrainee = new Trainee();
 

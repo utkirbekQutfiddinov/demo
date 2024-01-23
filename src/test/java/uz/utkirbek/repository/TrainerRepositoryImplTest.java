@@ -3,9 +3,6 @@ package uz.utkirbek.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +13,6 @@ import uz.utkirbek.model.Trainer;
 import uz.utkirbek.model.TrainingType;
 import uz.utkirbek.model.User;
 import uz.utkirbek.repository.impl.TrainerRepositoryImpl;
-import uz.utkirbek.repository.impl.UserRepositoryImpl;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,13 +33,12 @@ public class TrainerRepositoryImplTest {
 
     @InjectMocks
     private TrainerRepositoryImpl trainerRepository;
-    @InjectMocks
-    private UserRepositoryImpl userRepository;
     @Mock
     private Query nativeQuery;
 
     @BeforeEach
-    void setUp() {MockitoAnnotations.openMocks(this);
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
 
         when(entityManager.getTransaction()).thenReturn(transaction);
 
@@ -62,9 +57,9 @@ public class TrainerRepositoryImplTest {
 
 
     @Test
-    void testCreate() {
+    void create() {
 
-        User user=new User();
+        User user = new User();
         user.setId(1);
         user.setFirstname("text");
         user.setLastname("text");
@@ -88,7 +83,7 @@ public class TrainerRepositoryImplTest {
     }
 
     @Test
-    void testCreate_Failure() {
+    void create_Failure() {
         Trainer trainer = new Trainer();
 
         Optional<Trainer> result = trainerRepository.create(trainer);
@@ -100,7 +95,7 @@ public class TrainerRepositoryImplTest {
     }
 
     @Test
-    void testReadOne() {
+    void readOne() {
         Trainer trainer = new Trainer();
         trainer.setId(1);
 
@@ -115,7 +110,7 @@ public class TrainerRepositoryImplTest {
     }
 
     @Test
-    void testReadOne_NotFound() {
+    void readOne_NotFound() {
         when(entityManager.find(Trainer.class, 1)).thenReturn(null);
 
         Optional<Trainer> result = trainerRepository.readOne(1);
@@ -126,7 +121,7 @@ public class TrainerRepositoryImplTest {
     }
 
     @Test
-    void testReadAll() {
+    void readAll() {
         String sql = "select u.* from trainers u";
         List<Object[]> expectedResult = Arrays.asList(new Object[]{1L, "Trainer1"}, new Object[]{2L, "Trainer2"});
 
@@ -139,8 +134,8 @@ public class TrainerRepositoryImplTest {
     }
 
     @Test
-    void testUpdateTrainer() {
-        User user=new User();
+    void updateTrainer() {
+        User user = new User();
 
         Trainer existingTrainer = new Trainer();
         existingTrainer.setId(1);
@@ -165,7 +160,7 @@ public class TrainerRepositoryImplTest {
     }
 
     @Test
-    void testUpdateTrainer_NotFound() {
+    void updateTrainer_NotFound() {
         when(entityManager.find(Trainer.class, 1)).thenReturn(null);
 
         Optional<Trainer> result = trainerRepository.update(new Trainer());
@@ -174,7 +169,7 @@ public class TrainerRepositoryImplTest {
     }
 
     @Test
-    void testFindByUsername() {
+    void findByUsername() {
         String username = "testUsername";
         Trainer expectedTrainer = new Trainer();
 
@@ -192,7 +187,7 @@ public class TrainerRepositoryImplTest {
     }
 
     @Test
-    void testGetNotAssignedAndActive() {
+    void getNotAssignedAndActive() {
         String sql = "select t.* from trainers t left join users u on u.id=t.user_id " +
                 "where count(select * from trainings t1 where t1.trainer_id=t.id)=0 " +
                 "and u.is_active=true";

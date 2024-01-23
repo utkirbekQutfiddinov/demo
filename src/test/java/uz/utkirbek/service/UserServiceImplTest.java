@@ -1,4 +1,5 @@
 package uz.utkirbek.service;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -24,11 +25,11 @@ public class UserServiceImplTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         List<User> userList = mock(List.class);
         when(userRepository.readAll()).thenReturn(userList);
 
@@ -38,7 +39,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testGetOneUserFound() {
+    public void getOneUserFound() {
         User user = new User();
         when(userRepository.readOne(1)).thenReturn(Optional.of(user));
 
@@ -48,14 +49,14 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testGetOneUserNotFound() {
+    public void getOneUserNotFound() {
         when(userRepository.readOne(1)).thenReturn(Optional.empty());
 
         assertNull(userService.getOne(1));
     }
 
     @Test
-    public void testAddUserCreated() {
+    public void addUserCreated() {
         User user = new User();
         when(userRepository.create(user)).thenReturn(Optional.of(user));
 
@@ -65,7 +66,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testAddUserCreationFailed() {
+    public void addUserCreationFailed() {
         User user = new User();
         when(userRepository.create(user)).thenReturn(Optional.empty());
 
@@ -73,7 +74,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testUpdateUserFound() {
+    public void updateUserFound() {
         User user = new User();
         when(userRepository.update(user)).thenReturn(Optional.of(user));
 
@@ -83,7 +84,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testUpdateUserNotFound() {
+    public void updateUserNotFound() {
         User user = new User();
         when(userRepository.update(user)).thenReturn(Optional.empty());
 
@@ -91,7 +92,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testDeleteUser() {
+    public void deleteUser() {
         User user = new User();
         when(userRepository.readOne(1)).thenReturn(Optional.of(user));
 
@@ -101,7 +102,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testDeleteUserNotFound() {
+    public void deleteUserNotFound() {
         when(userRepository.readOne(1)).thenReturn(Optional.empty());
 
         userService.delete(1);
@@ -110,14 +111,14 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testChangePasswordSuccess() {
+    public void changePasswordSuccess() {
         when(userRepository.changePassword(1, "newPassword")).thenReturn(Optional.of(true));
 
         assertTrue(userService.changePassword(1, "newPassword"));
     }
 
     @Test
-    public void testChangePasswordFailure() {
+    public void changePasswordFailure() {
         when(userRepository.changePassword(1, "newPassword")).thenReturn(Optional.of(false));
 
         assertFalse(userService.changePassword(1, "newPassword"));

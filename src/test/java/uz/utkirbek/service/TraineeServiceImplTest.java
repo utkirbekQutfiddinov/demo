@@ -35,11 +35,11 @@ public class TraineeServiceImplTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         List<Trainee> traineeList = mock(List.class);
         when(traineeRepository.readAll()).thenReturn(traineeList);
 
@@ -49,7 +49,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testGetOneTraineeFound() {
+    public void getOneTraineeFound() {
         Trainee trainee = new Trainee();
         when(traineeRepository.readOne(1)).thenReturn(Optional.of(trainee));
 
@@ -59,14 +59,14 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testGetOneTraineeNotFound() {
+    public void getOneTraineeNotFound() {
         when(traineeRepository.readOne(1)).thenReturn(Optional.empty());
 
         assertNull(traineeService.getOne(1));
     }
 
     @Test
-    public void testAddTraineeCreated() {
+    public void addTraineeCreated() {
         Trainee trainee = new Trainee();
         when(traineeRepository.create(trainee)).thenReturn(Optional.of(trainee));
 
@@ -76,7 +76,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testAddTraineeCreationFailed() {
+    public void addTraineeCreationFailed() {
         Trainee trainee = new Trainee();
         when(traineeRepository.create(trainee)).thenReturn(Optional.empty());
 
@@ -84,7 +84,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testUpdateTrainee() {
+    public void updateTrainee() {
         Trainee trainee = new Trainee();
         when(traineeRepository.update(trainee)).thenReturn(Optional.of(trainee));
 
@@ -94,7 +94,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testDeleteTrainee() {
+    public void deleteTrainee() {
         Trainee trainee = new Trainee();
         when(traineeRepository.readOne(1)).thenReturn(Optional.of(trainee));
 
@@ -105,7 +105,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testDeleteTraineeNotFound() {
+    public void deleteTraineeNotFound() {
         when(traineeRepository.readOne(1)).thenReturn(Optional.empty());
 
         Boolean result = traineeService.delete(1);
@@ -115,7 +115,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testGetByUsername() {
+    public void getByUsername() {
         String username = "testUser";
         Trainee trainee = new Trainee();
         when(traineeRepository.findByUsername(username)).thenReturn(Optional.of(trainee));
@@ -126,7 +126,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testChangePasswordSuccess() {
+    public void changePasswordSuccess() {
         int traineeId = 1;
         String password = "newPassword";
         Trainee trainee = new Trainee();
@@ -139,7 +139,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testChangePasswordTraineeNotFound() {
+    public void changePasswordTraineeNotFound() {
         int traineeId = 1;
         String password = "newPassword";
         when(traineeRepository.readOne(traineeId)).thenReturn(Optional.empty());
@@ -150,7 +150,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testChangePasswordFailure() {
+    public void changePasswordFailure() {
         int traineeId = 1;
         String password = "newPassword";
         Trainee trainee = new Trainee();
@@ -163,7 +163,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testChangeStatusSuccess() {
+    public void changeStatusSuccess() {
         int traineeId = 1;
         Trainee trainee = new Trainee();
         when(traineeRepository.readOne(traineeId)).thenReturn(Optional.of(trainee));
@@ -175,7 +175,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testChangeStatusTraineeNotFound() {
+    public void changeStatusTraineeNotFound() {
         int traineeId = 1;
         when(traineeRepository.readOne(traineeId)).thenReturn(Optional.empty());
 
@@ -185,7 +185,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testChangeStatusFailure() {
+    public void changeStatusFailure() {
         int traineeId = 1;
         Trainee trainee = new Trainee();
         when(traineeRepository.readOne(traineeId)).thenReturn(Optional.of(trainee));
@@ -197,7 +197,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testDeleteByUsername() {
+    public void deleteByUsername() {
         String username = "testUser";
         Trainee trainee = new Trainee();
         when(traineeRepository.findByUsername(username)).thenReturn(Optional.of(trainee));
@@ -209,7 +209,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testDeleteByUsernameNotFound() {
+    public void deleteByUsernameNotFound() {
         String username = "testUser";
         when(traineeRepository.findByUsername(username)).thenReturn(Optional.empty());
 
@@ -220,7 +220,7 @@ public class TraineeServiceImplTest {
     }
 
     @Test
-    public void testGetTrainingsByUsernameAndCriteria() {
+    public void getTrainingsByUsernameAndCriteria() {
         String username = "testUser";
         List<Training> trainingList = mock(List.class);
         when(trainingRepository.getByUsernameAndCriteria(username)).thenReturn(trainingList);

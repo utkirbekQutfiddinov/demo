@@ -35,11 +35,11 @@ public class TrainerServiceImplTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         List<Trainer> trainerList = mock(List.class);
         when(trainerRepository.readAll()).thenReturn(trainerList);
 
@@ -49,7 +49,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testGetOneTrainerFound() {
+    public void getOneTrainerFound() {
         Trainer trainer = new Trainer();
         when(trainerRepository.readOne(1)).thenReturn(Optional.of(trainer));
 
@@ -59,14 +59,14 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testGetOneTrainerNotFound() {
+    public void getOneTrainerNotFound() {
         when(trainerRepository.readOne(1)).thenReturn(Optional.empty());
 
         assertNull(trainerService.getOne(1));
     }
 
     @Test
-    public void testAddTrainerCreated() {
+    public void addTrainerCreated() {
         Trainer trainer = new Trainer();
         when(trainerRepository.create(trainer)).thenReturn(Optional.of(trainer));
 
@@ -76,7 +76,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testAddTrainerCreationFailed() {
+    public void addTrainerCreationFailed() {
         Trainer trainer = new Trainer();
         when(trainerRepository.create(trainer)).thenReturn(Optional.empty());
 
@@ -84,7 +84,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testUpdateTrainer() {
+    public void updateTrainer() {
         Trainer trainer = new Trainer();
         when(trainerRepository.update(trainer)).thenReturn(Optional.of(trainer));
 
@@ -94,7 +94,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testGetByUserName() {
+    public void getByUserName() {
         String username = "testUser";
         Trainer trainer = new Trainer();
         when(trainerRepository.findByUsername(username)).thenReturn(Optional.of(trainer));
@@ -105,7 +105,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testChangePasswordSuccess() {
+    public void changePasswordSuccess() {
         int trainerId = 1;
         String password = "newPassword";
         Trainer trainer = new Trainer();
@@ -118,7 +118,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testChangePasswordTrainerNotFound() {
+    public void changePasswordTrainerNotFound() {
         int trainerId = 1;
         String password = "newPassword";
         when(trainerRepository.readOne(trainerId)).thenReturn(Optional.empty());
@@ -129,7 +129,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testChangePasswordFailure() {
+    public void changePasswordFailure() {
         int trainerId = 1;
         String password = "newPassword";
         Trainer trainer = new Trainer();
@@ -142,7 +142,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testChangeStatusSuccess() {
+    public void changeStatusSuccess() {
         int trainerId = 1;
         Trainer trainer = new Trainer();
         when(trainerRepository.readOne(trainerId)).thenReturn(Optional.of(trainer));
@@ -154,7 +154,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testChangeStatusTrainerNotFound() {
+    public void changeStatusTrainerNotFound() {
         int trainerId = 1;
         when(trainerRepository.readOne(trainerId)).thenReturn(Optional.empty());
 
@@ -164,7 +164,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testChangeStatusFailure() {
+    public void changeStatusFailure() {
         int trainerId = 1;
         Trainer trainer = new Trainer();
         when(trainerRepository.readOne(trainerId)).thenReturn(Optional.of(trainer));
@@ -176,7 +176,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testGetNotAssignedAndActive() {
+    public void getNotAssignedAndActive() {
         List<Trainer> trainerList = mock(List.class);
         when(trainerRepository.getNotAssignedAndActive()).thenReturn(trainerList);
 
@@ -186,7 +186,7 @@ public class TrainerServiceImplTest {
     }
 
     @Test
-    public void testGetTrainingsByUsernameAndCriteria() {
+    public void getTrainingsByUsernameAndCriteria() {
         String username = "testUser";
         List<Training> trainingList = mock(List.class);
         when(trainingRepository.getByUsernameAndCriteria(username)).thenReturn(trainingList);

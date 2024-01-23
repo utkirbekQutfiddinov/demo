@@ -1,4 +1,5 @@
 package uz.utkirbek.repository;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -26,7 +27,7 @@ class TrainingTypeRepositoryImplTest {
     }
 
     @Test
-    void testCreateTrainingType() {
+    void createTrainingType() {
         TrainingType trainingType = new TrainingType();
         trainingType.setName("Test Training Type");
 
@@ -49,7 +50,7 @@ class TrainingTypeRepositoryImplTest {
     }
 
     @Test
-    void testCreateTrainingTypeWithNameNull() {
+    void createTrainingTypeWithNameNull() {
         TrainingType trainingType = new TrainingType();
 
         Optional<TrainingType> result = trainingTypeRepository.create(trainingType);
@@ -61,7 +62,7 @@ class TrainingTypeRepositoryImplTest {
     }
 
     @Test
-    void testReadOneTrainingType() {
+    void readOneTrainingType() {
         int typeId = 1;
         TrainingType expectedTrainingType = new TrainingType();
         expectedTrainingType.setId(typeId);
@@ -76,7 +77,7 @@ class TrainingTypeRepositoryImplTest {
     }
 
     @Test
-    void testReadAllTrainingTypes() {
+    void readAllTrainingTypes() {
         String sql = "select u.* from training_types u";
         Query nativeQuery = mock(Query.class);
         List<TrainingType> expectedTrainingTypes = new ArrayList<>();

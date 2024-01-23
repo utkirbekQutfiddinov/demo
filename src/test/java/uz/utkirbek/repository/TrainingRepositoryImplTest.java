@@ -32,11 +32,11 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testCreateTraining() {
+    void createTraining() {
         Training training = new Training();
         training.setName("Test Training");
         training.setTrainingDate(parseToDate("2022-01-01"));
-        training.setDuration(2*3600*1000);
+        training.setDuration(2 * 3600 * 1000);
 
         training.setTrainerId(1);
         training.setTrainer(new Trainer());
@@ -66,7 +66,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testCreateTrainingWithNameNull() {
+    void createTrainingWithNameNull() {
         Training training = new Training();
 
         EntityTransaction transaction = mock(EntityTransaction.class);
@@ -81,12 +81,12 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testReadOneTraining() {
+    void readOneTraining() {
         int trainingId = 1;
         Training expectedTraining = new Training();
         expectedTraining.setName("Test Training");
         expectedTraining.setTrainingDate(parseToDate("2022-01-01"));
-        expectedTraining.setDuration(2*3600*1000);
+        expectedTraining.setDuration(2 * 3600 * 1000);
 
         expectedTraining.setTrainerId(1);
         expectedTraining.setTrainer(new Trainer());
@@ -107,7 +107,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testReadAllTrainings() {
+    void readAllTrainings() {
         String sql = "select u.* from trainings u";
         Query nativeQuery = mock(Query.class);
         List<Training> expectedTrainings = new ArrayList<>();
@@ -122,7 +122,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testTrainingUpdate() {
+    void trainingUpdate() {
 
         Training training = new Training();
         training.setId(1);
@@ -144,7 +144,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testUpdateTrainer() {
+    void updateTrainer() {
         int trainingId = 1;
         Trainer trainer = new Trainer();
         trainer.setId(1);
@@ -164,7 +164,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testUpdateTrainerNotFound() {
+    void updateTrainerNotFound() {
         int trainingId = 1;
         Trainer trainer = new Trainer();
         trainer.setId(1);
@@ -181,8 +181,8 @@ class TrainingRepositoryImplTest {
         verify(transaction).rollback();
     }
 
-    private Date parseToDate(String dateStr){
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+    private Date parseToDate(String dateStr) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             return sdf.parse(dateStr);
         } catch (ParseException e) {
@@ -192,16 +192,16 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testGetByUsernameAndCriteria() {
+    void getByUsernameAndCriteria() {
         String username = "testUsername";
 
 
-        TypedQuery<Training> typedQuery=mock(TypedQuery.class);
+        TypedQuery<Training> typedQuery = mock(TypedQuery.class);
         Predicate mockedPredicate = mock(Predicate.class);
 
-        CriteriaBuilder criteriaBuilder=mock(CriteriaBuilder.class);
-        CriteriaQuery<Training> criteriaQuery=mock(CriteriaQuery.class);
-        Root<Training> root=mock(Root.class);
+        CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class);
+        CriteriaQuery<Training> criteriaQuery = mock(CriteriaQuery.class);
+        Root<Training> root = mock(Root.class);
 
         when(entityManager.getCriteriaBuilder()).thenReturn(criteriaBuilder);
         when(criteriaBuilder.createQuery(Training.class)).thenReturn(criteriaQuery);
