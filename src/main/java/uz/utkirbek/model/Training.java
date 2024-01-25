@@ -11,14 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "trainings")
-public class Training implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-
-    @Column(name = "trainer_id")
-    private Integer trainerId;
+public class Training extends BaseId implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "trainer_id", insertable = false, updatable = false)

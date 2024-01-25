@@ -24,13 +24,13 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
 
-        if (item.getUserId() == null || item.getUser() == null) {
+        if (item.getUser() == null || item.getUser().getId() == 0) {
             transaction.commit();
             return Optional.empty();
         }
 
         try {
-            if (item.getId() == null) {
+            if (item.getId() == 0) {
                 entityManager.persist(item);
             } else {
                 item = entityManager.merge(item);
@@ -43,26 +43,26 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     }
 
     @Override
-    public Optional<Trainer> readOne(Integer key) {
-        EntityTransaction transaction= entityManager.getTransaction();
+    public Optional<Trainer> readOne(int id) {
+        EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-        try{
-            Trainer trainer = entityManager.find(Trainer.class, key);
+        try {
+            Trainer trainer = entityManager.find(Trainer.class, id);
             return trainer == null ? Optional.empty() : Optional.of(trainer);
-        }finally {
+        } finally {
             transaction.commit();
         }
     }
 
     @Override
     public List<Trainer> readAll() {
-        EntityTransaction transaction=entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-        try{
+        try {
             String sql = "select u.* from trainers u";
             Query nativeQuery = entityManager.createNativeQuery(sql);
             return nativeQuery.getResultList();
-        }finally {
+        } finally {
             transaction.commit();
         }
     }
@@ -86,7 +86,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             Trainer trainer = (Trainer) nativeQuery.getSingleResult();
 
             return trainer != null ? Optional.of(trainer) : Optional.empty();
-        }  finally {
+        } finally {
             transaction.commit();
         }
 
@@ -94,9 +94,9 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public List<Trainer> getNotAssignedAndActive() {
-        EntityTransaction transaction= entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
 
-        try{
+        try {
             transaction.begin();
             String sql = "select t.* " +
                     "from trainers t " +
@@ -106,7 +106,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
                     "and u.is_active=true";
             Query nativeQuery = entityManager.createNativeQuery(sql);
             return nativeQuery.getResultList();
-        }finally {
+        } finally {
             transaction.commit();
         }
 

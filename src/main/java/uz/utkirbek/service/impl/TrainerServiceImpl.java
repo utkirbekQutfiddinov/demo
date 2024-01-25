@@ -30,7 +30,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public Trainer getOne(Integer id) {
+    public Trainer getOne(int id) {
         Optional<Trainer> optional = repository.readOne(id);
         return optional.orElse(null);
     }
@@ -55,7 +55,7 @@ public class TrainerServiceImpl implements TrainerService {
         Optional<Trainer> optional = repository.readOne(trainerId);
         if (optional.isPresent()) {
             Trainer trainer = optional.get();
-            Optional<Boolean> changed = userRepository.changePassword(trainer.getUserId(), password);
+            Optional<Boolean> changed = userRepository.changePassword(trainer.getUser().getId(), password);
             return changed.orElse(false);
         } else {
             return false;
@@ -67,7 +67,7 @@ public class TrainerServiceImpl implements TrainerService {
         Optional<Trainer> optional = repository.readOne(trainerId);
         if (optional.isPresent()) {
             Trainer trainer = optional.get();
-            Optional<Boolean> changed = userRepository.changeStatus(trainer.getUserId());
+            Optional<Boolean> changed = userRepository.changeStatus(trainer.getUser().getId());
             return changed.orElse(false);
         } else {
             return false;

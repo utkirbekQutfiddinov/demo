@@ -22,7 +22,7 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
     }
 
     @Override
-    public TrainingType getOne(Integer id) {
+    public TrainingType getOne(int id) {
         Optional<TrainingType> optional=repository.readOne(id);
         return optional.orElse(null);
     }

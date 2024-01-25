@@ -29,7 +29,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public Trainee getOne(Integer id) {
+    public Trainee getOne(int id) {
         Optional<Trainee> optional = repository.readOne(id);
         return optional.orElse(null);
     }
@@ -45,7 +45,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public Boolean delete(Integer id) {
+    public Boolean delete(int id) {
         Trainee trainee = getOne(id);
         if (trainee == null){
             return false;
@@ -64,7 +64,7 @@ public class TraineeServiceImpl implements TraineeService {
         Optional<Trainee> optional = repository.readOne(traineeId);
         if (optional.isPresent()) {
             Trainee trainee = optional.get();
-            Optional<Boolean> changed = userRepository.changePassword(trainee.getUserId(), password);
+            Optional<Boolean> changed = userRepository.changePassword(trainee.getUser().getId(), password);
             return changed.orElse(false);
         } else {
             return false;
@@ -76,7 +76,7 @@ public class TraineeServiceImpl implements TraineeService {
         Optional<Trainee> optional = repository.readOne(trainerId);
         if (optional.isPresent()) {
             Trainee trainee = optional.get();
-            Optional<Boolean> changed = userRepository.changeStatus(trainee.getUserId());
+            Optional<Boolean> changed = userRepository.changeStatus(trainee.getUser().getId());
             return changed.orElse(false);
         } else {
             return false;

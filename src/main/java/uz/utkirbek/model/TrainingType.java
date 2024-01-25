@@ -10,10 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Entity
 @Table(name = "training_types")
-public class TrainingType implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+public class TrainingType extends BaseId implements Serializable {
 
     @Column(nullable = false)
     private String name;

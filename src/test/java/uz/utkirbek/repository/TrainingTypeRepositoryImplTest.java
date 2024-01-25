@@ -39,7 +39,7 @@ class TrainingTypeRepositoryImplTest {
         assertTrue(result.isPresent());
         assertEquals(trainingType, result.get());
 
-        if (trainingType.getId() == null) {
+        if (trainingType.getId() == 0) {
             verify(entityManager).persist(trainingType);
         } else {
             verify(entityManager).merge(trainingType);

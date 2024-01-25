@@ -26,11 +26,11 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         try {
             transaction.begin();
 
-        if (item.getUserId() == null) {
+        if (item.getUser().getId() == 0) {
             return Optional.empty();
         }
 
-            if (item.getId() == null) {
+            if (item.getId() == 0) {
                 entityManager.persist(item);
             } else {
                 item = entityManager.merge(item);
@@ -42,11 +42,11 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public Optional<Trainee> readOne(Integer key) {
+    public Optional<Trainee> readOne(int id) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
-            Trainee trainee = entityManager.find(Trainee.class, key);
+            Trainee trainee = entityManager.find(Trainee.class, id);
             return trainee == null ? Optional.empty() : Optional.of(trainee);
         } finally {
             transaction.commit();

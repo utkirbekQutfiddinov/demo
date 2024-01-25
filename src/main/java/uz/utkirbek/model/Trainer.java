@@ -10,13 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Entity
 @Table(name = "trainers")
-public class Trainer implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-
-    @Column(name = "user_id")
-    private Integer userId;
+public class Trainer extends BaseId implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)

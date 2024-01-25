@@ -1,5 +1,5 @@
 package uz.utkirbek.service.base;
 
-public interface BaseUpdateService<T, K> extends BaseService<T, K> {
+public interface BaseUpdateService<T> extends BaseService<T> {
     T update(T item);
 }

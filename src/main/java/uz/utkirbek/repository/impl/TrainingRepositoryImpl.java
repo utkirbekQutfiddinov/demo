@@ -36,7 +36,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         }
 
         try {
-            if (item.getId() == null) {
+            if (item.getId() == 0) {
                 entityManager.persist(item);
             } else {
                 transaction.rollback();
@@ -50,8 +50,8 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     }
 
     @Override
-    public Optional<Training> readOne(Integer key) {
-        Training training = entityManager.find(Training.class, key);
+    public Optional<Training> readOne(int id) {
+        Training training = entityManager.find(Training.class, id);
         return training == null ? Optional.empty() : Optional.of(training);
     }
 
@@ -76,7 +76,6 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
         Training training = trainerOptional.get();
         training.setTrainer(trainer);
-        training.setTrainerId(trainer.getId());
         entityManager.flush();
         transaction.commit();
         return Optional.of(true);

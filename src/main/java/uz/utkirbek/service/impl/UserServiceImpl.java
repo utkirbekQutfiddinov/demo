@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getOne(Integer id) {
+    public User getOne(int id) {
         Optional<User> optional = repository.readOne(id);
         return optional.orElse(null);
     }
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean delete(Integer id) {
+    public Boolean delete(int id) {
         User user = getOne(id);
         if (user == null){
             return false;

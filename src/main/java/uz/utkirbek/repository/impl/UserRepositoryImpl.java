@@ -30,7 +30,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         try {
             transaction.begin();
-            if (item.getId() == null) {
+            if (item.getId() == 0) {
                 entityManager.persist(item);
             } else {
                 item = entityManager.merge(item);
@@ -42,8 +42,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> readOne(Integer key) {
-        User user = entityManager.find(User.class, key);
+    public Optional<User> readOne(int id) {
+        User user = entityManager.find(User.class, id);
         return user == null ? Optional.empty() : Optional.of(user);
     }
 
@@ -93,7 +93,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<Boolean> changePassword(Integer id, String password) {
+    public Optional<Boolean> changePassword(int id, String password) {
         EntityTransaction transaction=entityManager.getTransaction();
         try {
             transaction.begin();
@@ -110,7 +110,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<Boolean> changeStatus(Integer id) {
+    public Optional<Boolean> changeStatus(int id) {
         EntityTransaction transaction=entityManager.getTransaction();
         try {
             transaction.begin();

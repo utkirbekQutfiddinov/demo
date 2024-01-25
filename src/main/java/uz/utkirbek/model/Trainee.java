@@ -12,20 +12,13 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "trainees")
-public class Trainee implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+public class Trainee extends BaseId implements Serializable {
 
     @Column(length = 1000)
     private String address;
 
     @Column(name = "birth_date")
     private Date birthdate;
-
-    @Column(name = "user_id")
-    private Integer userId;
 
     @OneToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)

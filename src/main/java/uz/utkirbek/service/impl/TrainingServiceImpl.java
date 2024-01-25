@@ -24,7 +24,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public Training getOne(Integer id) {
+    public Training getOne(int id) {
         Optional<Training> optional = repository.readOne(id);
         return optional.orElse(null);
     }

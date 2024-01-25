@@ -6,7 +6,7 @@ import uz.utkirbek.model.Trainer;
 import java.util.List;
 import java.util.Optional;
 
-public interface TrainerRepository extends BaseUpdateRepository<Trainer, Integer> {
+public interface TrainerRepository extends BaseUpdateRepository<Trainer> {
     Optional<Trainer> findByUsername(String username);
     List<Trainer> getNotAssignedAndActive();
 }

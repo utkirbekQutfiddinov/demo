@@ -5,6 +5,6 @@ import uz.utkirbek.model.Trainee;
 
 import java.util.Optional;
 
-public interface TraineeRepository extends BaseDeleteRepository<Trainee, Integer> {
+public interface TraineeRepository extends BaseDeleteRepository<Trainee> {
     Optional<Trainee> findByUsername(String username);
 }

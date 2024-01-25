@@ -22,7 +22,7 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
     public Optional<TrainingType> create(TrainingType item) {
         EntityTransaction transaction = entityManager.getTransaction();
 
-        if (item.getName() == null || item.getId() != null) {
+        if (item.getName() == null || item.getId() != 0) {
             return Optional.empty();
         }
 
@@ -39,8 +39,8 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
     }
 
     @Override
-    public Optional<TrainingType> readOne(Integer key) {
-        TrainingType type = entityManager.find(TrainingType.class, key);
+    public Optional<TrainingType> readOne(int id) {
+        TrainingType type = entityManager.find(TrainingType.class, id);
         return type == null ? Optional.empty() : Optional.of(type);
     }
 

@@ -23,72 +23,87 @@ public class ServiceFacade {
     }
 
     //UserService's methods
-    public User createUser(User item){
+    public User createUser(User item) {
         return userService.add(item);
     }
-    public User getUser(Integer id){
+
+    public User getUser(Integer id) {
         return userService.getOne(id);
     }
-    public List<User> getAllUsers(){
+
+    public List<User> getAllUsers() {
         return userService.getAll();
     }
-    public User updateUser(User item){
+
+    public User updateUser(User item) {
         return userService.update(item);
     }
-    public Boolean deleteUser(Integer id){
+
+    public Boolean deleteUser(Integer id) {
         return userService.delete(id);
     }
 
     //TrainingTypeService's methods
-    public TrainingType createTrainingType(TrainingType item){
+    public TrainingType createTrainingType(TrainingType item) {
         return trainingTypeService.add(item);
     }
-    public TrainingType getTrainingType(Integer id){
+
+    public TrainingType getTrainingType(Integer id) {
         return trainingTypeService.getOne(id);
     }
-    public List<TrainingType> getAllTrainingTypes(){
+
+    public List<TrainingType> getAllTrainingTypes() {
         return trainingTypeService.getAll();
     }
 
     //TrainingService's methods
-    public Training createTraining(Training item){
+    public Training createTraining(Training item) {
         return trainingService.add(item);
     }
-    public Training getTraining(Integer id){
+
+    public Training getTraining(Integer id) {
         return trainingService.getOne(id);
     }
-    public List<Training> getAllTrainings(){
+
+    public List<Training> getAllTrainings() {
         return trainingService.getAll();
     }
 
     //TrainerService's methods
-    public Trainer createTrainer(Trainer item){
+    public Trainer createTrainer(Trainer item) {
         return trainerService.add(item);
     }
-    public Trainer getTrainer(Integer id){
+
+    public Trainer getTrainer(Integer id) {
         return trainerService.getOne(id);
     }
-    public List<Trainer> getAllTrainers(){
+
+    public List<Trainer> getAllTrainers() {
         return trainerService.getAll();
     }
-    public Trainer updateTrainer(Trainer item){
+
+    public Trainer updateTrainer(Trainer item) {
         return trainerService.update(item);
     }
 
     //TraineeService's methods
-    public Trainee createTrainee(Trainee item){
+    public Trainee createTrainee(Trainee item) {
         return traineeService.add(item);
     }
-    public Trainee getTrainee(Integer id){
+
+    public Trainee getTrainee(Integer id) {
         return traineeService.getOne(id);
     }
-    public List<Trainee> getAllTrainees(){
+
+    public List<Trainee> getAllTrainees() {
         return traineeService.getAll();
     }
-    public Trainee updateTrainee(Trainee item){
+
+    public Trainee updateTrainee(Trainee item) {
         return traineeService.update(item);
     }
-    public Boolean deleteTrainee(Integer id){
+
+    public Boolean deleteTrainee(Integer id) {
         return traineeService.delete(id);
     }
 

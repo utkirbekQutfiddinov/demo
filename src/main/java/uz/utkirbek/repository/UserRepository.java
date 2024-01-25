@@ -5,8 +5,8 @@ import uz.utkirbek.model.User;
 
 import java.util.Optional;
 
-public interface UserRepository extends BaseDeleteRepository<User, Integer> {
+public interface UserRepository extends BaseDeleteRepository<User> {
     Optional<User> findByUserName(String username);
-    Optional<Boolean> changePassword(Integer id, String password);
-    Optional<Boolean> changeStatus(Integer id);
+    Optional<Boolean> changePassword(int id, String password);
+    Optional<Boolean> changeStatus(int id);
 }
