@@ -41,7 +41,7 @@ public class TrainerServiceImplTest {
     @Test
     public void getAll() {
         List<Trainer> trainerList = mock(List.class);
-        when(trainerRepository.readAll()).thenReturn(trainerList);
+        when(trainerRepository.findAll()).thenReturn(trainerList);
 
         List<Trainer> result = trainerService.getAll();
 
@@ -51,7 +51,7 @@ public class TrainerServiceImplTest {
     @Test
     public void getOneTrainerFound() {
         Trainer trainer = new Trainer();
-        when(trainerRepository.readOne(1)).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findById(1)).thenReturn(Optional.of(trainer));
 
         Trainer result = trainerService.getOne(1);
 
@@ -60,7 +60,7 @@ public class TrainerServiceImplTest {
 
     @Test
     public void getOneTrainerNotFound() {
-        when(trainerRepository.readOne(1)).thenReturn(Optional.empty());
+        when(trainerRepository.findById(1)).thenReturn(Optional.empty());
 
         assertNull(trainerService.getOne(1));
     }
@@ -109,8 +109,8 @@ public class TrainerServiceImplTest {
         int trainerId = 1;
         String password = "newPassword";
         Trainer trainer = new Trainer();
-        when(trainerRepository.readOne(trainerId)).thenReturn(Optional.of(trainer));
-        when(userRepository.changePassword(trainer.getUserId(), password)).thenReturn(Optional.of(true));
+        when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
+        when(userRepository.changePassword(trainer.getUser().getId(), password)).thenReturn(Optional.of(true));
 
         Boolean result = trainerService.changePassword(trainerId, password);
 
@@ -121,7 +121,7 @@ public class TrainerServiceImplTest {
     public void changePasswordTrainerNotFound() {
         int trainerId = 1;
         String password = "newPassword";
-        when(trainerRepository.readOne(trainerId)).thenReturn(Optional.empty());
+        when(trainerRepository.findById(trainerId)).thenReturn(Optional.empty());
 
         Boolean result = trainerService.changePassword(trainerId, password);
 
@@ -133,8 +133,8 @@ public class TrainerServiceImplTest {
         int trainerId = 1;
         String password = "newPassword";
         Trainer trainer = new Trainer();
-        when(trainerRepository.readOne(trainerId)).thenReturn(Optional.of(trainer));
-        when(userRepository.changePassword(trainer.getUserId(), password)).thenReturn(Optional.empty());
+        when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
+        when(userRepository.changePassword(trainer.getUser().getId(), password)).thenReturn(Optional.empty());
 
         Boolean result = trainerService.changePassword(trainerId, password);
 
@@ -145,8 +145,8 @@ public class TrainerServiceImplTest {
     public void changeStatusSuccess() {
         int trainerId = 1;
         Trainer trainer = new Trainer();
-        when(trainerRepository.readOne(trainerId)).thenReturn(Optional.of(trainer));
-        when(userRepository.changeStatus(trainer.getUserId())).thenReturn(Optional.of(true));
+        when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
+        when(userRepository.changeStatus(trainer.getUser().getId())).thenReturn(Optional.of(true));
 
         Boolean result = trainerService.changeStatus(trainerId);
 
@@ -156,7 +156,7 @@ public class TrainerServiceImplTest {
     @Test
     public void changeStatusTrainerNotFound() {
         int trainerId = 1;
-        when(trainerRepository.readOne(trainerId)).thenReturn(Optional.empty());
+        when(trainerRepository.findById(trainerId)).thenReturn(Optional.empty());
 
         Boolean result = trainerService.changeStatus(trainerId);
 
@@ -167,8 +167,8 @@ public class TrainerServiceImplTest {
     public void changeStatusFailure() {
         int trainerId = 1;
         Trainer trainer = new Trainer();
-        when(trainerRepository.readOne(trainerId)).thenReturn(Optional.of(trainer));
-        when(userRepository.changeStatus(trainer.getUserId())).thenReturn(Optional.empty());
+        when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
+        when(userRepository.changeStatus(trainer.getUser().getId())).thenReturn(Optional.empty());
 
         Boolean result = trainerService.changeStatus(trainerId);
 

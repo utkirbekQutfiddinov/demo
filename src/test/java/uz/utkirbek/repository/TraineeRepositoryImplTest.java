@@ -41,7 +41,6 @@ class TraineeRepositoryImplTest {
     @Test
     void create() {
         Trainee trainee = new Trainee();
-        trainee.setUserId(1);
         trainee.setBirthdate(new Date());
         trainee.setUser(new User());
         trainee.setTrainings(new ArrayList<>());
@@ -69,36 +68,36 @@ class TraineeRepositoryImplTest {
 
 
     @Test
-    void readOne() {
+    void findById() {
         Trainee trainee = new Trainee();
         trainee.setId(1);
 
         when(entityManager.find(Trainee.class, 1)).thenReturn(trainee);
 
-        Optional<Trainee> result = traineeRepository.readOne(1);
+        Optional<Trainee> result = traineeRepository.findById(1);
 
         assertTrue(result.isPresent());
         assertEquals(trainee, result.get());
     }
 
     @Test
-    void readOne_NotFound() {
+    void findById_NotFound() {
         when(entityManager.find(Trainee.class, 1)).thenReturn(null);
 
-        Optional<Trainee> result = traineeRepository.readOne(1);
+        Optional<Trainee> result = traineeRepository.findById(1);
 
         assertFalse(result.isPresent());
     }
 
     @Test
-    void readAll() {
+    void findAll() {
         String sql = "select u.* from trainees u";
         Query query = mock(Query.class);
 
         when(entityManager.createNativeQuery(sql)).thenReturn(query);
         when(query.getResultList()).thenReturn(Collections.emptyList());
 
-        List<Trainee> result = traineeRepository.readAll();
+        List<Trainee> result = traineeRepository.findAll();
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -120,11 +119,9 @@ class TraineeRepositoryImplTest {
     public void updateWithValidUserId() {
         Trainee existingTrainee = new Trainee();
         existingTrainee.setId(1);
-        existingTrainee.setUserId(1);
 
         Trainee updatedTrainee = new Trainee();
         updatedTrainee.setId(1);
-        updatedTrainee.setUserId(1);
         updatedTrainee.setAddress("Updated address");
 
         when(entityManager.getTransaction()).thenReturn(transaction);

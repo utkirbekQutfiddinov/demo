@@ -38,7 +38,6 @@ class TrainingRepositoryImplTest {
         training.setTrainingDate(parseToDate("2022-01-01"));
         training.setDuration(2 * 3600 * 1000);
 
-        training.setTrainerId(1);
         training.setTrainer(new Trainer());
 
         training.setTraineeId(1);
@@ -88,7 +87,6 @@ class TrainingRepositoryImplTest {
         expectedTraining.setTrainingDate(parseToDate("2022-01-01"));
         expectedTraining.setDuration(2 * 3600 * 1000);
 
-        expectedTraining.setTrainerId(1);
         expectedTraining.setTrainer(new Trainer());
 
         expectedTraining.setTraineeId(1);
@@ -100,14 +98,14 @@ class TrainingRepositoryImplTest {
 
         when(entityManager.find(Training.class, trainingId)).thenReturn(expectedTraining);
 
-        Optional<Training> result = trainingRepository.readOne(trainingId);
+        Optional<Training> result = trainingRepository.findById(trainingId);
 
         assertTrue(result.isPresent());
         assertEquals(expectedTraining, result.get());
     }
 
     @Test
-    void readAllTrainings() {
+    void findAllTrainings() {
         String sql = "select u.* from trainings u";
         Query nativeQuery = mock(Query.class);
         List<Training> expectedTrainings = new ArrayList<>();
@@ -116,7 +114,7 @@ class TrainingRepositoryImplTest {
         when(entityManager.createNativeQuery(sql)).thenReturn(nativeQuery);
         when(nativeQuery.getResultList()).thenReturn(expectedTrainings);
 
-        List<Training> result = trainingRepository.readAll();
+        List<Training> result = trainingRepository.findAll();
 
         assertEquals(expectedTrainings, result);
     }

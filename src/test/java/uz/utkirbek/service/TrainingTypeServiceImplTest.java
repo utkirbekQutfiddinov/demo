@@ -32,7 +32,7 @@ public class TrainingTypeServiceImplTest {
     @Test
     public void getAll() {
         List<TrainingType> trainingTypeList = mock(List.class);
-        when(trainingTypeRepository.readAll()).thenReturn(trainingTypeList);
+        when(trainingTypeRepository.findAll()).thenReturn(trainingTypeList);
 
         List<TrainingType> result = trainingTypeService.getAll();
 
@@ -42,7 +42,7 @@ public class TrainingTypeServiceImplTest {
     @Test
     public void getOneTrainingTypeFound() {
         TrainingType trainingType = new TrainingType();
-        when(trainingTypeRepository.readOne(1)).thenReturn(Optional.of(trainingType));
+        when(trainingTypeRepository.findById(1)).thenReturn(Optional.of(trainingType));
 
         TrainingType result = trainingTypeService.getOne(1);
 
@@ -51,7 +51,7 @@ public class TrainingTypeServiceImplTest {
 
     @Test
     public void getOneTrainingTypeNotFound() {
-        when(trainingTypeRepository.readOne(1)).thenReturn(Optional.empty());
+        when(trainingTypeRepository.findById(1)).thenReturn(Optional.empty());
 
         assertNull(trainingTypeService.getOne(1));
     }

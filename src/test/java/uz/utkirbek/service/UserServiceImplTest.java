@@ -31,7 +31,7 @@ public class UserServiceImplTest {
     @Test
     public void getAll() {
         List<User> userList = mock(List.class);
-        when(userRepository.readAll()).thenReturn(userList);
+        when(userRepository.findAll()).thenReturn(userList);
 
         List<User> result = userService.getAll();
 
@@ -41,7 +41,7 @@ public class UserServiceImplTest {
     @Test
     public void getOneUserFound() {
         User user = new User();
-        when(userRepository.readOne(1)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
 
         User result = userService.getOne(1);
 
@@ -50,7 +50,7 @@ public class UserServiceImplTest {
 
     @Test
     public void getOneUserNotFound() {
-        when(userRepository.readOne(1)).thenReturn(Optional.empty());
+        when(userRepository.findById(1)).thenReturn(Optional.empty());
 
         assertNull(userService.getOne(1));
     }
@@ -94,7 +94,7 @@ public class UserServiceImplTest {
     @Test
     public void deleteUser() {
         User user = new User();
-        when(userRepository.readOne(1)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
 
         userService.delete(1);
 
@@ -103,7 +103,7 @@ public class UserServiceImplTest {
 
     @Test
     public void deleteUserNotFound() {
-        when(userRepository.readOne(1)).thenReturn(Optional.empty());
+        when(userRepository.findById(1)).thenReturn(Optional.empty());
 
         userService.delete(1);
 

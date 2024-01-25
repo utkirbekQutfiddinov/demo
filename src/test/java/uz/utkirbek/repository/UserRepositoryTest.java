@@ -114,7 +114,7 @@ class UserRepositoryTest {
         User expectedUser = new User();
         when(entityManager.find(User.class, userId)).thenReturn(expectedUser);
 
-        Optional<User> result = userRepository.readOne(userId);
+        Optional<User> result = userRepository.findById(userId);
 
         assertTrue(result.isPresent());
         assertEquals(expectedUser, result.get());
@@ -131,7 +131,7 @@ class UserRepositoryTest {
         when(entityManager.createNativeQuery(sql)).thenReturn(nativeQuery);
         when(nativeQuery.getResultList()).thenReturn(expectedUsers);
 
-        List<User> result = userRepository.readAll();
+        List<User> result = userRepository.findAll();
 
         assertEquals(expectedUsers, result);
     }

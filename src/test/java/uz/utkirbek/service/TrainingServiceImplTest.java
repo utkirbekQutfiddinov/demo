@@ -33,7 +33,7 @@ public class TrainingServiceImplTest {
     @Test
     public void getAll() {
         List<Training> trainingList = mock(List.class);
-        when(trainingRepository.readAll()).thenReturn(trainingList);
+        when(trainingRepository.findAll()).thenReturn(trainingList);
 
         List<Training> result = trainingService.getAll();
 
@@ -43,7 +43,7 @@ public class TrainingServiceImplTest {
     @Test
     public void getOneTrainingFound() {
         Training training = new Training();
-        when(trainingRepository.readOne(1)).thenReturn(Optional.of(training));
+        when(trainingRepository.findById(1)).thenReturn(Optional.of(training));
 
         Training result = trainingService.getOne(1);
 
@@ -52,7 +52,7 @@ public class TrainingServiceImplTest {
 
     @Test
     public void getOneTrainingNotFound() {
-        when(trainingRepository.readOne(1)).thenReturn(Optional.empty());
+        when(trainingRepository.findById(1)).thenReturn(Optional.empty());
 
         assertNull(trainingService.getOne(1));
     }

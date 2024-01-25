@@ -41,7 +41,7 @@ public class TraineeServiceImplTest {
     @Test
     public void getAll() {
         List<Trainee> traineeList = mock(List.class);
-        when(traineeRepository.readAll()).thenReturn(traineeList);
+        when(traineeRepository.findAll()).thenReturn(traineeList);
 
         List<Trainee> result = traineeService.getAll();
 
@@ -51,7 +51,7 @@ public class TraineeServiceImplTest {
     @Test
     public void getOneTraineeFound() {
         Trainee trainee = new Trainee();
-        when(traineeRepository.readOne(1)).thenReturn(Optional.of(trainee));
+        when(traineeRepository.findById(1)).thenReturn(Optional.of(trainee));
 
         Trainee result = traineeService.getOne(1);
 
@@ -60,7 +60,7 @@ public class TraineeServiceImplTest {
 
     @Test
     public void getOneTraineeNotFound() {
-        when(traineeRepository.readOne(1)).thenReturn(Optional.empty());
+        when(traineeRepository.findById(1)).thenReturn(Optional.empty());
 
         assertNull(traineeService.getOne(1));
     }
@@ -96,7 +96,7 @@ public class TraineeServiceImplTest {
     @Test
     public void deleteTrainee() {
         Trainee trainee = new Trainee();
-        when(traineeRepository.readOne(1)).thenReturn(Optional.of(trainee));
+        when(traineeRepository.findById(1)).thenReturn(Optional.of(trainee));
 
         Boolean result = traineeService.delete(1);
 
@@ -106,7 +106,7 @@ public class TraineeServiceImplTest {
 
     @Test
     public void deleteTraineeNotFound() {
-        when(traineeRepository.readOne(1)).thenReturn(Optional.empty());
+        when(traineeRepository.findById(1)).thenReturn(Optional.empty());
 
         Boolean result = traineeService.delete(1);
 
@@ -130,8 +130,8 @@ public class TraineeServiceImplTest {
         int traineeId = 1;
         String password = "newPassword";
         Trainee trainee = new Trainee();
-        when(traineeRepository.readOne(traineeId)).thenReturn(Optional.of(trainee));
-        when(userRepository.changePassword(trainee.getUserId(), password)).thenReturn(Optional.of(true));
+        when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
+        when(userRepository.changePassword(trainee.getUser().getId(), password)).thenReturn(Optional.of(true));
 
         Boolean result = traineeService.changePassword(traineeId, password);
 
@@ -142,7 +142,7 @@ public class TraineeServiceImplTest {
     public void changePasswordTraineeNotFound() {
         int traineeId = 1;
         String password = "newPassword";
-        when(traineeRepository.readOne(traineeId)).thenReturn(Optional.empty());
+        when(traineeRepository.findById(traineeId)).thenReturn(Optional.empty());
 
         Boolean result = traineeService.changePassword(traineeId, password);
 
@@ -154,8 +154,8 @@ public class TraineeServiceImplTest {
         int traineeId = 1;
         String password = "newPassword";
         Trainee trainee = new Trainee();
-        when(traineeRepository.readOne(traineeId)).thenReturn(Optional.of(trainee));
-        when(userRepository.changePassword(trainee.getUserId(), password)).thenReturn(Optional.empty());
+        when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
+        when(userRepository.changePassword(trainee.getUser().getId(), password)).thenReturn(Optional.empty());
 
         Boolean result = traineeService.changePassword(traineeId, password);
 
@@ -166,8 +166,8 @@ public class TraineeServiceImplTest {
     public void changeStatusSuccess() {
         int traineeId = 1;
         Trainee trainee = new Trainee();
-        when(traineeRepository.readOne(traineeId)).thenReturn(Optional.of(trainee));
-        when(userRepository.changeStatus(trainee.getUserId())).thenReturn(Optional.of(true));
+        when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
+        when(userRepository.changeStatus(trainee.getUser().getId())).thenReturn(Optional.of(true));
 
         Boolean result = traineeService.changeStatus(traineeId);
 
@@ -177,7 +177,7 @@ public class TraineeServiceImplTest {
     @Test
     public void changeStatusTraineeNotFound() {
         int traineeId = 1;
-        when(traineeRepository.readOne(traineeId)).thenReturn(Optional.empty());
+        when(traineeRepository.findById(traineeId)).thenReturn(Optional.empty());
 
         Boolean result = traineeService.changeStatus(traineeId);
 
@@ -188,8 +188,8 @@ public class TraineeServiceImplTest {
     public void changeStatusFailure() {
         int traineeId = 1;
         Trainee trainee = new Trainee();
-        when(traineeRepository.readOne(traineeId)).thenReturn(Optional.of(trainee));
-        when(userRepository.changeStatus(trainee.getUserId())).thenReturn(Optional.empty());
+        when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
+        when(userRepository.changeStatus(trainee.getUser().getId())).thenReturn(Optional.empty());
 
         Boolean result = traineeService.changeStatus(traineeId);
 

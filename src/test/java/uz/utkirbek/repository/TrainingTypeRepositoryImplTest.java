@@ -70,7 +70,7 @@ class TrainingTypeRepositoryImplTest {
 
         when(entityManager.find(TrainingType.class, typeId)).thenReturn(expectedTrainingType);
 
-        Optional<TrainingType> result = trainingTypeRepository.readOne(typeId);
+        Optional<TrainingType> result = trainingTypeRepository.findById(typeId);
 
         assertTrue(result.isPresent());
         assertEquals(expectedTrainingType, result.get());
@@ -86,7 +86,7 @@ class TrainingTypeRepositoryImplTest {
         when(entityManager.createNativeQuery(sql)).thenReturn(nativeQuery);
         when(nativeQuery.getResultList()).thenReturn(expectedTrainingTypes);
 
-        List<TrainingType> result = trainingTypeRepository.readAll();
+        List<TrainingType> result = trainingTypeRepository.findAll();
 
         assertEquals(expectedTrainingTypes, result);
     }

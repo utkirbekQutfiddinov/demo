@@ -69,7 +69,6 @@ public class TrainerRepositoryImplTest {
         when(entityManager.merge(user)).thenReturn(user);
 
         Trainer trainer = new Trainer();
-        trainer.setUserId(user.getId());
         trainer.setUser(user);
         trainer.setTrainingType(new TrainingType());
         trainer.setSpecialization(1);
@@ -101,7 +100,7 @@ public class TrainerRepositoryImplTest {
 
         when(entityManager.find(Trainer.class, 1)).thenReturn(trainer);
 
-        Optional<Trainer> result = trainerRepository.readOne(1);
+        Optional<Trainer> result = trainerRepository.findById(1);
 
         assertTrue(result.isPresent());
         assertEquals(1, result.get().getId());
@@ -113,7 +112,7 @@ public class TrainerRepositoryImplTest {
     void readOne_NotFound() {
         when(entityManager.find(Trainer.class, 1)).thenReturn(null);
 
-        Optional<Trainer> result = trainerRepository.readOne(1);
+        Optional<Trainer> result = trainerRepository.findById(1);
 
         assertFalse(result.isPresent());
 
@@ -121,14 +120,14 @@ public class TrainerRepositoryImplTest {
     }
 
     @Test
-    void readAll() {
+    void findAll() {
         String sql = "select u.* from trainers u";
         List<Object[]> expectedResult = Arrays.asList(new Object[]{1L, "Trainer1"}, new Object[]{2L, "Trainer2"});
 
         when(entityManager.createNativeQuery(sql)).thenReturn(nativeQuery);
         when(nativeQuery.getResultList()).thenReturn(expectedResult);
 
-        List<Trainer> result = trainerRepository.readAll();
+        List<Trainer> result = trainerRepository.findAll();
 
         assertEquals(expectedResult, result);
     }
@@ -139,12 +138,10 @@ public class TrainerRepositoryImplTest {
 
         Trainer existingTrainer = new Trainer();
         existingTrainer.setId(1);
-        existingTrainer.setUserId(100);
         existingTrainer.setUser(user);
 
         Trainer updatedTrainer = new Trainer();
         updatedTrainer.setId(1);
-        updatedTrainer.setUserId(200);
         updatedTrainer.setUser(user);
 
         when(entityManager.find(Trainer.class, 1)).thenReturn(existingTrainer);
@@ -153,7 +150,7 @@ public class TrainerRepositoryImplTest {
         Optional<Trainer> result = trainerRepository.update(updatedTrainer);
 
         assertTrue(result.isPresent());
-        assertEquals(updatedTrainer.getUserId(), result.get().getUserId());
+        assertEquals(updatedTrainer.getUser().getId(), result.get().getUser().getId());
 
         verify(entityManager).merge(updatedTrainer);
         verify(transaction).commit();
