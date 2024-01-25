@@ -6,7 +6,7 @@ import java.util.Optional;
 public interface BaseRepository<T> {
     Optional<T> create(T item);
 
-    Optional<T> readOne(int id);
+    Optional<T> findById(int id);
 
-    List<T> readAll();
+    List<T> findAll();
 }

@@ -42,7 +42,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public Optional<Trainee> readOne(int id) {
+    public Optional<Trainee> findById(int id) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
@@ -54,7 +54,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public List<Trainee> readAll() {
+    public List<Trainee> findAll() {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();

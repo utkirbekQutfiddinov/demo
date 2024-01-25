@@ -39,13 +39,13 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
     }
 
     @Override
-    public Optional<TrainingType> readOne(int id) {
+    public Optional<TrainingType> findById(int id) {
         TrainingType type = entityManager.find(TrainingType.class, id);
         return type == null ? Optional.empty() : Optional.of(type);
     }
 
     @Override
-    public List<TrainingType> readAll() {
+    public List<TrainingType> findAll() {
         String sql = "select u.* from training_types u";
         Query nativeQuery = entityManager.createNativeQuery(sql);
         return nativeQuery.getResultList();

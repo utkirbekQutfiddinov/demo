@@ -26,12 +26,12 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public List<Trainer> getAll() {
-        return repository.readAll();
+        return repository.findAll();
     }
 
     @Override
     public Trainer getOne(int id) {
-        Optional<Trainer> optional = repository.readOne(id);
+        Optional<Trainer> optional = repository.findById(id);
         return optional.orElse(null);
     }
 
@@ -52,7 +52,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public Boolean changePassword(Integer trainerId, String password) {
-        Optional<Trainer> optional = repository.readOne(trainerId);
+        Optional<Trainer> optional = repository.findById(trainerId);
         if (optional.isPresent()) {
             Trainer trainer = optional.get();
             Optional<Boolean> changed = userRepository.changePassword(trainer.getUser().getId(), password);
@@ -64,7 +64,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public Boolean changeStatus(Integer trainerId) {
-        Optional<Trainer> optional = repository.readOne(trainerId);
+        Optional<Trainer> optional = repository.findById(trainerId);
         if (optional.isPresent()) {
             Trainer trainer = optional.get();
             Optional<Boolean> changed = userRepository.changeStatus(trainer.getUser().getId());

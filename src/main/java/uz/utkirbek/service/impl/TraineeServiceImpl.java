@@ -25,12 +25,12 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public List<Trainee> getAll() {
-        return repository.readAll();
+        return repository.findAll();
     }
 
     @Override
     public Trainee getOne(int id) {
-        Optional<Trainee> optional = repository.readOne(id);
+        Optional<Trainee> optional = repository.findById(id);
         return optional.orElse(null);
     }
 
@@ -47,7 +47,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public Boolean delete(int id) {
         Trainee trainee = getOne(id);
-        if (trainee == null){
+        if (trainee == null) {
             return false;
         }
         repository.delete(trainee);
@@ -60,8 +60,8 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public Boolean changePassword(Integer traineeId, String password) {
-        Optional<Trainee> optional = repository.readOne(traineeId);
+    public Boolean changePassword(int traineeId, String password) {
+        Optional<Trainee> optional = repository.findById(traineeId);
         if (optional.isPresent()) {
             Trainee trainee = optional.get();
             Optional<Boolean> changed = userRepository.changePassword(trainee.getUser().getId(), password);
@@ -72,8 +72,8 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public Boolean changeStatus(Integer trainerId) {
-        Optional<Trainee> optional = repository.readOne(trainerId);
+    public Boolean changeStatus(int trainerId) {
+        Optional<Trainee> optional = repository.findById(trainerId);
         if (optional.isPresent()) {
             Trainee trainee = optional.get();
             Optional<Boolean> changed = userRepository.changeStatus(trainee.getUser().getId());
@@ -86,7 +86,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public Boolean deleteByUsername(String username) {
         Trainee trainee = getByUsername(username);
-        if (trainee == null){
+        if (trainee == null) {
             return false;
         }
         repository.delete(trainee);

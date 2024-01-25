@@ -42,13 +42,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> readOne(int id) {
+    public Optional<User> findById(int id) {
         User user = entityManager.find(User.class, id);
         return user == null ? Optional.empty() : Optional.of(user);
     }
 
     @Override
-    public List<User> readAll() {
+    public List<User> findAll() {
         String sql = "select u.* from users u";
         Query nativeQuery = entityManager.createNativeQuery(sql);
         return nativeQuery.getResultList();

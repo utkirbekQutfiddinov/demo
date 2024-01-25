@@ -6,7 +6,8 @@ import uz.utkirbek.service.base.BaseService;
 
 import java.util.List;
 
-public interface TrainingService extends BaseService<Training, Integer> {
+public interface TrainingService extends BaseService<Training> {
     List<Training> getByUsernameAndCriteria(String username);
-    Boolean updateTrainer(Integer trainingId, Trainer trainer);
+
+    Boolean updateTrainer(int trainingId, Trainer trainer);
 }

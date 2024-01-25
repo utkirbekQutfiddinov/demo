@@ -43,7 +43,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     }
 
     @Override
-    public Optional<Trainer> readOne(int id) {
+    public Optional<Trainer> findById(int id) {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
         try {
@@ -55,7 +55,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     }
 
     @Override
-    public List<Trainer> readAll() {
+    public List<Trainer> findAll() {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
         try {

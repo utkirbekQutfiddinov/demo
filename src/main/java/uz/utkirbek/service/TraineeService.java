@@ -6,10 +6,14 @@ import uz.utkirbek.service.base.BaseDeleteService;
 
 import java.util.List;
 
-public interface TraineeService extends BaseDeleteService<Trainee, Integer> {
+public interface TraineeService extends BaseDeleteService<Trainee> {
     Trainee getByUsername(String username);
-    Boolean changePassword(Integer traineeId, String password);
-    Boolean changeStatus(Integer trainerId);
+
+    Boolean changePassword(int traineeId, String password);
+
+    Boolean changeStatus(int trainerId);
+
     Boolean deleteByUsername(String username);
+
     List<Training> getTrainingsByUsernameAndCriteria(String username);
 }

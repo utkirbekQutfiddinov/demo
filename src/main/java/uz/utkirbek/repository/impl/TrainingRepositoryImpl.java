@@ -50,13 +50,13 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     }
 
     @Override
-    public Optional<Training> readOne(int id) {
+    public Optional<Training> findById(int id) {
         Training training = entityManager.find(Training.class, id);
         return training == null ? Optional.empty() : Optional.of(training);
     }
 
     @Override
-    public List<Training> readAll() {
+    public List<Training> findAll() {
         String sql = "select u.* from trainings u";
         Query nativeQuery = entityManager.createNativeQuery(sql);
         return nativeQuery.getResultList();
@@ -67,7 +67,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         EntityTransaction transaction = entityManager.getTransaction();
 
         transaction.begin();
-        Optional<Training> trainerOptional = readOne(trainingId);
+        Optional<Training> trainerOptional = findById(trainingId);
 
         if (!trainerOptional.isPresent()) {
             transaction.rollback();

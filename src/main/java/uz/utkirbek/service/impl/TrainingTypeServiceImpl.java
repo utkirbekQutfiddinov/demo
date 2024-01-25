@@ -18,12 +18,12 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
 
     @Override
     public List<TrainingType> getAll() {
-        return repository.readAll();
+        return repository.findAll();
     }
 
     @Override
     public TrainingType getOne(int id) {
-        Optional<TrainingType> optional=repository.readOne(id);
+        Optional<TrainingType> optional = repository.findById(id);
         return optional.orElse(null);
     }
 

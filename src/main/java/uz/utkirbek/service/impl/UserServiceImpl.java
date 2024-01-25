@@ -18,12 +18,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAll() {
-        return repository.readAll();
+        return repository.findAll();
     }
 
     @Override
     public User getOne(int id) {
-        Optional<User> optional = repository.readOne(id);
+        Optional<User> optional = repository.findById(id);
         return optional.orElse(null);
     }
 
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean delete(int id) {
         User user = getOne(id);
-        if (user == null){
+        if (user == null) {
             return false;
         }
         repository.delete(user);
@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean changePassword(Integer id, String password) {
+    public Boolean changePassword(int id, String password) {
         return repository.changePassword(id, password).orElse(false);
     }
 }

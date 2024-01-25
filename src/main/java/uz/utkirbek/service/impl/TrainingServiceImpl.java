@@ -20,12 +20,12 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public List<Training> getAll() {
-        return repository.readAll();
+        return repository.findAll();
     }
 
     @Override
     public Training getOne(int id) {
-        Optional<Training> optional = repository.readOne(id);
+        Optional<Training> optional = repository.findById(id);
         return optional.orElse(null);
     }
 
@@ -40,7 +40,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public Boolean updateTrainer(Integer trainingId, Trainer trainer) {
-        return repository.updateTrainer(trainingId,trainer).orElse(false);
+    public Boolean updateTrainer(int trainingId, Trainer trainer) {
+        return repository.updateTrainer(trainingId, trainer).orElse(false);
     }
 }
