@@ -112,9 +112,9 @@ public class TrainerServiceImplTest {
         when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
         when(userRepository.changePassword(trainer.getUser().getId(), password)).thenReturn(Optional.of(true));
 
-        Boolean result = trainerService.changePassword(trainerId, password);
+        Boolean isChanged = trainerService.changePassword(trainerId, password);
 
-        assertEquals(true, result);
+        assertEquals(true, isChanged);
     }
 
     @Test
@@ -123,9 +123,9 @@ public class TrainerServiceImplTest {
         String password = "newPassword";
         when(trainerRepository.findById(trainerId)).thenReturn(Optional.empty());
 
-        Boolean result = trainerService.changePassword(trainerId, password);
+        Boolean isChanged = trainerService.changePassword(trainerId, password);
 
-        assertEquals(false, result);
+        assertEquals(false, isChanged);
     }
 
     @Test
@@ -136,9 +136,9 @@ public class TrainerServiceImplTest {
         when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
         when(userRepository.changePassword(trainer.getUser().getId(), password)).thenReturn(Optional.empty());
 
-        Boolean result = trainerService.changePassword(trainerId, password);
+        Boolean isChanged = trainerService.changePassword(trainerId, password);
 
-        assertEquals(false, result);
+        assertEquals(false, isChanged);
     }
 
     @Test
@@ -148,9 +148,9 @@ public class TrainerServiceImplTest {
         when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
         when(userRepository.changeStatus(trainer.getUser().getId())).thenReturn(Optional.of(true));
 
-        Boolean result = trainerService.changeStatus(trainerId);
+        Boolean isChanged = trainerService.changeStatus(trainerId);
 
-        assertEquals(true, result);
+        assertEquals(true, isChanged);
     }
 
     @Test
@@ -158,9 +158,9 @@ public class TrainerServiceImplTest {
         int trainerId = 1;
         when(trainerRepository.findById(trainerId)).thenReturn(Optional.empty());
 
-        Boolean result = trainerService.changeStatus(trainerId);
+        Boolean isChanged = trainerService.changeStatus(trainerId);
 
-        assertEquals(false, result);
+        assertEquals(false, isChanged);
     }
 
     @Test
@@ -170,9 +170,9 @@ public class TrainerServiceImplTest {
         when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
         when(userRepository.changeStatus(trainer.getUser().getId())).thenReturn(Optional.empty());
 
-        Boolean result = trainerService.changeStatus(trainerId);
+        Boolean isUpdated = trainerService.changeStatus(trainerId);
 
-        assertEquals(false, result);
+        assertEquals(false, isUpdated);
     }
 
     @Test

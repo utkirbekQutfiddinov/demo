@@ -1,5 +1,7 @@
 package uz.utkirbek.repository.impl;
 
+import com.sun.org.slf4j.internal.Logger;
+import com.sun.org.slf4j.internal.LoggerFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
@@ -12,12 +14,14 @@ import java.util.Optional;
 
 @Repository
 public class TraineeRepositoryImpl implements TraineeRepository {
+    static final Logger LOGGER = LoggerFactory.getLogger(TraineeRepositoryImpl.class);
+
     private final EntityManager entityManager;
-    private final String SELECT_ALL="select u.* from trainees u";
-    private final String SELECT_BY_USERNAME ="select t.* from trainees t" +
+    private final String SELECT_ALL = "select u.* from trainees u";
+    private final String SELECT_BY_USERNAME = "select t.* from trainees t" +
             "left join users u on t.user_id=u.id" +
             "where u.username=:username";
-    private final String USERNAME="username";
+    private final String USERNAME = "username";
 
     public TraineeRepositoryImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -30,9 +34,10 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
         try {
 
-        if (item.getUser().getId() == 0) {
-            return Optional.empty();
-        }
+            if (item.getUser().getId() == 0) {
+                LOGGER.trace("Empty parameters");
+                return Optional.empty();
+            }
             transaction.begin();
 
             if (item.getId() == 0) {
@@ -72,7 +77,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Optional<Trainee> update(Trainee item) {
-            return create(item);
+        return create(item);
     }
 
     @Override

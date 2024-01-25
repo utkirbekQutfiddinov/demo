@@ -92,9 +92,9 @@ public class TrainingServiceImplTest {
         Trainer trainer = new Trainer();
         when(trainingRepository.updateTrainer(trainingId, trainer)).thenReturn(Optional.of(true));
 
-        Boolean result = trainingService.updateTrainer(trainingId, trainer);
+        Boolean isUpdated = trainingService.updateTrainer(trainingId, trainer);
 
-        assertEquals(true, result);
+        assertEquals(true, isUpdated);
     }
 
     @Test
@@ -103,9 +103,9 @@ public class TrainingServiceImplTest {
         Trainer trainer = new Trainer();
         when(trainingRepository.updateTrainer(trainingId, trainer)).thenReturn(Optional.empty());
 
-        Boolean result = trainingService.updateTrainer(trainingId, trainer);
+        Boolean isUpdated = trainingService.updateTrainer(trainingId, trainer);
 
-        assertEquals(false, result);
+        assertEquals(false, isUpdated);
     }
 }
 

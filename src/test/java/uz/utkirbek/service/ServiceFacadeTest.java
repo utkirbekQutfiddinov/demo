@@ -14,9 +14,9 @@ class ServiceFacadeTest {
     UserService userService = mock(UserService.class);
     TraineeService traineeService = mock(TraineeService.class);
     TrainerService trainerService = mock(TrainerService.class);
-    TrainingTypeService trainingTypeService= mock(TrainingTypeService.class);
-    TrainingService trainingService=mock(TrainingService.class);
-    ServiceFacade facade=new ServiceFacade(userService,trainingTypeService,trainingService,trainerService,traineeService);
+    TrainingTypeService trainingTypeService = mock(TrainingTypeService.class);
+    TrainingService trainingService = mock(TrainingService.class);
+    ServiceFacade facade = new ServiceFacade(userService, trainingTypeService, trainingService, trainerService, traineeService);
 
     @Test
     void createUser() {

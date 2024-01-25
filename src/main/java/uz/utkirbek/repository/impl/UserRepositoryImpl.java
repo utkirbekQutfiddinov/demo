@@ -1,5 +1,7 @@
 package uz.utkirbek.repository.impl;
 
+import com.sun.org.slf4j.internal.Logger;
+import com.sun.org.slf4j.internal.LoggerFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
@@ -12,6 +14,8 @@ import java.util.Optional;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserRepositoryImpl.class);
+
     private static final String SELECT_ALL = "select u.* from users u";
     private static final String SELECT_BY_USERNAME = "select u.* from users u where u.username=:username";
     private static final String USERNAME = "username";
@@ -26,10 +30,11 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> create(User item) {
         if (item.getFirstname() == null || item.getLastname() == null || item.getUsername() == null
                 || item.getPassword() == null) {
+            LOGGER.trace("Empty parameters");
             return Optional.empty();
         }
 
-        EntityTransaction transaction=entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
 
         try {
             transaction.begin();
@@ -39,7 +44,7 @@ public class UserRepositoryImpl implements UserRepository {
                 item = entityManager.merge(item);
             }
             return Optional.of(item);
-        }finally {
+        } finally {
             transaction.commit();
         }
     }
@@ -63,7 +68,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(User item) {
-        EntityTransaction transaction=entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
 
         try {
             transaction.begin();
@@ -71,7 +76,7 @@ public class UserRepositoryImpl implements UserRepository {
             if (entityManager.contains(item)) {
                 entityManager.remove(item);
             }
-        }finally {
+        } finally {
             transaction.commit();
         }
 
@@ -79,7 +84,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findByUserName(String username) {
-        EntityTransaction transaction=entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
 
@@ -91,7 +96,7 @@ public class UserRepositoryImpl implements UserRepository {
             return user != null ? Optional.of(user) : Optional.empty();
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+            LOGGER.debug(e.getMessage());
         }
 
         return Optional.empty();
@@ -99,7 +104,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<Boolean> changePassword(int id, String password) {
-        EntityTransaction transaction=entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
 
@@ -108,7 +113,7 @@ public class UserRepositoryImpl implements UserRepository {
             entityManager.flush();
 
             return Optional.of(true);
-        }finally {
+        } finally {
             transaction.commit();
         }
 
@@ -116,16 +121,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<Boolean> changeStatus(int id) {
-        EntityTransaction transaction=entityManager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
 
             User user = entityManager.find(User.class, id);
-            boolean currentStatus = user.getIsActive();
-            user.setIsActive(!currentStatus);
+            boolean isActive = user.getIsActive();
+            user.setIsActive(!isActive);
             entityManager.flush();
 
-            return Optional.of(currentStatus);
+            return Optional.of(isActive);
         } finally {
             transaction.commit();
         }

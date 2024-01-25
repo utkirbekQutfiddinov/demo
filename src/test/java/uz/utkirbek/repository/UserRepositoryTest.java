@@ -207,10 +207,10 @@ class UserRepositoryTest {
         when(entityManager.getTransaction()).thenReturn(transaction);
         when(entityManager.find(User.class, userId)).thenReturn(existingUser);
 
-        Optional<Boolean> result = userRepository.changePassword(userId, newPassword);
+        Optional<Boolean> isChanged = userRepository.changePassword(userId, newPassword);
 
-        assertTrue(result.isPresent());
-        assertTrue(result.get());
+        assertTrue(isChanged.isPresent());
+        assertTrue(isChanged.get());
         assertEquals(newPassword, existingUser.getPassword());
 
         verify(entityManager).flush();
@@ -233,10 +233,10 @@ class UserRepositoryTest {
         when(entityManager.getTransaction()).thenReturn(transaction);
         when(entityManager.find(User.class, userId)).thenReturn(existingUser);
 
-        Optional<Boolean> result = userRepository.changeStatus(userId);
+        Optional<Boolean> isChanged = userRepository.changeStatus(userId);
 
-        assertTrue(result.isPresent());
-        assertEquals(!existingUser.getIsActive(), result.get());
+        assertTrue(isChanged.isPresent());
+        assertEquals(!existingUser.getIsActive(), isChanged.get());
 
         verify(entityManager).flush();
 

@@ -151,10 +151,10 @@ class TrainingRepositoryImplTest {
         when(entityManager.getTransaction()).thenReturn(transaction);
         when(entityManager.find(Training.class, trainingId)).thenReturn(new Training());
 
-        Optional<Boolean> result = trainingRepository.updateTrainer(trainingId, trainer);
+        Optional<Boolean> isUpdated = trainingRepository.updateTrainer(trainingId, trainer);
 
-        assertTrue(result.isPresent());
-        assertTrue(result.get());
+        assertTrue(isUpdated.isPresent());
+        assertTrue(isUpdated.get());
 
         verify(entityManager).flush();
         verify(transaction).begin();
@@ -171,9 +171,9 @@ class TrainingRepositoryImplTest {
         when(entityManager.getTransaction()).thenReturn(transaction);
         when(entityManager.find(Training.class, trainingId)).thenReturn(null);
 
-        Optional<Boolean> result = trainingRepository.updateTrainer(trainingId, trainer);
+        Optional<Boolean> isUpdated = trainingRepository.updateTrainer(trainingId, trainer);
 
-        assertFalse(result.isPresent());
+        assertFalse(isUpdated.isPresent());
 
         verify(transaction).begin();
         verify(transaction).rollback();
@@ -181,7 +181,7 @@ class TrainingRepositoryImplTest {
 
     private Date parseToDate(String dateStr) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            return sdf.parse(dateStr);
+        return sdf.parse(dateStr);
     }
 
     @Test

@@ -64,8 +64,8 @@ public class TraineeServiceImpl implements TraineeService {
         Optional<Trainee> optional = repository.findById(traineeId);
         if (optional.isPresent()) {
             Trainee trainee = optional.get();
-            Optional<Boolean> changed = userRepository.changePassword(trainee.getUser().getId(), password);
-            return changed.orElse(false);
+            Optional<Boolean> isChanged = userRepository.changePassword(trainee.getUser().getId(), password);
+            return isChanged.orElse(false);
         } else {
             return false;
         }
@@ -76,8 +76,8 @@ public class TraineeServiceImpl implements TraineeService {
         Optional<Trainee> optional = repository.findById(trainerId);
         if (optional.isPresent()) {
             Trainee trainee = optional.get();
-            Optional<Boolean> changed = userRepository.changeStatus(trainee.getUser().getId());
-            return changed.orElse(false);
+            Optional<Boolean> isChanged = userRepository.changeStatus(trainee.getUser().getId());
+            return isChanged.orElse(false);
         } else {
             return false;
         }

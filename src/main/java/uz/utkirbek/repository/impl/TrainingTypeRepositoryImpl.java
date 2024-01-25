@@ -1,5 +1,7 @@
 package uz.utkirbek.repository.impl;
 
+import com.sun.org.slf4j.internal.Logger;
+import com.sun.org.slf4j.internal.LoggerFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
@@ -12,6 +14,8 @@ import java.util.Optional;
 
 @Repository
 public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainingTypeRepositoryImpl.class);
+
     private static final String SELECT_ALL = "select u.* from training_types u";
     private final EntityManager entityManager;
 
@@ -24,6 +28,7 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
         EntityTransaction transaction = entityManager.getTransaction();
 
         if (item.getName() == null || item.getId() != 0) {
+            LOGGER.trace("Empty parameters");
             return Optional.empty();
         }
 

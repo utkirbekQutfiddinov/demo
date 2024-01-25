@@ -55,8 +55,8 @@ public class TrainerServiceImpl implements TrainerService {
         Optional<Trainer> optional = repository.findById(trainerId);
         if (optional.isPresent()) {
             Trainer trainer = optional.get();
-            Optional<Boolean> changed = userRepository.changePassword(trainer.getUser().getId(), password);
-            return changed.orElse(false);
+            Optional<Boolean> isChanged = userRepository.changePassword(trainer.getUser().getId(), password);
+            return isChanged.orElse(false);
         } else {
             return false;
         }
@@ -67,8 +67,8 @@ public class TrainerServiceImpl implements TrainerService {
         Optional<Trainer> optional = repository.findById(trainerId);
         if (optional.isPresent()) {
             Trainer trainer = optional.get();
-            Optional<Boolean> changed = userRepository.changeStatus(trainer.getUser().getId());
-            return changed.orElse(false);
+            Optional<Boolean> isChanged = userRepository.changeStatus(trainer.getUser().getId());
+            return isChanged.orElse(false);
         } else {
             return false;
         }

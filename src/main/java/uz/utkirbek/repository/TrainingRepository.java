@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface TrainingRepository extends BaseRepository<Training> {
     Optional<Boolean> updateTrainer(Integer trainingId, Trainer trainer);
+
     List<Training> getByUsernameAndCriteria(String username);
 }

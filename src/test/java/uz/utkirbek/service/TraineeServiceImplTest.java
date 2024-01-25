@@ -98,9 +98,9 @@ public class TraineeServiceImplTest {
         Trainee trainee = new Trainee();
         when(traineeRepository.findById(1)).thenReturn(Optional.of(trainee));
 
-        Boolean result = traineeService.delete(1);
+        Boolean isDeleted = traineeService.delete(1);
 
-        assertEquals(true, result);
+        assertEquals(true, isDeleted);
         verify(traineeRepository, times(1)).delete(trainee);
     }
 
@@ -108,9 +108,9 @@ public class TraineeServiceImplTest {
     public void deleteTraineeNotFound() {
         when(traineeRepository.findById(1)).thenReturn(Optional.empty());
 
-        Boolean result = traineeService.delete(1);
+        Boolean isDeleted = traineeService.delete(1);
 
-        assertEquals(false, result);
+        assertEquals(false, isDeleted);
         verify(traineeRepository, never()).delete(any());
     }
 
@@ -133,9 +133,9 @@ public class TraineeServiceImplTest {
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
         when(userRepository.changePassword(trainee.getUser().getId(), password)).thenReturn(Optional.of(true));
 
-        Boolean result = traineeService.changePassword(traineeId, password);
+        Boolean isChanged = traineeService.changePassword(traineeId, password);
 
-        assertEquals(true, result);
+        assertEquals(true, isChanged);
     }
 
     @Test
@@ -144,9 +144,9 @@ public class TraineeServiceImplTest {
         String password = "newPassword";
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.empty());
 
-        Boolean result = traineeService.changePassword(traineeId, password);
+        Boolean isChanged = traineeService.changePassword(traineeId, password);
 
-        assertEquals(false, result);
+        assertEquals(false, isChanged);
     }
 
     @Test
@@ -157,9 +157,9 @@ public class TraineeServiceImplTest {
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
         when(userRepository.changePassword(trainee.getUser().getId(), password)).thenReturn(Optional.empty());
 
-        Boolean result = traineeService.changePassword(traineeId, password);
+        Boolean isChanged = traineeService.changePassword(traineeId, password);
 
-        assertEquals(false, result);
+        assertEquals(false, isChanged);
     }
 
     @Test
@@ -169,9 +169,9 @@ public class TraineeServiceImplTest {
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
         when(userRepository.changeStatus(trainee.getUser().getId())).thenReturn(Optional.of(true));
 
-        Boolean result = traineeService.changeStatus(traineeId);
+        Boolean isChanged = traineeService.changeStatus(traineeId);
 
-        assertEquals(true, result);
+        assertEquals(true, isChanged);
     }
 
     @Test
@@ -179,9 +179,9 @@ public class TraineeServiceImplTest {
         int traineeId = 1;
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.empty());
 
-        Boolean result = traineeService.changeStatus(traineeId);
+        Boolean isChanged = traineeService.changeStatus(traineeId);
 
-        assertEquals(false, result);
+        assertEquals(false, isChanged);
     }
 
     @Test
@@ -191,9 +191,9 @@ public class TraineeServiceImplTest {
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
         when(userRepository.changeStatus(trainee.getUser().getId())).thenReturn(Optional.empty());
 
-        Boolean result = traineeService.changeStatus(traineeId);
+        Boolean isChanged = traineeService.changeStatus(traineeId);
 
-        assertEquals(false, result);
+        assertEquals(false, isChanged);
     }
 
     @Test
@@ -202,9 +202,9 @@ public class TraineeServiceImplTest {
         Trainee trainee = new Trainee();
         when(traineeRepository.findByUsername(username)).thenReturn(Optional.of(trainee));
 
-        Boolean result = traineeService.deleteByUsername(username);
+        Boolean isDeleted = traineeService.deleteByUsername(username);
 
-        assertEquals(true, result);
+        assertEquals(true, isDeleted);
         verify(traineeRepository, times(1)).delete(trainee);
     }
 
@@ -213,9 +213,9 @@ public class TraineeServiceImplTest {
         String username = "testUser";
         when(traineeRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-        Boolean result = traineeService.deleteByUsername(username);
+        Boolean isDeleted = traineeService.deleteByUsername(username);
 
-        assertEquals(false, result);
+        assertEquals(false, isDeleted);
         verify(traineeRepository, never()).delete(any());
     }
 
