@@ -12,6 +12,18 @@ import java.util.Optional;
 
 @Repository
 public class TrainerRepositoryImpl implements TrainerRepository {
+    private static final String SELECT_ALL = "select u.* from trainers u";
+    private static final String SELECT_BY_USERNAME = "select t.* from trainers t" +
+            "left join users u on t.user_id=u.id" +
+            "where u.username=:username";
+    private static final String USERNAME = "username";
+    private static final String SELECT_ACTIVE_NOT_ASSIGNED = "select t.* " +
+            "from trainers t " +
+            "left join users u on u.id=t.user_id" +
+            "where count(select * from trainings t1 " +
+            "where t1.trainer_id=t.id)=0" +
+            "and u.is_active=true";
+
     private final EntityManager entityManager;
 
     public TrainerRepositoryImpl(EntityManager entityManager) {
@@ -22,14 +34,13 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public Optional<Trainer> create(Trainer item) {
         EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
 
         if (item.getUser() == null || item.getUser().getId() == 0) {
-            transaction.commit();
             return Optional.empty();
         }
 
         try {
+            transaction.begin();
             if (item.getId() == 0) {
                 entityManager.persist(item);
             } else {
@@ -45,8 +56,8 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public Optional<Trainer> findById(int id) {
         EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
         try {
+            transaction.begin();
             Trainer trainer = entityManager.find(Trainer.class, id);
             return trainer == null ? Optional.empty() : Optional.of(trainer);
         } finally {
@@ -57,10 +68,9 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public List<Trainer> findAll() {
         EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
         try {
-            String sql = "select u.* from trainers u";
-            Query nativeQuery = entityManager.createNativeQuery(sql);
+            transaction.begin();
+            Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
             return nativeQuery.getResultList();
         } finally {
             transaction.commit();
@@ -78,11 +88,8 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         try {
             transaction.begin();
 
-            String sql = "select t.* from trainers t" +
-                    "left join users u on t.user_id=u.id" +
-                    "where u.username=:username";
-            Query nativeQuery = entityManager.createNativeQuery(sql);
-            nativeQuery.setParameter("username", username);
+            Query nativeQuery = entityManager.createNativeQuery(SELECT_BY_USERNAME);
+            nativeQuery.setParameter(USERNAME, username);
             Trainer trainer = (Trainer) nativeQuery.getSingleResult();
 
             return trainer != null ? Optional.of(trainer) : Optional.empty();
@@ -98,13 +105,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
         try {
             transaction.begin();
-            String sql = "select t.* " +
-                    "from trainers t " +
-                    "left join users u on u.id=t.user_id" +
-                    "where count(select * from trainings t1 " +
-                    "where t1.trainer_id=t.id)=0" +
-                    "and u.is_active=true";
-            Query nativeQuery = entityManager.createNativeQuery(sql);
+            Query nativeQuery = entityManager.createNativeQuery(SELECT_ACTIVE_NOT_ASSIGNED);
             return nativeQuery.getResultList();
         } finally {
             transaction.commit();

@@ -12,6 +12,9 @@ import java.util.Optional;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
+    private static final String SELECT_ALL = "select u.* from users u";
+    private static final String SELECT_BY_USERNAME = "select u.* from users u where u.username=:username";
+    private static final String USERNAME = "username";
     private final EntityManager entityManager;
 
     public UserRepositoryImpl(EntityManager entityManager) {
@@ -49,8 +52,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> findAll() {
-        String sql = "select u.* from users u";
-        Query nativeQuery = entityManager.createNativeQuery(sql);
+        Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
         return nativeQuery.getResultList();
     }
 
@@ -62,12 +64,16 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(User item) {
         EntityTransaction transaction=entityManager.getTransaction();
-        transaction.begin();
 
-        if (entityManager.contains(item)) {
-            entityManager.remove(item);
+        try {
+            transaction.begin();
+
+            if (entityManager.contains(item)) {
+                entityManager.remove(item);
+            }
+        }finally {
+            transaction.commit();
         }
-        transaction.commit();
 
     }
 
@@ -77,9 +83,8 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             transaction.begin();
 
-            String sql = "select u.* from users u where u.username=:username";
-            Query nativeQuery = entityManager.createNativeQuery(sql);
-            nativeQuery.setParameter("username", username);
+            Query nativeQuery = entityManager.createNativeQuery(SELECT_BY_USERNAME);
+            nativeQuery.setParameter(USERNAME, username);
             User user = (User) nativeQuery.getSingleResult();
             transaction.commit();
 

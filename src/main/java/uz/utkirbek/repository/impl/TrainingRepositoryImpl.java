@@ -18,6 +18,8 @@ import java.util.Optional;
 
 @Repository
 public class TrainingRepositoryImpl implements TrainingRepository {
+    private static final String SELECT_ALL = "select u.* from trainings u";
+    private static final String USERNAME = "username";
     private final EntityManager entityManager;
 
     public TrainingRepositoryImpl(EntityManager entityManager) {
@@ -29,13 +31,12 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     public Optional<Training> create(Training item) {
         EntityTransaction transaction = entityManager.getTransaction();
 
-        transaction.begin();
         if (item.getName() == null || item.getTrainingDate() == null || item.getDuration() == null) {
-            transaction.rollback();
             return Optional.empty();
         }
 
         try {
+            transaction.begin();
             if (item.getId() == 0) {
                 entityManager.persist(item);
             } else {
@@ -57,8 +58,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public List<Training> findAll() {
-        String sql = "select u.* from trainings u";
-        Query nativeQuery = entityManager.createNativeQuery(sql);
+        Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
         return nativeQuery.getResultList();
     }
 
@@ -90,7 +90,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
         List<Training> trainings = entityManager.createQuery(
                 cr.select(root)
-                        .where(cb.equal(root.get("username"), username))
+                        .where(cb.equal(root.get(USERNAME), username))
         ).getResultList();
 
         return trainings;

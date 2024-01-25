@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
+    private static final String SELECT_ALL = "select u.* from training_types u";
     private final EntityManager entityManager;
 
     public TrainingTypeRepositoryImpl(EntityManager entityManager) {
@@ -46,8 +47,7 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
 
     @Override
     public List<TrainingType> findAll() {
-        String sql = "select u.* from training_types u";
-        Query nativeQuery = entityManager.createNativeQuery(sql);
+        Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
         return nativeQuery.getResultList();
     }
 }

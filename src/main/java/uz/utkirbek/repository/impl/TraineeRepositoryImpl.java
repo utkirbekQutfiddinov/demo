@@ -13,6 +13,11 @@ import java.util.Optional;
 @Repository
 public class TraineeRepositoryImpl implements TraineeRepository {
     private final EntityManager entityManager;
+    private final String SELECT_ALL="select u.* from trainees u";
+    private final String SELECT_BY_USERNAME ="select t.* from trainees t" +
+            "left join users u on t.user_id=u.id" +
+            "where u.username=:username";
+    private final String USERNAME="username";
 
     public TraineeRepositoryImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -24,11 +29,11 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         EntityTransaction transaction = entityManager.getTransaction();
 
         try {
-            transaction.begin();
 
         if (item.getUser().getId() == 0) {
             return Optional.empty();
         }
+            transaction.begin();
 
             if (item.getId() == 0) {
                 entityManager.persist(item);
@@ -58,8 +63,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
-            String sql = "select u.* from trainees u";
-            Query nativeQuery = entityManager.createNativeQuery(sql);
+            Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
             return nativeQuery.getResultList();
         } finally {
             transaction.commit();
@@ -91,11 +95,8 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         try {
             transaction.begin();
 
-            String sql = "select t.* from trainees t" +
-                    "left join users u on t.user_id=u.id" +
-                    "where u.username=:username";
-            Query nativeQuery = entityManager.createNativeQuery(sql);
-            nativeQuery.setParameter("username", username);
+            Query nativeQuery = entityManager.createNativeQuery(SELECT_BY_USERNAME);
+            nativeQuery.setParameter(USERNAME, username);
             Trainee trainee = (Trainee) nativeQuery.getSingleResult();
 
             return trainee != null ? Optional.of(trainee) : Optional.empty();

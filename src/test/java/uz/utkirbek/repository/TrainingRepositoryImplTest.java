@@ -32,7 +32,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void createTraining() {
+    void createTraining() throws ParseException {
         Training training = new Training();
         training.setName("Test Training");
         training.setTrainingDate(parseToDate("2022-01-01"));
@@ -80,7 +80,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void readOneTraining() {
+    void readOneTraining() throws ParseException {
         int trainingId = 1;
         Training expectedTraining = new Training();
         expectedTraining.setName("Test Training");
@@ -179,14 +179,9 @@ class TrainingRepositoryImplTest {
         verify(transaction).rollback();
     }
 
-    private Date parseToDate(String dateStr) {
+    private Date parseToDate(String dateStr) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        try {
             return sdf.parse(dateStr);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return new Date();
-        }
     }
 
     @Test
