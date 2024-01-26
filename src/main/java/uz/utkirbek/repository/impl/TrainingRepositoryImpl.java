@@ -1,18 +1,16 @@
 package uz.utkirbek.repository.impl;
 
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.model.Trainer;
 import uz.utkirbek.model.Training;
-import uz.utkirbek.model.User;
 import uz.utkirbek.repository.TrainingRepository;
 
 import java.util.List;

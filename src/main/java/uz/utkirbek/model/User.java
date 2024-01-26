@@ -28,4 +28,8 @@ public class User extends BaseId implements Serializable {
             nullable = false,
             columnDefinition = "boolean DEFAULT true")
     private Boolean isActive;
+
+    public User(int id){
+        super(id);
+    }
 }

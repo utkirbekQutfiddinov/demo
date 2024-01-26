@@ -1,7 +1,7 @@
 package uz.utkirbek.repository.impl;
 
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
@@ -34,7 +34,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
         try {
 
-            if (item.getUser().getId() == 0) {
+            if (item.getUser() == null || item.getUser().getId() == 0) {
                 LOGGER.trace("Empty parameters");
                 return Optional.empty();
             }

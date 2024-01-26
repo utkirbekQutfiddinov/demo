@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import uz.utkirbek.model.Trainee;
 import uz.utkirbek.model.Training;
+import uz.utkirbek.model.User;
 import uz.utkirbek.repository.TraineeRepository;
 import uz.utkirbek.repository.TrainingRepository;
 import uz.utkirbek.repository.UserRepository;
@@ -129,7 +130,11 @@ public class TraineeServiceImplTest {
     public void changePasswordSuccess() {
         int traineeId = 1;
         String password = "newPassword";
+        User user = new User();
+        user.setId(100);
+
         Trainee trainee = new Trainee();
+        trainee.setUser(user);
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
         when(userRepository.changePassword(trainee.getUser().getId(), password)).thenReturn(Optional.of(true));
 
@@ -154,6 +159,9 @@ public class TraineeServiceImplTest {
         int traineeId = 1;
         String password = "newPassword";
         Trainee trainee = new Trainee();
+        User user = new User();
+        user.setId(100);
+        trainee.setUser(user);
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
         when(userRepository.changePassword(trainee.getUser().getId(), password)).thenReturn(Optional.empty());
 
@@ -166,6 +174,7 @@ public class TraineeServiceImplTest {
     public void changeStatusSuccess() {
         int traineeId = 1;
         Trainee trainee = new Trainee();
+        trainee.setUser(new User(100));
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
         when(userRepository.changeStatus(trainee.getUser().getId())).thenReturn(Optional.of(true));
 
@@ -188,6 +197,7 @@ public class TraineeServiceImplTest {
     public void changeStatusFailure() {
         int traineeId = 1;
         Trainee trainee = new Trainee();
+        trainee.setUser(new User(100));
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
         when(userRepository.changeStatus(trainee.getUser().getId())).thenReturn(Optional.empty());
 

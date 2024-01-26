@@ -42,7 +42,10 @@ class TraineeRepositoryImplTest {
     void create() {
         Trainee trainee = new Trainee();
         trainee.setBirthdate(new Date());
-        trainee.setUser(new User());
+        User user = new User();
+        user.setId(100);
+
+        trainee.setUser(user);
         trainee.setTrainings(new ArrayList<>());
 
         when(entityManager.merge(any(Trainee.class))).thenReturn(trainee);
@@ -117,11 +120,16 @@ class TraineeRepositoryImplTest {
 
     @Test
     public void updateWithValidUserId() {
+        User user = new User();
+        user.setId(100);
+
         Trainee existingTrainee = new Trainee();
         existingTrainee.setId(1);
+        existingTrainee.setUser(user);
 
         Trainee updatedTrainee = new Trainee();
         updatedTrainee.setId(1);
+        updatedTrainee.setUser(user);
         updatedTrainee.setAddress("Updated address");
 
         when(entityManager.getTransaction()).thenReturn(transaction);

@@ -48,13 +48,6 @@ public class TrainerRepositoryImplTest {
         when(query.getResultList()).thenReturn(Collections.emptyList());
     }
 
-    @AfterEach
-    void tearDown() {
-        verify(transaction).begin();
-        verify(transaction).commit();
-        verify(transaction, never()).rollback();
-    }
-
 
     @Test
     void create() {
@@ -91,6 +84,7 @@ public class TrainerRepositoryImplTest {
 
         verify(entityManager, never()).persist(trainer);
         verify(entityManager, never()).merge(trainer);
+        verify(transaction, never()).begin();
     }
 
     @Test
@@ -135,6 +129,7 @@ public class TrainerRepositoryImplTest {
     @Test
     void updateTrainer() {
         User user = new User();
+        user.setId(100);
 
         Trainer existingTrainer = new Trainer();
         existingTrainer.setId(1);

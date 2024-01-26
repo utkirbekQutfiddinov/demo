@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import uz.utkirbek.model.Trainer;
 import uz.utkirbek.model.Training;
+import uz.utkirbek.model.User;
 import uz.utkirbek.repository.TrainerRepository;
 import uz.utkirbek.repository.TrainingRepository;
 import uz.utkirbek.repository.UserRepository;
@@ -109,6 +110,7 @@ public class TrainerServiceImplTest {
         int trainerId = 1;
         String password = "newPassword";
         Trainer trainer = new Trainer();
+        trainer.setUser(new User(100));
         when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
         when(userRepository.changePassword(trainer.getUser().getId(), password)).thenReturn(Optional.of(true));
 
@@ -133,6 +135,7 @@ public class TrainerServiceImplTest {
         int trainerId = 1;
         String password = "newPassword";
         Trainer trainer = new Trainer();
+        trainer.setUser(new User(100));
         when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
         when(userRepository.changePassword(trainer.getUser().getId(), password)).thenReturn(Optional.empty());
 
@@ -145,6 +148,7 @@ public class TrainerServiceImplTest {
     public void changeStatusSuccess() {
         int trainerId = 1;
         Trainer trainer = new Trainer();
+        trainer.setUser(new User(100));
         when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
         when(userRepository.changeStatus(trainer.getUser().getId())).thenReturn(Optional.of(true));
 
@@ -167,6 +171,7 @@ public class TrainerServiceImplTest {
     public void changeStatusFailure() {
         int trainerId = 1;
         Trainer trainer = new Trainer();
+        trainer.setUser(new User(100));
         when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
         when(userRepository.changeStatus(trainer.getUser().getId())).thenReturn(Optional.empty());
 
