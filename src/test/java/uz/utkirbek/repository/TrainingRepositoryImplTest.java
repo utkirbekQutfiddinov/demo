@@ -179,10 +179,6 @@ class TrainingRepositoryImplTest {
         verify(transaction).rollback();
     }
 
-    private Date parseToDate(String dateStr) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.parse(dateStr);
-    }
 
     @Test
     void getByUsernameAndCriteria() {
@@ -216,6 +212,11 @@ class TrainingRepositoryImplTest {
         verify(criteriaBuilder).equal(root.get("username"), username);
         verify(entityManager).createQuery(criteriaQuery);
         verify(typedQuery).getResultList();
+    }
+
+    private Date parseToDate(String dateStr) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.parse(dateStr);
     }
 
 }
