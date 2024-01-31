@@ -1,24 +1,21 @@
 package uz.utkirbek.repository.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
+import uz.utkirbek.model.entity.User;
 import uz.utkirbek.repository.UserRepository;
-import uz.utkirbek.model.User;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserRepositoryImpl.class);
 
     private static final String SELECT_ALL = "select u.* from users u";
-    private static final String SELECT_BY_USERNAME = "select u.* from users u where u.username=:username";
-    private static final String USERNAME = "username";
+    private static final String SELECT_BY_USERNAME = "SELECT u FROM User u WHERE u.username = :username";
     private final EntityManager entityManager;
 
     public UserRepositoryImpl(EntityManager entityManager) {
@@ -28,11 +25,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> create(User item) {
-        if (item.getFirstname() == null || item.getLastname() == null || item.getUsername() == null
-                || item.getPassword() == null) {
-            LOGGER.trace("Empty parameters");
-            return Optional.empty();
-        }
 
         EntityTransaction transaction = entityManager.getTransaction();
 
@@ -83,23 +75,17 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByUserName(String username) {
-        EntityTransaction transaction = entityManager.getTransaction();
+    public Optional<User> findByUsername(String username) {
         try {
-            transaction.begin();
+            TypedQuery<User> query = entityManager.createQuery(SELECT_BY_USERNAME, User.class);
+            query.setParameter("username", username);
 
-            Query nativeQuery = entityManager.createNativeQuery(SELECT_BY_USERNAME);
-            nativeQuery.setParameter(USERNAME, username);
-            User user = (User) nativeQuery.getSingleResult();
-            transaction.commit();
+            User user = query.getSingleResult();
 
-            return user != null ? Optional.of(user) : Optional.empty();
+            return Optional.ofNullable(user);
         } catch (Exception e) {
-            transaction.rollback();
-            LOGGER.debug(e.getMessage());
+            return Optional.empty();
         }
-
-        return Optional.empty();
     }
 
     @Override
@@ -120,17 +106,22 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<Boolean> changeStatus(int id) {
+    public Optional<Boolean> changeStatus(String username, Boolean isActive) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
 
-            User user = entityManager.find(User.class, id);
-            boolean isActive = user.getIsActive();
-            user.setIsActive(!isActive);
+            Optional<User> userOptional = findByUsername(username);
+            if (!userOptional.isPresent()) {
+                return Optional.empty();
+            }
+            User user = userOptional.get();
+            user.setActive(isActive);
             entityManager.flush();
 
-            return Optional.of(isActive);
+            return Optional.of(true);
+        } catch (Exception e) {
+            return Optional.of(false);
         } finally {
             transaction.commit();
         }

@@ -1,10 +1,11 @@
 package uz.utkirbek.service.impl;
 
-import org.hibernate.Criteria;
 import org.springframework.stereotype.Service;
-import uz.utkirbek.model.Trainer;
+import uz.utkirbek.model.dto.TrainingDto;
+import uz.utkirbek.model.dto.TrainingFiltersDto;
+import uz.utkirbek.model.entity.Training;
+import uz.utkirbek.model.response.TrainingResponse;
 import uz.utkirbek.repository.TrainingRepository;
-import uz.utkirbek.model.Training;
 import uz.utkirbek.service.TrainingService;
 
 import java.util.List;
@@ -30,17 +31,17 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public Training add(Training bean) {
+    public Training add(TrainingDto bean) {
         return repository.create(bean).orElse(null);
     }
 
     @Override
-    public List<Training> getByUsernameAndCriteria(String username) {
-        return repository.getByUsernameAndCriteria(username);
+    public List<TrainingResponse> getByCriteria(TrainingFiltersDto filter) {
+        return repository.getByCriteria(filter);
     }
 
     @Override
-    public Boolean updateTrainer(int trainingId, Trainer trainer) {
-        return repository.updateTrainer(trainingId, trainer).orElse(false);
+    public Boolean updateTrainer(Integer trainingId, String trainerUsername) {
+        return repository.updateTrainer(trainingId, trainerUsername).orElse(false);
     }
 }

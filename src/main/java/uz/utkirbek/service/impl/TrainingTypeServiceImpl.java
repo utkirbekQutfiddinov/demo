@@ -1,8 +1,8 @@
 package uz.utkirbek.service.impl;
 
 import org.springframework.stereotype.Service;
+import uz.utkirbek.model.entity.TrainingType;
 import uz.utkirbek.repository.TrainingTypeRepository;
-import uz.utkirbek.model.TrainingType;
 import uz.utkirbek.service.TrainingTypeService;
 
 import java.util.List;
@@ -32,4 +32,9 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
         return repository.create(bean).orElse(null);
     }
 
+    @Override
+    public TrainingType getByName(String name) {
+        Optional<TrainingType> optional = repository.findByName(name);
+        return optional.orElse(null);
+    }
 }

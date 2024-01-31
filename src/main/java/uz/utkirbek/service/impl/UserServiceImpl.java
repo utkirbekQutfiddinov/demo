@@ -1,8 +1,8 @@
 package uz.utkirbek.service.impl;
 
 import org.springframework.stereotype.Service;
+import uz.utkirbek.model.entity.User;
 import uz.utkirbek.repository.UserRepository;
-import uz.utkirbek.model.User;
 import uz.utkirbek.service.UserService;
 
 import java.util.List;
@@ -49,6 +49,23 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Override
+    public Boolean changePassword(int id, String password) {
+        return repository.changePassword(id, password).orElse(false);
+    }
+
+    @Override
+    public User findByUsernameAndPassword(String username, String password) {
+        Optional<User> byUserName = repository.findByUsername(username);
+
+        if (!byUserName.isPresent()) {
+            return null;
+        }
+        User user = byUserName.get();
+
+        return user.getPassword().equals(password) ? user : null;
+    }
+
     private String generateUsername(String firstname, String lastname) {
         String baseUsername = firstname + lastname;
         String username = baseUsername;
@@ -63,7 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean usernameExists(String username) {
-        Optional<User> existingUser = repository.findByUserName(username);
+        Optional<User> existingUser = repository.findByUsername(username);
         return existingUser.isPresent();
     }
 
@@ -79,8 +96,5 @@ public class UserServiceImpl implements UserService {
         return password.toString();
     }
 
-    @Override
-    public Boolean changePassword(int id, String password) {
-        return repository.changePassword(id, password).orElse(false);
-    }
+
 }

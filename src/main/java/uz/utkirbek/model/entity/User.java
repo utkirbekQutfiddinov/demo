@@ -1,4 +1,4 @@
-package uz.utkirbek.model;
+package uz.utkirbek.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -10,7 +10,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User extends BaseId implements Serializable {
+public class User implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
     @Column(nullable = false)
     private String firstname;
@@ -18,7 +21,7 @@ public class User extends BaseId implements Serializable {
     @Column(nullable = false)
     private String lastname;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private String username;
 
     @Column(nullable = false)
@@ -27,9 +30,14 @@ public class User extends BaseId implements Serializable {
     @Column(name = "is_active",
             nullable = false,
             columnDefinition = "boolean DEFAULT true")
-    private Boolean isActive;
+    private boolean isActive;
 
-    public User(int id){
-        super(id);
+    public User(int id) {
+        this.id = id;
+    }
+
+    public User(String firstName, String lastName) {
+        this.firstname = firstName;
+        this.lastname = lastName;
     }
 }

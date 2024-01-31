@@ -1,13 +1,13 @@
 package uz.utkirbek.repository;
 
+import uz.utkirbek.model.dto.TrainerDto;
+import uz.utkirbek.model.entity.Trainer;
 import uz.utkirbek.repository.base.BaseUpdateRepository;
-import uz.utkirbek.model.Trainer;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface TrainerRepository extends BaseUpdateRepository<Trainer> {
+public interface TrainerRepository extends BaseUpdateRepository<Trainer, TrainerDto> {
     Optional<Trainer> findByUsername(String username);
 
-    List<Trainer> getNotAssignedAndActive();
+    Trainer findByTrainingId(Integer trainingId);
 }

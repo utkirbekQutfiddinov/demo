@@ -1,51 +1,56 @@
 package uz.utkirbek.repository.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import uz.utkirbek.model.dto.TraineeDto;
+import uz.utkirbek.model.entity.*;
+import uz.utkirbek.model.response.TraineeTrainerResponse;
 import uz.utkirbek.repository.TraineeRepository;
-import uz.utkirbek.model.Trainee;
+import uz.utkirbek.repository.TrainingTypeRepository;
+import uz.utkirbek.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class TraineeRepositoryImpl implements TraineeRepository {
-    static final Logger LOGGER = LoggerFactory.getLogger(TraineeRepositoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TraineeRepositoryImpl.class);
 
     private final EntityManager entityManager;
-    private final String SELECT_ALL = "select u.* from trainees u";
-    private final String SELECT_BY_USERNAME = "select t.* from trainees t" +
-            "left join users u on t.user_id=u.id" +
-            "where u.username=:username";
-    private final String USERNAME = "username";
+    private final UserRepository userRepository;
+    private final TrainingTypeRepository trainingTypeRepository;
 
-    public TraineeRepositoryImpl(EntityManager entityManager) {
+    private final String SELECT_ALL = "select u.* from trainees u";
+
+
+    public TraineeRepositoryImpl(EntityManager entityManager, UserRepository userRepository, TrainingTypeRepository trainingTypeRepository) {
         this.entityManager = entityManager;
+        this.userRepository = userRepository;
+        this.trainingTypeRepository = trainingTypeRepository;
     }
 
 
     @Override
-    public Optional<Trainee> create(Trainee item) {
+    public Optional<Trainee> create(TraineeDto item) {
         EntityTransaction transaction = entityManager.getTransaction();
 
         try {
-
-            if (item.getUser() == null || item.getUser().getId() == 0) {
-                LOGGER.trace("Empty parameters");
-                return Optional.empty();
-            }
             transaction.begin();
+            User user = new User(item.getFirstName(), item.getLastName());
+            user.setUsername(generateUsername(item.getFirstName(), item.getLastName()));
+            user.setPassword(generatePassword());
 
-            if (item.getId() == 0) {
-                entityManager.persist(item);
-            } else {
-                item = entityManager.merge(item);
-            }
-            return Optional.of(item);
+            Trainee trainee = new Trainee(user, item.getAddress(), item.getBirthDate());
+
+            entityManager.persist(trainee);
+            return Optional.of(trainee);
         } finally {
             transaction.commit();
         }
@@ -77,7 +82,8 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Optional<Trainee> update(Trainee item) {
-        return create(item);
+        item = entityManager.merge(item);
+        return Optional.of(item);
     }
 
     @Override
@@ -96,18 +102,114 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Optional<Trainee> findByUsername(String username) {
-        EntityTransaction transaction = entityManager.getTransaction();
         try {
-            transaction.begin();
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Trainee> criteriaQuery = criteriaBuilder.createQuery(Trainee.class);
+            Root<Trainee> traineeRoot = criteriaQuery.from(Trainee.class);
 
-            Query nativeQuery = entityManager.createNativeQuery(SELECT_BY_USERNAME);
-            nativeQuery.setParameter(USERNAME, username);
-            Trainee trainee = (Trainee) nativeQuery.getSingleResult();
+            Join<Trainee, User> userJoin = traineeRoot.join("user");
 
-            return trainee != null ? Optional.of(trainee) : Optional.empty();
-        } finally {
-            transaction.commit();
+            criteriaQuery.where(criteriaBuilder.equal(userJoin.get("username"), username));
+
+            TypedQuery<Trainee> typedQuery = entityManager.createQuery(criteriaQuery);
+
+            Trainee trainee = typedQuery.getSingleResult();
+            return Optional.of(trainee);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<TraineeTrainerResponse> getNotAssignedActiveTrainers(String username) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<TraineeTrainerResponse> criteriaQuery = criteriaBuilder.createQuery(TraineeTrainerResponse.class);
+        Root<Trainer> trainerRoot = criteriaQuery.from(Trainer.class);
+
+        Join<Trainer, User> userJoin = trainerRoot.join("user", JoinType.LEFT);
+
+        Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
+        Root<Training> trainingRoot = subquery.from(Training.class);
+        Join<Training, Trainee> traineeJoin = trainingRoot.join("trainee", JoinType.LEFT);
+        Join<Trainee, User> traineeUserJoin = traineeJoin.join("user", JoinType.LEFT);
+        subquery.select(trainingRoot.get("trainer").get("id"))
+                .where(criteriaBuilder.equal(traineeUserJoin.get("username"), "trainee"));
+
+        criteriaQuery.select(criteriaBuilder.construct(
+                TraineeTrainerResponse.class,
+                userJoin.get("username"),
+                userJoin.get("firstname"),
+                userJoin.get("lastname")
+        ))
+                .where(
+                        criteriaBuilder.isTrue(userJoin.get("isActive")),
+                        criteriaBuilder.not(trainerRoot.get("id").in(subquery))
+                );
+
+        List<TraineeTrainerResponse> result = entityManager.createQuery(criteriaQuery).getResultList();
+
+        for (TraineeTrainerResponse item : result) {
+            Optional<TrainingType> typeOptional = trainingTypeRepository.findByUsername(item.getUsername());
+            typeOptional.ifPresent(item::setSpecialization);
         }
 
+        return result;
+
+    }
+
+    @Override
+    public Trainee findByTrainingId(Integer trainingId) {
+        try {
+            String sql = "select t2.* from trainings t" +
+                    " left join trainees t2 on t.trainee_id = t2.id" +
+                    " where t.id=" + trainingId;
+
+
+            Object[] result = (Object[]) entityManager.createNativeQuery(sql).getSingleResult();
+
+
+            Trainee singleResult = new Trainee();
+            singleResult.setId((Integer) result[0]);
+            singleResult.setAddress((String) result[1]);
+
+            Optional<User> userOptional = userRepository.findById((Integer) result[3]);
+            singleResult.setUser(userOptional.orElse(null));
+            singleResult.setBirthdate(LocalDate.parse(result[2].toString().substring(0, 10)));
+
+            return singleResult;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    private String generateUsername(String firstname, String lastname) {
+        String baseUsername = firstname + lastname;
+        String username = baseUsername;
+
+        int serialNumber = 1;
+        while (usernameExists(username)) {
+            username = baseUsername + serialNumber;
+            serialNumber++;
+        }
+
+        return username;
+    }
+
+    private boolean usernameExists(String username) {
+        Optional<User> existingUser = userRepository.findByUsername(username);
+        return existingUser.isPresent();
+    }
+
+    private String generatePassword() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i < 10; i++) {
+            int index = (int) (Math.random() * characters.length());
+            password.append(characters.charAt(index));
+        }
+
+        return password.toString();
     }
 }

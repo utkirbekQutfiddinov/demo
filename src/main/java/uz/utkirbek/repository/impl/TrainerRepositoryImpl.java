@@ -1,13 +1,20 @@
 package uz.utkirbek.repository.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
+import jakarta.persistence.criteria.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import uz.utkirbek.model.Trainer;
+import uz.utkirbek.model.dto.TrainerDto;
+import uz.utkirbek.model.entity.Trainer;
+import uz.utkirbek.model.entity.TrainingType;
+import uz.utkirbek.model.entity.User;
 import uz.utkirbek.repository.TrainerRepository;
+import uz.utkirbek.repository.TrainingTypeRepository;
+import uz.utkirbek.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,45 +24,44 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerRepositoryImpl.class);
 
     private static final String SELECT_ALL = "select u.* from trainers u";
-    private static final String SELECT_BY_USERNAME = "select t.* from trainers t" +
-            "left join users u on t.user_id=u.id" +
-            "where u.username=:username";
-    private static final String USERNAME = "username";
-    private static final String SELECT_ACTIVE_NOT_ASSIGNED = "select t.* " +
-            "from trainers t " +
-            "left join users u on u.id=t.user_id" +
-            "where count(select * from trainings t1 " +
-            "where t1.trainer_id=t.id)=0" +
-            "and u.is_active=true";
 
+    private final TrainingTypeRepository trainingTypeRepository;
+    private final UserRepository userRepository;
     private final EntityManager entityManager;
 
-    public TrainerRepositoryImpl(EntityManager entityManager) {
+    public TrainerRepositoryImpl(TrainingTypeRepository trainingTypeRepository, UserRepository userRepository, EntityManager entityManager) {
+        this.trainingTypeRepository = trainingTypeRepository;
+        this.userRepository = userRepository;
         this.entityManager = entityManager;
     }
 
 
     @Override
-    public Optional<Trainer> create(Trainer item) {
+    public Optional<Trainer> create(TrainerDto item) {
         EntityTransaction transaction = entityManager.getTransaction();
-
-        if (item.getUser() == null || item.getUser().getId() == 0) {
-            LOGGER.trace("Empty parameters");
-            return Optional.empty();
-        }
 
         try {
             transaction.begin();
-            if (item.getId() == 0) {
-                entityManager.persist(item);
-            } else {
-                item = entityManager.merge(item);
+            User user = new User(item.getFirstName(), item.getLastName());
+            user.setUsername(generateUsername(item.getFirstName(), item.getLastName()));
+            user.setPassword(generatePassword());
+
+            Optional<TrainingType> trainingType = trainingTypeRepository.findByName(item.getSpecialization().getName());
+
+            if (!trainingType.isPresent()) {
+                return Optional.empty();
             }
-            return Optional.of(item);
+            Trainer trainer = new Trainer();
+            trainer.setTrainingType(trainingType.get());
+            trainer.setUser(user);
+            entityManager.persist(trainer);
+
+            return Optional.of(trainer);
+        } catch (Exception e) {
+            return Optional.empty();
         } finally {
             transaction.commit();
         }
-
     }
 
     @Override
@@ -84,38 +90,88 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public Optional<Trainer> update(Trainer item) {
-        return create(item);
+        item = entityManager.merge(item);
+        return Optional.of(item);
     }
 
     @Override
     public Optional<Trainer> findByUsername(String username) {
-        EntityTransaction transaction = entityManager.getTransaction();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
+        Root<Trainer> trainerRoot = criteriaQuery.from(Trainer.class);
+
+        Join<Trainer, User> userJoin = trainerRoot.join("user", JoinType.LEFT);
+
+
+        Predicate usernamePredicate = criteriaBuilder.equal(userJoin.get("username"), username);
+        criteriaQuery.where(usernamePredicate);
+
         try {
-            transaction.begin();
-
-            Query nativeQuery = entityManager.createNativeQuery(SELECT_BY_USERNAME);
-            nativeQuery.setParameter(USERNAME, username);
-            Trainer trainer = (Trainer) nativeQuery.getSingleResult();
-
-            return trainer != null ? Optional.of(trainer) : Optional.empty();
-        } finally {
-            transaction.commit();
+            Trainer trainer = entityManager.createQuery(criteriaQuery).getSingleResult();
+            return Optional.of(trainer);
+        } catch (NoResultException e) {
+            LOGGER.error(e.getMessage());
+            return Optional.empty();
         }
-
     }
 
     @Override
-    public List<Trainer> getNotAssignedAndActive() {
-        EntityTransaction transaction = entityManager.getTransaction();
-
+    public Trainer findByTrainingId(Integer trainingId) {
         try {
-            transaction.begin();
-            Query nativeQuery = entityManager.createNativeQuery(SELECT_ACTIVE_NOT_ASSIGNED);
-            return nativeQuery.getResultList();
-        } finally {
-            transaction.commit();
+            String sql = "select t2.* from trainings t" +
+                    " left join trainers t2 on t.trainer_id = t2.id" +
+                    " where t.id=" + trainingId;
+
+
+            Object[] result = (Object[]) entityManager.createNativeQuery(sql).getSingleResult();
+
+
+            Trainer singleResult = new Trainer();
+            singleResult.setId((Integer) result[0]);
+
+            Optional<TrainingType> type = trainingTypeRepository.findById((Integer) result[1]);
+
+            singleResult.setTrainingType(type.orElse(null));
+
+            Optional<User> userOptional = userRepository.findById((Integer) result[2]);
+            singleResult.setUser(userOptional.orElse(null));
+
+            return singleResult;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    private String generateUsername(String firstname, String lastname) {
+        String baseUsername = firstname + lastname;
+        String username = baseUsername;
+
+        int serialNumber = 1;
+        while (usernameExists(username)) {
+            username = baseUsername + serialNumber;
+            serialNumber++;
         }
 
-
+        return username;
     }
+
+    private boolean usernameExists(String username) {
+        Optional<User> existingUser = userRepository.findByUsername(username);
+        return existingUser.isPresent();
+    }
+
+    private String generatePassword() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i < 10; i++) {
+            int index = (int) (Math.random() * characters.length());
+            password.append(characters.charAt(index));
+        }
+
+        return password.toString();
+    }
+
+
 }

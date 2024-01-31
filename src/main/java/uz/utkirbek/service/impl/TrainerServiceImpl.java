@@ -1,12 +1,13 @@
 package uz.utkirbek.service.impl;
 
-import org.hibernate.Criteria;
 import org.springframework.stereotype.Service;
-import uz.utkirbek.model.Training;
+import uz.utkirbek.model.dto.TrainerDto;
+import uz.utkirbek.model.dto.TrainingFiltersDto;
+import uz.utkirbek.model.entity.Trainer;
+import uz.utkirbek.model.response.TrainingResponse;
 import uz.utkirbek.repository.TrainerRepository;
 import uz.utkirbek.repository.TrainingRepository;
 import uz.utkirbek.repository.UserRepository;
-import uz.utkirbek.model.Trainer;
 import uz.utkirbek.service.TrainerService;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public Trainer add(Trainer bean) {
+    public Trainer add(TrainerDto bean) {
         return repository.create(bean).orElse(null);
     }
 
@@ -46,7 +47,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public Trainer getByUserName(String username) {
+    public Trainer getByUsername(String username) {
         return repository.findByUsername(username).orElse(null);
     }
 
@@ -63,24 +64,13 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public Boolean changeStatus(Integer trainerId) {
-        Optional<Trainer> optional = repository.findById(trainerId);
-        if (optional.isPresent()) {
-            Trainer trainer = optional.get();
-            Optional<Boolean> isChanged = userRepository.changeStatus(trainer.getUser().getId());
-            return isChanged.orElse(false);
-        } else {
-            return false;
-        }
+    public Boolean changeStatus(String username, Boolean isActive) {
+        Optional<Boolean> isChanged = userRepository.changeStatus(username, isActive);
+        return isChanged.orElse(false);
     }
 
     @Override
-    public List<Trainer> getNotAssignedAndActive() {
-        return repository.getNotAssignedAndActive();
-    }
-
-    @Override
-    public List<Training> getTrainingsByUsernameAndCriteria(String username) {
-        return trainingRepository.getByUsernameAndCriteria(username);
+    public List<TrainingResponse> getByCriteria(TrainingFiltersDto filter) {
+        return trainingRepository.getByCriteria(filter);
     }
 }

@@ -1,7 +1,12 @@
 package uz.utkirbek.repository;
 
+import uz.utkirbek.model.entity.TrainingType;
 import uz.utkirbek.repository.base.BaseRepository;
-import uz.utkirbek.model.TrainingType;
 
-public interface TrainingTypeRepository extends BaseRepository<TrainingType> {
+import java.util.Optional;
+
+public interface TrainingTypeRepository extends BaseRepository<TrainingType, TrainingType> {
+    Optional<TrainingType> findByName(String name);
+
+    Optional<TrainingType> findByUsername(String username);
 }
