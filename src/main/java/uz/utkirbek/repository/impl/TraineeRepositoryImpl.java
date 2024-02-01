@@ -16,7 +16,6 @@ import uz.utkirbek.repository.TrainingTypeRepository;
 import uz.utkirbek.repository.UserRepository;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +28,9 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     private final TrainingTypeRepository trainingTypeRepository;
 
     private final String SELECT_ALL = "select u.* from trainees u";
+    private final String SELECT_TRAINEE_BY_TRAINING_ID = "select t2.* from trainings t" +
+            " left join trainees t2 on t.trainee_id = t2.id" +
+            " where t.id=:trainingId";
 
 
     public TraineeRepositoryImpl(EntityManager entityManager, UserRepository userRepository, TrainingTypeRepository trainingTypeRepository) {
@@ -161,20 +163,18 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     @Override
     public Trainee findByTrainingId(Integer trainingId) {
         try {
-            String sql = "select t2.* from trainings t" +
-                    " left join trainees t2 on t.trainee_id = t2.id" +
-                    " where t.id=" + trainingId;
 
+            Query nativeQuery = entityManager.createNativeQuery(SELECT_TRAINEE_BY_TRAINING_ID);
+            nativeQuery.setParameter("trainingId", trainingId);
 
-            Object[] result = (Object[]) entityManager.createNativeQuery(sql).getSingleResult();
-
+            Object[] result = (Object[]) nativeQuery.getSingleResult();
 
             Trainee singleResult = new Trainee();
             singleResult.setId((Integer) result[0]);
             singleResult.setAddress((String) result[1]);
 
             Optional<User> userOptional = userRepository.findById((Integer) result[3]);
-            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             singleResult.setUser(userOptional.orElse(null));
             singleResult.setBirthdate(sdf.parse(result[2].toString()));

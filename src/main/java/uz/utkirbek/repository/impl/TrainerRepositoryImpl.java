@@ -24,6 +24,9 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerRepositoryImpl.class);
 
     private static final String SELECT_ALL = "select u.* from trainers u";
+    private static final String SELECT_TRAINER_BY_TRAINING_ID = "select t2.* from trainings t" +
+            " left join trainers t2 on t.trainer_id = t2.id" +
+            " where t.id=:trainingId";
 
     private final TrainingTypeRepository trainingTypeRepository;
     private final UserRepository userRepository;
@@ -118,13 +121,10 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public Trainer findByTrainingId(Integer trainingId) {
         try {
-            String sql = "select t2.* from trainings t" +
-                    " left join trainers t2 on t.trainer_id = t2.id" +
-                    " where t.id=" + trainingId;
 
-
-            Object[] result = (Object[]) entityManager.createNativeQuery(sql).getSingleResult();
-
+            Query nativeQuery = entityManager.createNativeQuery(SELECT_TRAINER_BY_TRAINING_ID);
+            nativeQuery.setParameter("trainingId", trainingId);
+            Object[] result = (Object[]) nativeQuery.getSingleResult();
 
             Trainer singleResult = new Trainer();
             singleResult.setId((Integer) result[0]);
