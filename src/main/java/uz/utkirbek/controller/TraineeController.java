@@ -154,7 +154,7 @@ public class TraineeController {
             return new ResponseEntity<>(null, HttpStatusCode.valueOf(400));
         }
 
-        TrainingFiltersDto filter = new TrainingFiltersDto(trainerUsername, periodFrom, periodTo, username, trainingType);
+        TrainingFiltersDto filter = new TrainingFiltersDto(username, periodFrom, periodTo, trainerUsername, trainingType);
 
         try {
             List<TrainingResponse> trainings = traineeService.getByCriteria(filter);

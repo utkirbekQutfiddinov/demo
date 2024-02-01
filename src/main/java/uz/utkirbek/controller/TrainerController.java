@@ -18,6 +18,8 @@ import uz.utkirbek.service.TrainerService;
 import uz.utkirbek.service.TrainingTypeService;
 import uz.utkirbek.service.UserService;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -132,25 +134,36 @@ public class TrainerController {
     public ResponseEntity<List<TrainerTrainingResponse>> getTrainings(@RequestParam String username,
                                                                       @RequestParam(required = false) LocalDate periodFrom,
                                                                       @RequestParam(required = false) LocalDate periodTo,
-                                                                      @RequestParam(required = false) String trainerName,
+                                                                      @RequestParam(required = false) String traineeUserName,
                                                                       @RequestParam(required = false) String trainingType) {
 
 
-        TrainingFiltersDto filter = new TrainingFiltersDto(username, periodFrom, periodTo, trainerName, trainingType);
+        try {
+            TrainingFiltersDto filter = new TrainingFiltersDto(traineeUserName, periodFrom, periodTo, username, trainingType);
 
-        List<TrainingResponse> trainings = trainerService.getByCriteria(filter);
+            List<TrainingResponse> trainings = trainerService.getByCriteria(filter);
 
-        List<TrainerTrainingResponse> traineeTrainingsResponse = trainings.stream().map((training) -> {
-            TrainerTrainingResponse response = new TrainerTrainingResponse();
-            response.setDate(training.getDate());
-            response.setType(training.getType());
-            response.setName(training.getName());
-            response.setDuration(training.getDuration());
-            response.setTraineeUsername(training.getTraineeUsername());
-            return response;
-        }).collect(Collectors.toList());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        return ResponseEntity.ok(traineeTrainingsResponse);
+            List<TrainerTrainingResponse> traineeTrainingsResponse = trainings.stream().map((training) -> {
+                TrainerTrainingResponse response = new TrainerTrainingResponse();
+                try {
+                    response.setDate(sdf.parse(training.getDate().toString()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                response.setType(training.getType());
+                response.setName(training.getName());
+                response.setDuration(training.getDuration());
+                response.setTraineeUsername(training.getTraineeUsername());
+                return response;
+            }).collect(Collectors.toList());
+
+            return new ResponseEntity<>(traineeTrainingsResponse, HttpStatusCode.valueOf(200));
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PatchMapping

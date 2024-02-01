@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -21,7 +21,7 @@ public class Trainee implements Serializable {
     private String address;
 
     @Column(name = "birth_date")
-    private LocalDate birthdate;
+    private Date birthdate;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", updatable = false)
@@ -31,7 +31,7 @@ public class Trainee implements Serializable {
     @JoinColumn(name = "trainee_id", updatable = false)
     private List<Training> trainings;
 
-    public Trainee(User user, String address, LocalDate birthdate) {
+    public Trainee(User user, String address, Date birthdate) {
         this.address = address;
         this.user = user;
         this.birthdate = birthdate;

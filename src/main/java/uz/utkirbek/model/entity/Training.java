@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -28,12 +29,12 @@ public class Training implements Serializable {
     private String name;
 
     @Column(name = "training_date", nullable = false)
-    private LocalDate trainingDate;
+    private Date trainingDate;
 
     @Column(nullable = false)
     private Integer duration;
 
-    public Training(Integer id, String name, Integer duration, LocalDate date) {
+    public Training(Integer id, String name, Integer duration, Date date) {
         this.id = id;
         this.name = name;
         this.duration = duration;

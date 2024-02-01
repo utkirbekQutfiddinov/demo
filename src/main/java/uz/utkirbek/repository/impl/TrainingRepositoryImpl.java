@@ -61,10 +61,8 @@ public class TrainingRepositoryImpl implements TrainingRepository {
             }
             Trainee trainee = traineeOptional.get();
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
             Training newTraining = new Training();
-            newTraining.setTrainingDate(LocalDate.parse(sdf.format(item.getDate())));
+            newTraining.setTrainingDate(item.getDate());
             newTraining.setTrainer(trainer);
             newTraining.setTrainee(trainee);
             newTraining.setDuration(item.getDuration());
@@ -144,7 +142,10 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         );
 
         List<Predicate> predicates = new ArrayList<>();
-        predicates.add(criteriaBuilder.equal(traineeUserJoin.get("username"), filter.getTraineeUsername()));
+
+        if (filter.getTraineeUsername() != null) {
+            predicates.add(criteriaBuilder.equal(traineeUserJoin.get("username"), filter.getTraineeUsername()));
+        }
 
         if (filter.getPeriodFrom() != null) {
             predicates.add(criteriaBuilder.greaterThanOrEqualTo(trainingRoot.get("trainingDate"), filter.getPeriodFrom()));

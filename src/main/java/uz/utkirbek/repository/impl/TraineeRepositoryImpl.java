@@ -15,6 +15,7 @@ import uz.utkirbek.repository.TraineeRepository;
 import uz.utkirbek.repository.TrainingTypeRepository;
 import uz.utkirbek.repository.UserRepository;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -173,8 +174,10 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             singleResult.setAddress((String) result[1]);
 
             Optional<User> userOptional = userRepository.findById((Integer) result[3]);
+            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
             singleResult.setUser(userOptional.orElse(null));
-            singleResult.setBirthdate(LocalDate.parse(result[2].toString().substring(0, 10)));
+            singleResult.setBirthdate(sdf.parse(result[2].toString()));
 
             return singleResult;
         } catch (Exception e) {
