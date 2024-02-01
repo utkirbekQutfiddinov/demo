@@ -14,6 +14,7 @@ import uz.utkirbek.model.entity.Training;
 import uz.utkirbek.model.entity.User;
 import uz.utkirbek.model.response.*;
 import uz.utkirbek.service.TraineeService;
+import uz.utkirbek.service.TrainingService;
 import uz.utkirbek.service.UserService;
 
 import java.time.LocalDate;
@@ -27,10 +28,12 @@ public class TraineeController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeController.class);
 
     private final TraineeService traineeService;
+    private final TrainingService trainingService;
     private final UserService userService;
 
-    public TraineeController(TraineeService traineeService, UserService userService) {
+    public TraineeController(TraineeService traineeService, TrainingService trainingService, UserService userService) {
         this.traineeService = traineeService;
+        this.trainingService = trainingService;
         this.userService = userService;
     }
 
@@ -157,7 +160,7 @@ public class TraineeController {
         TrainingFiltersDto filter = new TrainingFiltersDto(username, periodFrom, periodTo, trainerUsername, trainingType);
 
         try {
-            List<TrainingResponse> trainings = traineeService.getByCriteria(filter);
+            List<TrainingResponse> trainings = trainingService.getByCriteria(filter);
 
             List<TraineeTrainingResponse> traineeTrainingsResponse = trainings.stream().map((training) -> {
                 TraineeTrainingResponse response = new TraineeTrainingResponse();

@@ -11,9 +11,5 @@ import java.util.List;
 public interface TrainerService extends BaseUpdateService<Trainer, TrainerDto> {
     Trainer getByUsername(String username);
 
-    Boolean changePassword(Integer trainerId, String password);
-
     Boolean changeStatus(String username, Boolean isActive);
-
-    List<TrainingResponse> getByCriteria(TrainingFiltersDto filter);
 }

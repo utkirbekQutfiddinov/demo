@@ -63,36 +63,9 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public Boolean changePassword(int traineeId, String password) {
-        Optional<Trainee> optional = traineeRepository.findById(traineeId);
-        if (optional.isPresent()) {
-            Trainee trainee = optional.get();
-            Optional<Boolean> isChanged = userRepository.changePassword(trainee.getUser().getId(), password);
-            return isChanged.orElse(false);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     public Boolean changeStatus(String username, Boolean isActive) {
         Optional<Boolean> isChanged = userRepository.changeStatus(username, isActive);
         return isChanged.orElse(false);
-    }
-
-    @Override
-    public Boolean deleteByUsername(String username) {
-        Trainee trainee = getByUsername(username);
-        if (trainee == null) {
-            return false;
-        }
-        traineeRepository.delete(trainee);
-        return true;
-    }
-
-    @Override
-    public List<TrainingResponse> getByCriteria(TrainingFiltersDto filter) {
-        return trainingRepository.getByCriteria(filter);
     }
 
     @Override

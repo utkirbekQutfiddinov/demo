@@ -12,13 +12,7 @@ import java.util.List;
 public interface TraineeService extends BaseDeleteService<Trainee, TraineeDto> {
     Trainee getByUsername(String username);
 
-    Boolean changePassword(int traineeId, String password);
-
     Boolean changeStatus(String username, Boolean isActive);
-
-    Boolean deleteByUsername(String username);
-
-    List<TrainingResponse> getByCriteria(TrainingFiltersDto filter);
 
     List<TraineeTrainerResponse> getNotAssignedAcitiveTrainers(String username);
 }

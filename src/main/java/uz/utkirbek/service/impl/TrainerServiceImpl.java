@@ -52,25 +52,8 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public Boolean changePassword(Integer trainerId, String password) {
-        Optional<Trainer> optional = repository.findById(trainerId);
-        if (optional.isPresent()) {
-            Trainer trainer = optional.get();
-            Optional<Boolean> isChanged = userRepository.changePassword(trainer.getUser().getId(), password);
-            return isChanged.orElse(false);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     public Boolean changeStatus(String username, Boolean isActive) {
         Optional<Boolean> isChanged = userRepository.changeStatus(username, isActive);
         return isChanged.orElse(false);
-    }
-
-    @Override
-    public List<TrainingResponse> getByCriteria(TrainingFiltersDto filter) {
-        return trainingRepository.getByCriteria(filter);
     }
 }

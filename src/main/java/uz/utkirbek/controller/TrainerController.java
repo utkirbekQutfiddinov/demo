@@ -13,10 +13,7 @@ import uz.utkirbek.model.entity.Trainer;
 import uz.utkirbek.model.entity.TrainingType;
 import uz.utkirbek.model.entity.User;
 import uz.utkirbek.model.response.*;
-import uz.utkirbek.service.TraineeService;
-import uz.utkirbek.service.TrainerService;
-import uz.utkirbek.service.TrainingTypeService;
-import uz.utkirbek.service.UserService;
+import uz.utkirbek.service.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,12 +28,14 @@ public class TrainerController {
 
     private final TrainerService trainerService;
     private final TraineeService traineeService;
+    private final TrainingService trainingService;
     private final UserService userService;
     private final TrainingTypeService trainingTypeService;
 
-    public TrainerController(TrainerService trainerService, TraineeService traineeService, UserService userService, TrainingTypeService trainingTypeService) {
+    public TrainerController(TrainerService trainerService, TraineeService traineeService, TrainingService trainingService, UserService userService, TrainingTypeService trainingTypeService) {
         this.trainerService = trainerService;
         this.traineeService = traineeService;
+        this.trainingService = trainingService;
         this.userService = userService;
         this.trainingTypeService = trainingTypeService;
     }
@@ -91,7 +90,7 @@ public class TrainerController {
             TrainingFiltersDto filter = new TrainingFiltersDto();
             filter.setTraineeUsername(username);
 
-            List<TrainerTraineeResponse> trainerResponses = getTraineesList(trainerService.getByCriteria(filter));
+            List<TrainerTraineeResponse> trainerResponses = getTraineesList(trainingService.getByCriteria(filter));
             response.setTraineesList(trainerResponses);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
@@ -141,7 +140,7 @@ public class TrainerController {
         try {
             TrainingFiltersDto filter = new TrainingFiltersDto(traineeUserName, periodFrom, periodTo, username, trainingType);
 
-            List<TrainingResponse> trainings = trainerService.getByCriteria(filter);
+            List<TrainingResponse> trainings = trainingService.getByCriteria(filter);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
