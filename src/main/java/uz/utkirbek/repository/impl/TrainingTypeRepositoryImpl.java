@@ -33,7 +33,7 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
 
             entityManager.persist(item);
 
-            return Optional.of(item);
+            return Optional.ofNullable(item);
 
         } finally {
             transaction.commit();
@@ -43,7 +43,7 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
     @Override
     public Optional<TrainingType> findById(int id) {
         TrainingType type = entityManager.find(TrainingType.class, id);
-        return type == null ? Optional.empty() : Optional.of(type);
+        return type == null ? Optional.empty() : Optional.ofNullable(type);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
 
         try {
             TrainingType result = typedQuery.getSingleResult();
-            return Optional.of(result);
+            return Optional.ofNullable(result);
         } catch (NoResultException e) {
             return Optional.empty();
         }
@@ -87,7 +87,7 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
 
         try {
             TrainingType result = entityManager.createQuery(criteriaQuery).getSingleResult();
-            return Optional.of(result);
+            return Optional.ofNullable(result);
         } catch (NoResultException e) {
             LOGGER.error(e.getMessage());
             return Optional.empty();

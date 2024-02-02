@@ -35,7 +35,7 @@ public class UserRepositoryImpl implements UserRepository {
             } else {
                 item = entityManager.merge(item);
             }
-            return Optional.of(item);
+            return Optional.ofNullable(item);
         } finally {
             transaction.commit();
         }
@@ -44,7 +44,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findById(int id) {
         User user = entityManager.find(User.class, id);
-        return user == null ? Optional.empty() : Optional.of(user);
+        return user == null ? Optional.empty() : Optional.ofNullable(user);
     }
 
     @Override

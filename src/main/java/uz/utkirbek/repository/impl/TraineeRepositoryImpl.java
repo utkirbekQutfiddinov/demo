@@ -44,6 +44,10 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     public Optional<Trainee> create(TraineeDto item) {
         EntityTransaction transaction = entityManager.getTransaction();
 
+        if (item.getFirstName() == null || item.getLastName() == null) {
+            return Optional.empty();
+        }
+
         try {
             transaction.begin();
             User user = new User(item.getFirstName(), item.getLastName());
@@ -53,7 +57,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             Trainee trainee = new Trainee(user, item.getAddress(), item.getBirthDate());
 
             entityManager.persist(trainee);
-            return Optional.of(trainee);
+            return Optional.ofNullable(trainee);
         } finally {
             transaction.commit();
         }
@@ -65,7 +69,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         try {
             transaction.begin();
             Trainee trainee = entityManager.find(Trainee.class, id);
-            return trainee == null ? Optional.empty() : Optional.of(trainee);
+            return trainee == null ? Optional.empty() : Optional.ofNullable(trainee);
         } finally {
             transaction.commit();
         }
@@ -86,7 +90,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     @Override
     public Optional<Trainee> update(Trainee item) {
         item = entityManager.merge(item);
-        return Optional.of(item);
+        return Optional.ofNullable(item);
     }
 
     @Override
@@ -117,7 +121,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             TypedQuery<Trainee> typedQuery = entityManager.createQuery(criteriaQuery);
 
             Trainee trainee = typedQuery.getSingleResult();
-            return Optional.of(trainee);
+            return Optional.ofNullable(trainee);
         } catch (Exception e) {
             return Optional.empty();
         }

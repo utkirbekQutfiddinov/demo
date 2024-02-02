@@ -70,7 +70,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
             entityManager.persist(newTraining);
 
-            return Optional.of(newTraining);
+            return Optional.ofNullable(newTraining);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return Optional.empty();
@@ -83,7 +83,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     public Optional<Training> findById(int id) {
         Training training = entityManager.find(Training.class, id);
-        return training == null ? Optional.empty() : Optional.of(training);
+        return training == null ? Optional.empty() : Optional.ofNullable(training);
     }
 
     @Override

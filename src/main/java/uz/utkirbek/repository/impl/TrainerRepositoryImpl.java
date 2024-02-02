@@ -59,7 +59,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             trainer.setUser(user);
             entityManager.persist(trainer);
 
-            return Optional.of(trainer);
+            return Optional.ofNullable(trainer);
         } catch (Exception e) {
             return Optional.empty();
         } finally {
@@ -73,7 +73,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         try {
             transaction.begin();
             Trainer trainer = entityManager.find(Trainer.class, id);
-            return trainer == null ? Optional.empty() : Optional.of(trainer);
+            return trainer == null ? Optional.empty() : Optional.ofNullable(trainer);
         } finally {
             transaction.commit();
         }
@@ -94,7 +94,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public Optional<Trainer> update(Trainer item) {
         item = entityManager.merge(item);
-        return Optional.of(item);
+        return Optional.ofNullable(item);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
         try {
             Trainer trainer = entityManager.createQuery(criteriaQuery).getSingleResult();
-            return Optional.of(trainer);
+            return Optional.ofNullable(trainer);
         } catch (NoResultException e) {
             LOGGER.error(e.getMessage());
             return Optional.empty();
