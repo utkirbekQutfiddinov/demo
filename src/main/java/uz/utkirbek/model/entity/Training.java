@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -33,12 +32,5 @@ public class Training implements Serializable {
 
     @Column(nullable = false)
     private Integer duration;
-
-    public Training(Integer id, String name, Integer duration, Date date) {
-        this.id = id;
-        this.name = name;
-        this.duration = duration;
-        this.trainingDate = date;
-    }
 
 }

@@ -19,4 +19,9 @@ public class TrainingType implements Serializable {
 
     @Column(nullable = false)
     private String name;
+
+    public TrainingType(String name, int id) {
+        this.name = name;
+        this.id = id;
+    }
 }

@@ -9,31 +9,42 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import uz.utkirbek.model.dto.TraineeDto;
 import uz.utkirbek.model.entity.Trainee;
+import uz.utkirbek.model.entity.Trainer;
+import uz.utkirbek.model.entity.Training;
 import uz.utkirbek.model.entity.User;
+import uz.utkirbek.model.response.TraineeTrainerResponse;
 import uz.utkirbek.repository.impl.TraineeRepositoryImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class TraineeRepositoryImplTest1 {
+class TraineeRepositoryImplTest {
 
     @Mock
     private EntityManager entityManager;
 
+    @Mock
+    private EntityTransaction transaction;
     @Mock
     private UserRepository userRepository;
 
     @InjectMocks
     private TraineeRepositoryImpl traineeRepository;
 
+    @Mock
+    private Query nativeQuery;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        when(entityManager.getTransaction()).thenReturn(transaction);
     }
 
     @Test
@@ -69,83 +80,109 @@ public class TraineeRepositoryImplTest1 {
     }
 
     @Test
-    void testFindById_ExistingTrainee() {
-        EntityTransaction transaction = mock(EntityTransaction.class);
-        when(entityManager.getTransaction()).thenReturn(transaction);
-
-        int traineeId = 1;
+    void findById() {
         Trainee trainee = new Trainee();
-        when(entityManager.find(eq(Trainee.class), anyInt())).thenReturn(trainee);
+        trainee.setId(1);
 
-        Optional<Trainee> result = traineeRepository.findById(traineeId);
+        when(entityManager.find(Trainee.class, 1)).thenReturn(trainee);
+
+        Optional<Trainee> result = traineeRepository.findById(1);
 
         assertTrue(result.isPresent());
-        assertEquals(trainee, result.orElse(null));
+        assertEquals(trainee, result.get());
     }
 
     @Test
-    void testFindById_NonExistingTrainee() {
-        EntityTransaction transaction = mock(EntityTransaction.class);
-        when(entityManager.getTransaction()).thenReturn(transaction);
+    void findById_NotFound() {
+        when(entityManager.find(Trainee.class, 1)).thenReturn(null);
 
-        int traineeId = 1;
-        when(entityManager.find(eq(Trainee.class), anyInt())).thenReturn(null);
-
-        Optional<Trainee> result = traineeRepository.findById(traineeId);
+        Optional<Trainee> result = traineeRepository.findById(1);
 
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testFindAll() {
-        EntityTransaction transaction = mock(EntityTransaction.class);
-        when(entityManager.getTransaction()).thenReturn(transaction);
-
+    void findAll() {
+        String sql = "select u.* from trainees u";
         Query query = mock(Query.class);
-        when(entityManager.createNativeQuery(anyString())).thenReturn(query);
 
-        List<Trainee> trainees = new ArrayList<>();
-        when(query.getResultList()).thenReturn(trainees);
+        when(entityManager.createNativeQuery(sql)).thenReturn(query);
+        when(query.getResultList()).thenReturn(Collections.emptyList());
 
         List<Trainee> result = traineeRepository.findAll();
 
-        assertEquals(trainees, result);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
-    void testUpdateTrainee_Success() {
-        EntityTransaction transaction = mock(EntityTransaction.class);
-        when(entityManager.getTransaction()).thenReturn(transaction);
-
+    public void updateWithNullUserId() {
         Trainee trainee = new Trainee();
-        when(entityManager.merge(any())).thenReturn(trainee);
+
+        when(entityManager.getTransaction()).thenReturn(transaction);
 
         Optional<Trainee> result = traineeRepository.update(trainee);
-
-        assertEquals(trainee, result.orElse(null));
-    }
-
-    @Test
-    void testUpdateTrainee_Failure() {
-        EntityTransaction transaction = mock(EntityTransaction.class);
-        when(entityManager.getTransaction()).thenReturn(transaction);
-
-        when(entityManager.merge(any())).thenReturn(null);
-
-        Optional<Trainee> result = traineeRepository.update(new Trainee());
 
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testDeleteTrainee() {
-        EntityTransaction transaction = mock(EntityTransaction.class);
-        when(entityManager.getTransaction()).thenReturn(transaction);
+    public void updateWithValidUserId() {
+        User user = new User();
+        user.setId(100);
 
-        traineeRepository.delete(new Trainee());
+        Trainee existingTrainee = new Trainee();
+        existingTrainee.setId(1);
+        existingTrainee.setUser(user);
+
+        Trainee updatedTrainee = new Trainee();
+        updatedTrainee.setId(1);
+        updatedTrainee.setUser(user);
+        updatedTrainee.setAddress("Updated address");
+
+        when(entityManager.getTransaction()).thenReturn(transaction);
+        when(entityManager.find(Trainee.class, 1)).thenReturn(existingTrainee);
+        when(entityManager.merge(updatedTrainee)).thenReturn(updatedTrainee);
+
+        Optional<Trainee> result = traineeRepository.update(updatedTrainee);
+
+        assertTrue(result.isPresent());
+        assertEquals("Updated address", result.get().getAddress());
+    }
+
+
+    @Test
+    public void deleteWhenEntityIsManaged() {
+        Trainee managedTrainee = new Trainee();
+        when(entityManager.getTransaction()).thenReturn(transaction);
+        when(entityManager.contains(managedTrainee)).thenReturn(true);
+
+        traineeRepository.delete(managedTrainee);
+
+        verify(transaction).begin();
+        verify(entityManager).remove(managedTrainee);
+        verify(transaction).commit();
+    }
+
+    @Test
+    public void deleteWhenEntityIsNotManaged() {
+        Trainee unmanagedTrainee = new Trainee();
+        when(entityManager.getTransaction()).thenReturn(transaction);
+        when(entityManager.contains(unmanagedTrainee)).thenReturn(false);
+
+        traineeRepository.delete(unmanagedTrainee);
 
         verify(transaction).begin();
         verify(transaction).commit();
+    }
+
+    @Test
+    void findByUsername() {
+        String username = "testUsername";
+
+        Optional<Trainee> result = traineeRepository.findByUsername(username);
+
+        assertFalse(result.isPresent());
     }
 
     @Test
@@ -226,26 +263,82 @@ public class TraineeRepositoryImplTest1 {
 
     }
 
+
     @Test
-    void findByTrainingId_Success() {
+    void getNotAssignedActiveTrainers_Success() {
+
+        CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class);
+        when(entityManager.getCriteriaBuilder()).thenReturn(criteriaBuilder);
+
+
+        CriteriaQuery criteriaQuery = mock(CriteriaQuery.class);
+        when(criteriaBuilder.createQuery(TraineeTrainerResponse.class)).thenReturn(criteriaQuery);
+
+        Root trainerRoot = mock(Root.class);
+        when(criteriaQuery.from(Trainer.class)).thenReturn(trainerRoot);
+
+        Join userJoin = mock(Join.class);
+        when(trainerRoot.join("user", JoinType.LEFT)).thenReturn(userJoin);
+
+        Subquery subquery = mock(Subquery.class);
+        when(criteriaQuery.subquery(Long.class)).thenReturn(subquery);
+
+        Root trainingRoot = mock(Root.class);
+        when(subquery.from(Training.class)).thenReturn(trainingRoot);
+
+        Join traineeJoin = mock(Join.class);
+        when(trainingRoot.join("trainee", JoinType.LEFT)).thenReturn(traineeJoin);
+
+        Join traineeUserJoin = mock(Join.class);
+        when(traineeJoin.join("user", JoinType.LEFT)).thenReturn(traineeUserJoin);
+
+        TypedQuery typedQuery = mock(TypedQuery.class);
+        when(entityManager.createQuery(criteriaQuery)).thenReturn(typedQuery);
+
+        Path path=mock(Path.class);
+        when(trainingRoot.get(anyString())).thenReturn(path);
+
+        Subquery selectedSubquery=mock(Subquery.class);
+        when(subquery.select(any())).thenReturn(selectedSubquery);
+
+        Path trainerRootGetPath=mock(Path.class);
+        when(trainerRoot.get(anyString())).thenReturn(trainerRootGetPath);
+
+        CriteriaQuery selectedCriteriaQuery=mock(CriteriaQuery.class);
+        when(criteriaQuery.select(any())).thenReturn(selectedCriteriaQuery);
+
+        List<TraineeTrainerResponse> expectedResult = new ArrayList<>();
+        when(typedQuery.getResultList()).thenReturn(expectedResult);
+
+        List<TraineeTrainerResponse> result = traineeRepository.getNotAssignedActiveTrainers("testUsername");
+
+        assertEquals(expectedResult, result);
+
+        verify(entityManager).getCriteriaBuilder();
+        verify(criteriaBuilder).createQuery(TraineeTrainerResponse.class);
+        verify(criteriaQuery).from(Trainer.class);
+        verify(trainerRoot).join("user", JoinType.LEFT);
+        verify(criteriaQuery).subquery(Long.class);
+        verify(subquery).from(Training.class);
+        verify(trainingRoot).join("trainee", JoinType.LEFT);
+        verify(traineeJoin).join("user", JoinType.LEFT);
+        verify(entityManager).createQuery(criteriaQuery);
+    }
+
+    @Test
+    void findByTrainingId_NullResult() {
         MockitoAnnotations.openMocks(this);
 
-        Integer trainingId = 1;
+        Query nativeQuery = mock(Query.class);
+        when(entityManager.createNativeQuery(anyString())).thenReturn(nativeQuery);
+        when(nativeQuery.setParameter(anyString(), any())).thenReturn(nativeQuery);
+        when(nativeQuery.getSingleResult()).thenReturn(null);
 
-        Object[] mockResult = {1, "MockAddress", "2022-01-30 12:00:00", 1};
-
-        Query query = mock(Query.class);
-        when(entityManager.createNativeQuery(anyString())).thenReturn(query);
-        when(query.setParameter(anyString(), any())).thenReturn(query);
-        when(query.getSingleResult()).thenReturn(mockResult);
-
-        User mockUser = new User();
-        mockUser.setId(1);
-        when(userRepository.findById(anyInt())).thenReturn(Optional.of(mockUser));
-
-        Trainee result = traineeRepository.findByTrainingId(trainingId);
+        Trainee result = traineeRepository.findByTrainingId(1);
 
         assertNull(result);
     }
 
+
 }
+

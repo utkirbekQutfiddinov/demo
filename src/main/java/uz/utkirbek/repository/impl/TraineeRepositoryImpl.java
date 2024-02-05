@@ -153,7 +153,8 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                         criteriaBuilder.not(trainerRoot.get("id").in(subquery))
                 );
 
-        List<TraineeTrainerResponse> result = entityManager.createQuery(criteriaQuery).getResultList();
+        TypedQuery<TraineeTrainerResponse> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<TraineeTrainerResponse> result = typedQuery.getResultList();
 
         for (TraineeTrainerResponse item : result) {
             Optional<TrainingType> typeOptional = trainingTypeRepository.findByUsername(item.getUsername());

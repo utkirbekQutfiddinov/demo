@@ -40,7 +40,7 @@ public class TraineeController {
     @PostMapping
     public ResponseEntity<RegisterResponse> register(@RequestBody TraineeDto traineeDto) {
 
-        if (traineeDto.getFirstName() == null || traineeDto.getLastName() == null) {
+        if (traineeDto == null || traineeDto.getFirstName() == null || traineeDto.getLastName() == null) {
             LOGGER.error("Empty parameters: " + traineeDto);
             return ResponseEntity.badRequest().body(null);
         }
@@ -192,8 +192,8 @@ public class TraineeController {
             return ResponseEntity.ok(notAssignedActiveTrainers);
         } catch (Exception e) {
             LOGGER.error("Error: ", e);
+            return ResponseEntity.internalServerError().build();
         }
-        return null;
 
     }
 
@@ -216,7 +216,7 @@ public class TraineeController {
 
 
     private boolean isValidDtoForUpdating(TraineeUpdateDto dto) {
-        return dto.getUsername() != null && dto.getFirstName() != null && dto.getLastName() != null;
+        return dto != null && dto.getUsername() != null && dto.getFirstName() != null && dto.getLastName() != null;
     }
 
     private List<TraineeTrainerResponse> getTrainerResponses(List<Training> trainings) {

@@ -1,10 +1,8 @@
 package uz.utkirbek.service;
 
 import uz.utkirbek.model.dto.TraineeDto;
-import uz.utkirbek.model.dto.TrainingFiltersDto;
 import uz.utkirbek.model.entity.Trainee;
 import uz.utkirbek.model.response.TraineeTrainerResponse;
-import uz.utkirbek.model.response.TrainingResponse;
 import uz.utkirbek.service.base.BaseDeleteService;
 
 import java.util.List;

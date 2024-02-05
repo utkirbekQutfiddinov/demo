@@ -2,9 +2,7 @@ package uz.utkirbek.service.impl;
 
 import org.springframework.stereotype.Service;
 import uz.utkirbek.model.dto.TrainerDto;
-import uz.utkirbek.model.dto.TrainingFiltersDto;
 import uz.utkirbek.model.entity.Trainer;
-import uz.utkirbek.model.response.TrainingResponse;
 import uz.utkirbek.repository.TrainerRepository;
 import uz.utkirbek.repository.TrainingRepository;
 import uz.utkirbek.repository.UserRepository;

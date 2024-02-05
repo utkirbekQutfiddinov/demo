@@ -3,6 +3,7 @@ package uz.utkirbek.repository.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +17,6 @@ import uz.utkirbek.repository.TrainerRepository;
 import uz.utkirbek.repository.TrainingRepository;
 import uz.utkirbek.repository.TrainingTypeRepository;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -94,31 +93,35 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public Optional<Boolean> updateTrainer(Integer trainingId, String trainerUsername) {
-        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            EntityTransaction transaction = entityManager.getTransaction();
 
-        transaction.begin();
-        Optional<Training> trainingOptional = findById(trainingId);
+            transaction.begin();
+            Training training = entityManager.find(Training.class, trainingId);
 
-        if (!trainingOptional.isPresent()) {
-            transaction.rollback();
-            return Optional.empty();
+            if (training == null) {
+                transaction.rollback();
+                return Optional.empty();
+            }
+
+            Optional<Trainer> trainerOptional = trainerRepository.findByUsername(trainerUsername);
+
+            if (!trainerOptional.isPresent()) {
+                transaction.rollback();
+                return Optional.empty();
+            }
+
+            Trainer trainer = trainerOptional.get();
+
+            training.setTrainer(trainer);
+
+            entityManager.merge(training);
+            transaction.commit();
+            return Optional.of(true);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return Optional.of(false);
         }
-
-        Optional<Trainer> trainerOptional = trainerRepository.findByUsername(trainerUsername);
-
-        if (!trainerOptional.isPresent()) {
-            transaction.rollback();
-            return Optional.empty();
-        }
-
-        Trainer trainer = trainerOptional.get();
-
-        Training training = trainingOptional.get();
-        training.setTrainer(trainer);
-
-        entityManager.merge(training);
-        transaction.commit();
-        return Optional.of(true);
     }
 
     @Override
@@ -166,7 +169,9 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
 
-        List<Training> resultList = entityManager.createQuery(criteriaQuery).getResultList();
+        TypedQuery<Training> typedQuery = entityManager.createQuery(criteriaQuery);
+
+        List<Training> resultList = typedQuery.getResultList();
 
         List<TrainingResponse> finalList = new ArrayList<>();
         for (Training training : resultList) {

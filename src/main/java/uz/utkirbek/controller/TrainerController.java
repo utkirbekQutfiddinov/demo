@@ -53,29 +53,24 @@ public class TrainerController {
             Trainer addedTrainer = trainerService.add(trainerDto);
             if (addedTrainer == null) {
                 LOGGER.error("Error during creation: " + trainerDto);
-                return ResponseEntity.badRequest().body(null);
+                return ResponseEntity.internalServerError().body(null);
             }
 
             return ResponseEntity.ok(new RegisterResponse(addedTrainer.getUser().getUsername(),
                     addedTrainer.getUser().getPassword()));
         } catch (Exception e) {
             LOGGER.error("Error: " + e.getMessage());
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.internalServerError().body(null);
         }
     }
 
     @GetMapping
     public ResponseEntity<TrainerResponse> getByUsername(@RequestParam String username) {
 
-        if (username == null) {
-            LOGGER.error("Empty parameters: username is null");
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(400));
-        }
-
         Trainer trainer = trainerService.getByUsername(username);
         if (trainer == null) {
             LOGGER.error("Trainer does not exist by username: " + username);
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(404));
+            return ResponseEntity.notFound().build();
         }
 
         TrainerResponse response = new TrainerResponse();
@@ -105,28 +100,33 @@ public class TrainerController {
 
         if (!isValidTrainerDtoForUpdating(dto)) {
             LOGGER.error("Empty parameters: " + dto);
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(400));
+            return ResponseEntity.badRequest().build();
         }
 
         Trainer trainer = trainerService.getByUsername(dto.getUsername());
         if (trainer == null) {
             LOGGER.error("Trainer not found: username=" + dto.getUsername());
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(404));
+            return ResponseEntity.notFound().build();
         }
+        try {
 
-        TrainingType trainingType = trainingTypeService.getByName(dto.getSpecialization().getName());
-        trainer.setTrainingType(trainingType);
+            TrainingType trainingType = trainingTypeService.getByName(dto.getSpecialization().getName());
+            trainer.setTrainingType(trainingType);
 
-        trainerService.update(trainer);
+            trainerService.update(trainer);
 
-        User user = trainer.getUser();
-        user.setFirstname(dto.getFirstName());
-        user.setLastname(dto.getLastName());
-        user.setActive(dto.isActive());
+            User user = trainer.getUser();
+            user.setFirstname(dto.getFirstName());
+            user.setLastname(dto.getLastName());
+            user.setActive(dto.isActive());
 
-        userService.update(user);
+            userService.update(user);
 
-        return getByUsername(dto.getUsername());
+            return getByUsername(dto.getUsername());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/trainings")
@@ -183,7 +183,7 @@ public class TrainerController {
     }
 
     private boolean isValidTrainerDtoForUpdating(TrainerUpdateDto dto) {
-        return dto.getUsername() != null && dto.getFirstName() != null
+        return dto != null && dto.getUsername() != null && dto.getFirstName() != null
                 && dto.getLastName() != null && dto.getSpecialization() != null;
     }
 

@@ -85,8 +85,9 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
         criteriaQuery.select(trainingTypeRoot)
                 .where(criteriaBuilder.equal(trainingTypeRoot.get("id"), subquery));
 
+        TypedQuery<TrainingType> typedQuery = entityManager.createQuery(criteriaQuery);
         try {
-            TrainingType result = entityManager.createQuery(criteriaQuery).getSingleResult();
+            TrainingType result = typedQuery.getSingleResult();
             return Optional.ofNullable(result);
         } catch (NoResultException e) {
             LOGGER.error(e.getMessage());
