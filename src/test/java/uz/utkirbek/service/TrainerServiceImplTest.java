@@ -40,7 +40,7 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testGetAll() {
+    void getAll() {
         when(trainerRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<Trainer> result = trainerService.getAll();
@@ -50,7 +50,7 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testGetOne() {
+    void getOne() {
         when(trainerRepository.findById(1)).thenReturn(Optional.of(new Trainer()));
 
         Trainer result = trainerService.getOne(1);
@@ -59,7 +59,7 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testGetOneNotFound() {
+    void getOneNotFound() {
         when(trainerRepository.findById(1)).thenReturn(Optional.empty());
 
         Trainer result = trainerService.getOne(1);
@@ -68,7 +68,7 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testAdd() {
+    void add() {
         when(trainerRepository.create(any())).thenReturn(Optional.of(new Trainer()));
 
         Trainer result = trainerService.add(new TrainerDto());
@@ -77,7 +77,7 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testAddRepositoryError() {
+    void addRepositoryError() {
         when(trainerRepository.create(any())).thenReturn(Optional.empty());
 
         Trainer result = trainerService.add(new TrainerDto());
@@ -86,7 +86,7 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testUpdate() {
+    void update() {
         when(trainerRepository.update(any())).thenReturn(Optional.of(new Trainer()));
 
         Trainer result = trainerService.update(new Trainer());
@@ -95,7 +95,7 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testUpdateRepositoryError() {
+    void updateRepositoryError() {
         when(trainerRepository.update(any())).thenReturn(Optional.empty());
 
         Trainer result = trainerService.update(new Trainer());
@@ -104,7 +104,7 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testGetByUsername() {
+    void getByUsername() {
         when(trainerRepository.findByUsername("username")).thenReturn(Optional.of(new Trainer()));
 
         Trainer result = trainerService.getByUsername("username");
@@ -113,7 +113,7 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testGetByUsernameNotFound() {
+    void getByUsernameNotFound() {
         when(trainerRepository.findByUsername("username")).thenReturn(Optional.empty());
 
         Trainer result = trainerService.getByUsername("username");
@@ -122,7 +122,7 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testChangeStatus() {
+    void changeStatus() {
         when(userRepository.changeStatus("username", true)).thenReturn(Optional.of(true));
 
         boolean result = trainerService.changeStatus("username", true);
@@ -131,7 +131,7 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testChangeStatusRepositoryError() {
+    void changeStatusRepositoryError() {
         when(userRepository.changeStatus("username", true)).thenReturn(Optional.empty());
 
         boolean result = trainerService.changeStatus("username", true);

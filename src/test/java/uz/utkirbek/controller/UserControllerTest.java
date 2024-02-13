@@ -30,7 +30,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testLogin_ValidCredentials_ReturnsOk() {
+    public void login_ValidCredentials_ReturnsOk() {
         String username = "testUsername";
         String password = "testPassword";
         User mockUser = new User();
@@ -48,7 +48,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testLogin_EmptyUsername_ReturnsBadRequest() {
+    public void login_EmptyUsername_ReturnsBadRequest() {
         ResponseEntity<String> response = userController.login(null, "testPassword");
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -57,7 +57,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testLogin_EmptyPassword_ReturnsBadRequest() {
+    public void login_EmptyPassword_ReturnsBadRequest() {
         ResponseEntity<String> response = userController.login("testUsername", null);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -66,7 +66,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testLogin_UserNotFound_ReturnsNotFound() {
+    public void login_UserNotFound_ReturnsNotFound() {
         String username = "testUsername";
         String password = "testPassword";
         Mockito.when(userService.findByUsernameAndPassword(username, password)).thenReturn(null);
@@ -79,7 +79,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testLogin_InactiveUser_ReturnsBadRequest() {
+    public void login_InactiveUser_ReturnsBadRequest() {
         String username = "testUsername";
         String password = "testPassword";
         User mockUser = new User();
@@ -97,7 +97,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testChangePassword_ValidParameters_ReturnsSuccess() {
+    public void changePassword_ValidParameters_ReturnsSuccess() {
         UserChangePasswordDto dto = new UserChangePasswordDto();
         dto.setUsername("testUsername");
         dto.setOldPassword("oldPassword");
@@ -118,7 +118,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testChangePassword_EmptyUsername_ReturnsBadRequest() {
+    public void changePassword_EmptyUsername_ReturnsBadRequest() {
         UserChangePasswordDto dto = new UserChangePasswordDto();
         dto.setUsername(null);
         dto.setOldPassword("oldPassword");
@@ -132,7 +132,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testChangePassword_EmptyOldPassword_ReturnsBadRequest() {
+    public void changePassword_EmptyOldPassword_ReturnsBadRequest() {
         UserChangePasswordDto dto = new UserChangePasswordDto();
         dto.setUsername("testUsername");
         dto.setOldPassword(null);
@@ -146,7 +146,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testChangePassword_EmptyNewPassword_ReturnsBadRequest() {
+    public void changePassword_EmptyNewPassword_ReturnsBadRequest() {
         UserChangePasswordDto dto = new UserChangePasswordDto();
         dto.setUsername("testUsername");
         dto.setOldPassword("oldPassword");
@@ -160,7 +160,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testChangePassword_PasswordChangeFailure_ReturnsError() {
+    public void changePassword_PasswordChangeFailure_ReturnsError() {
         UserChangePasswordDto dto = new UserChangePasswordDto();
         dto.setUsername("testUsername");
         dto.setOldPassword("oldPassword");

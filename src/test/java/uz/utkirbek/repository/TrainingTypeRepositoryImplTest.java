@@ -32,7 +32,7 @@ class TrainingTypeRepositoryImplTest {
     }
 
     @Test
-    void testCreateTrainingTypeSuccess() {
+    void createTrainingTypeSuccess() {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(entityManager.getTransaction()).thenReturn(transaction);
 
@@ -47,7 +47,7 @@ class TrainingTypeRepositoryImplTest {
     }
 
     @Test
-    void testFindByIdTrainingTypeFound() {
+    void findByIdTrainingTypeFound() {
         TrainingType trainingType = new TrainingType();
         when(entityManager.find(TrainingType.class, 1)).thenReturn(trainingType);
 
@@ -57,7 +57,7 @@ class TrainingTypeRepositoryImplTest {
     }
 
     @Test
-    void testFindByIdTrainingTypeNotFound() {
+    void findByIdTrainingTypeNotFound() {
         when(entityManager.find(TrainingType.class, 1)).thenReturn(null);
 
         Optional<TrainingType> result = trainingTypeRepository.findById(1);
@@ -66,7 +66,7 @@ class TrainingTypeRepositoryImplTest {
     }
 
     @Test
-    void testFindAll() {
+    void findAll() {
         Query query = mock(Query.class);
         when(entityManager.createNativeQuery(anyString())).thenReturn(query);
 
@@ -76,7 +76,7 @@ class TrainingTypeRepositoryImplTest {
     }
 
     @Test
-    void testFindByNameTrainingTypeFound() {
+    void findByNameTrainingTypeFound() {
         CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class);
         when(entityManager.getCriteriaBuilder()).thenReturn(criteriaBuilder);
 
@@ -108,7 +108,7 @@ class TrainingTypeRepositoryImplTest {
     }
 
     @Test
-    void testFindByNameTrainingTypeNotFound() {
+    void findByNameTrainingTypeNotFound() {
         CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class);
         when(entityManager.getCriteriaBuilder()).thenReturn(criteriaBuilder);
 

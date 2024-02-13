@@ -49,7 +49,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    void testRegisterSuccess() {
+    void registerSuccess() {
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
         User user = new User(firstname, lastname);
@@ -69,7 +69,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    void testRegisterBadRequest() {
+    void registerBadRequest() {
         ResponseEntity<RegisterResponse> response = traineeController.register(new TraineeDto());
 
         assertNotNull(response);
@@ -78,7 +78,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    void testRegisterError() {
+    void registerError() {
         when(traineeService.add(any())).thenReturn(null);
 
         TraineeDto traineeDto = new TraineeDto();
@@ -90,7 +90,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    void testGetByUsernameSuccess() {
+    void getByUsernameSuccess() {
 
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
@@ -112,7 +112,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    void testGetByUsernameBadRequest() {
+    void getByUsernameBadRequest() {
         ResponseEntity<TraineeResponse> response = traineeController.getByUsername(null);
 
         assertNotNull(response);
@@ -121,7 +121,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    void testGetByUsernameNotFound() {
+    void getByUsernameNotFound() {
         when(traineeService.getByUsername(anyString())).thenReturn(null);
 
         ResponseEntity<TraineeResponse> response = traineeController.getByUsername("nonExistentUsername");
@@ -132,7 +132,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    void testUpdateProfileSuccess() {
+    void updateProfileSuccess() {
 
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
@@ -158,7 +158,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    void testUpdateProfileBadRequest() {
+    void updateProfileBadRequest() {
         ResponseEntity<TraineeResponse> response = traineeController.updateProfile(null);
 
         assertNotNull(response);
@@ -167,7 +167,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    void testUpdateProfileTraineeNotFound() {
+    void updateProfileTraineeNotFound() {
 
         when(traineeService.getByUsername(anyString())).thenReturn(null);
 
@@ -181,7 +181,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    void testUpdateProfileTraineeUpdateError() {
+    void updateProfileTraineeUpdateError() {
         when(traineeService.getByUsername(anyString())).thenReturn(new Trainee());
         when(traineeService.update(any())).thenReturn(null);
 
@@ -194,7 +194,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testDelete_ValidUsername_ReturnsSuccess() {
+    public void delete_ValidUsername_ReturnsSuccess() {
         String username = "testUsername";
         Trainee trainee = new Trainee();
         trainee.setId(1);
@@ -211,7 +211,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testDelete_NonexistentUsername_ReturnsNotFound() {
+    public void delete_NonexistentUsername_ReturnsNotFound() {
         String username = "nonexistentUser";
         when(traineeService.getByUsername(username)).thenReturn(null);
 
@@ -223,7 +223,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testDelete_EmptyUsername_ReturnsBadRequest() {
+    public void delete_EmptyUsername_ReturnsBadRequest() {
         ResponseEntity<String> response = traineeController.delete(null);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -231,7 +231,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testGetTrainings_ValidParameters_ReturnsOk() {
+    public void getTrainings_ValidParameters_ReturnsOk() {
         String username = "testUsername";
         LocalDate periodFrom = LocalDate.of(2023, 1, 1);
         LocalDate periodTo = LocalDate.of(2023, 12, 31);
@@ -249,7 +249,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testGetTrainings_EmptyUsername_ReturnsBadRequest() {
+    public void getTrainings_EmptyUsername_ReturnsBadRequest() {
         ResponseEntity<List<TraineeTrainingResponse>> response = traineeController.getTrainings(
                 null, LocalDate.now(), LocalDate.now(), null, null);
 
@@ -259,7 +259,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testGetTrainings_InternalServerError_ReturnsInternalServerError() {
+    public void getTrainings_InternalServerError_ReturnsInternalServerError() {
         String username = "testUsername";
         LocalDate periodFrom = LocalDate.of(2023, 1, 1);
         LocalDate periodTo = LocalDate.of(2023, 12, 31);
@@ -277,7 +277,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testGetActiveNotAssignedTrainers_ValidParameters_ReturnsOk() {
+    public void getActiveNotAssignedTrainers_ValidParameters_ReturnsOk() {
         String username = "testUsername";
         Mockito.when(traineeService.getNotAssignedAcitiveTrainers(username)).thenReturn(Collections.emptyList());
 
@@ -289,7 +289,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testGetActiveNotAssignedTrainers_EmptyUsername_ReturnsBadRequest() {
+    public void getActiveNotAssignedTrainers_EmptyUsername_ReturnsBadRequest() {
         ResponseEntity<List<TraineeTrainerResponse>> response = traineeController.getActiveNotAssignedTrainers(null);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -298,7 +298,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testGetActiveNotAssignedTrainers_InternalServerError_ReturnsInternalServerError() {
+    public void getActiveNotAssignedTrainers_InternalServerError_ReturnsInternalServerError() {
         String username = "testUsername";
         Mockito.when(traineeService.getNotAssignedAcitiveTrainers(username)).thenThrow(new RuntimeException("Test Exception"));
 
@@ -310,7 +310,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testChangeStatus_ValidParameters_ReturnsOk() {
+    public void changeStatus_ValidParameters_ReturnsOk() {
         String username = "testUsername";
         Boolean isActive = true;
         Mockito.when(traineeService.changeStatus(username, isActive)).thenReturn(true);
@@ -323,7 +323,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testChangeStatus_EmptyUsername_ReturnsBadRequest() {
+    public void changeStatus_EmptyUsername_ReturnsBadRequest() {
         ResponseEntity<String> response = traineeController.changeStatus(null, true);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -332,7 +332,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testChangeStatus_NullIsActive_ReturnsBadRequest() {
+    public void changeStatus_NullIsActive_ReturnsBadRequest() {
         ResponseEntity<String> response = traineeController.changeStatus("testUsername", null);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -341,7 +341,7 @@ class TraineeControllerTest {
     }
 
     @Test
-    public void testChangeStatus_InternalServerError_ReturnsInternalServerError() {
+    public void changeStatus_InternalServerError_ReturnsInternalServerError() {
         String username = "testUsername";
         Boolean isActive = true;
         Mockito.when(traineeService.changeStatus(username, isActive)).thenReturn(false);

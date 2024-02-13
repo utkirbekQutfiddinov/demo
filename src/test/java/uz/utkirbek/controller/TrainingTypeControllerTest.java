@@ -30,7 +30,7 @@ public class TrainingTypeControllerTest {
     }
 
     @Test
-    public void testGetAll_Success() {
+    public void getAll_Success() {
         List<TrainingType> trainingTypes = Arrays.asList(
                 new TrainingType("Java", 1),
                 new TrainingType("Spring", 2)
@@ -46,7 +46,7 @@ public class TrainingTypeControllerTest {
     }
 
     @Test
-    public void testGetAll_ExceptionThrown_ReturnsInternalServerError() {
+    public void getAll_ExceptionThrown_ReturnsInternalServerError() {
         Mockito.when(trainingTypeService.getAll()).thenThrow(new RuntimeException());
 
         ResponseEntity<List<TrainingType>> response = trainingTypeController.getAll();

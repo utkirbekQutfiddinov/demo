@@ -43,7 +43,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testCreateTrainingSuccess() {
+    void createTrainingSuccess() {
         Trainer trainer = new Trainer();
         trainer.setId(1);
         when(trainerRepository.findByUsername("trainerUsername")).thenReturn(Optional.of(trainer));
@@ -72,7 +72,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testCreateTrainingException() {
+    void createTrainingException() {
         Trainer trainer = new Trainer();
         trainer.setId(1);
         when(trainerRepository.findByUsername("trainerUsername")).thenReturn(Optional.of(trainer));
@@ -99,7 +99,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testCreateTrainingTrainerNotFound() {
+    void createTrainingTrainerNotFound() {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(entityManager.getTransaction()).thenReturn(transaction);
         when(trainerRepository.findByUsername("trainerUsername")).thenReturn(Optional.empty());
@@ -113,7 +113,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testCreateTrainingTraineeNotFound() {
+    void createTrainingTraineeNotFound() {
         Trainer trainer = new Trainer();
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(entityManager.getTransaction()).thenReturn(transaction);
@@ -130,7 +130,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testFindByIdTrainingFound() {
+    void findByIdTrainingFound() {
         Training training = new Training();
         training.setTrainingDate(new Date());
         training.setTrainee(null);
@@ -146,7 +146,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testFindByIdTrainingNotFound() {
+    void findByIdTrainingNotFound() {
         when(entityManager.find(Training.class, 1)).thenReturn(null);
 
         Optional<Training> result = trainingRepository.findById(1);
@@ -155,7 +155,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testFindAll() {
+    void findAll() {
         Query query = mock(Query.class);
         when(entityManager.createNativeQuery(anyString())).thenReturn(query);
 
@@ -165,7 +165,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testUpdateTrainer_Success() {
+    void updateTrainer_Success() {
         when(entityManager.getTransaction()).thenReturn(mock(EntityTransaction.class));
         when(entityManager.find(Training.class, 1)).thenReturn(new Training());
         when(trainerRepository.findByUsername("trainerUsername")).thenReturn(Optional.of(new Trainer()));
@@ -177,7 +177,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testUpdateTrainerTrainingNotFound() {
+    void updateTrainerTrainingNotFound() {
         when(entityManager.getTransaction()).thenReturn(mock(EntityTransaction.class));
         when(entityManager.find(Training.class, 1)).thenReturn(null);
 
@@ -188,7 +188,7 @@ class TrainingRepositoryImplTest {
 
 
     @Test
-    void testUpdateTrainerTrainerNotFound() {
+    void updateTrainerTrainerNotFound() {
         when(entityManager.getTransaction()).thenReturn(mock(EntityTransaction.class));
         when(entityManager.find(Training.class, 1)).thenReturn(new Training());
         when(trainerRepository.findByUsername("trainerUsername")).thenReturn(Optional.empty());
@@ -200,7 +200,7 @@ class TrainingRepositoryImplTest {
 
 
     @Test
-    void testGetByCriteria() {
+    void getByCriteria() {
         CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class);
         when(entityManager.getCriteriaBuilder()).thenReturn(criteriaBuilder);
 
@@ -243,7 +243,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testGetByCriteriaNoResults() {
+    void getByCriteriaNoResults() {
         CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class);
         when(entityManager.getCriteriaBuilder()).thenReturn(criteriaBuilder);
 
@@ -284,7 +284,7 @@ class TrainingRepositoryImplTest {
     }
 
     @Test
-    void testGetByCriteriaException() {
+    void getByCriteriaException() {
         CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class);
         when(entityManager.getCriteriaBuilder()).thenReturn(criteriaBuilder);
 

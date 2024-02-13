@@ -31,7 +31,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testGetAll() {
+    void getAll() {
         when(userRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<User> result = userService.getAll();
@@ -41,7 +41,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testGetOne() {
+    void getOne() {
         when(userRepository.findById(1)).thenReturn(Optional.of(new User()));
 
         User result = userService.getOne(1);
@@ -50,7 +50,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testGetOneNotFound() {
+    void getOneNotFound() {
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
         User result = userService.getOne(1);
@@ -60,7 +60,7 @@ class UserServiceImplTest {
 
 
     @Test
-    void testAddRepositoryError() {
+    void addRepositoryError() {
         when(userRepository.create(any())).thenReturn(Optional.empty());
 
         User result = userService.add(new User());
@@ -69,7 +69,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testUpdate() {
+    void update() {
         when(userRepository.update(any())).thenReturn(Optional.of(new User()));
 
         User result = userService.update(new User());
@@ -78,7 +78,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testUpdateRepositoryError() {
+    void updateRepositoryError() {
         when(userRepository.update(any())).thenReturn(Optional.empty());
 
         User result = userService.update(new User());
@@ -87,7 +87,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testDelete() {
+    void delete() {
         when(userRepository.findById(1)).thenReturn(Optional.of(new User()));
 
         Boolean result = userService.delete(1);
@@ -97,7 +97,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testDeleteNotFound() {
+    void deleteNotFound() {
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
         Boolean result = userService.delete(1);
@@ -107,7 +107,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testChangePassword() {
+    void changePassword() {
         when(userRepository.changePassword(1, "newPassword")).thenReturn(Optional.of(true));
 
         Boolean result = userService.changePassword(1, "newPassword");
@@ -116,7 +116,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testChangePasswordRepositoryError() {
+    void changePasswordRepositoryError() {
         when(userRepository.changePassword(1, "newPassword")).thenReturn(Optional.empty());
 
         Boolean result = userService.changePassword(1, "newPassword");
@@ -126,7 +126,7 @@ class UserServiceImplTest {
 
 
     @Test
-    void testFindByUsernameAndPasswordNotFound() {
+    void findByUsernameAndPasswordNotFound() {
         when(userRepository.findByUsername("nonexistentUser")).thenReturn(Optional.empty());
 
         User result = userService.findByUsernameAndPassword("nonexistentUser", "testPassword");

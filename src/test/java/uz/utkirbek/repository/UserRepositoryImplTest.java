@@ -29,7 +29,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    void testCreateUserSuccess() {
+    void createUserSuccess() {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(entityManager.getTransaction()).thenReturn(transaction);
 
@@ -45,7 +45,7 @@ class UserRepositoryImplTest {
 
 
     @Test
-    void testFindByIdUserFound() {
+    void findByIdUserFound() {
         User user = new User();
         when(entityManager.find(User.class, 1)).thenReturn(user);
 
@@ -55,7 +55,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    void testFindByIdUserNotFound() {
+    void findByIdUserNotFound() {
         when(entityManager.find(User.class, 1)).thenReturn(null);
 
         Optional<User> result = userRepository.findById(1);
@@ -64,7 +64,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    void testFindAll() {
+    void findAll() {
         Query query = mock(Query.class);
         when(entityManager.createNativeQuery(anyString())).thenReturn(query);
 
@@ -74,7 +74,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    void testUpdateUser() {
+    void updateUser() {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(entityManager.getTransaction()).thenReturn(transaction);
         Optional<User> result = userRepository.update(new User());
@@ -83,7 +83,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    void testDeleteUser() {
+    void deleteUser() {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(entityManager.getTransaction()).thenReturn(transaction);
 
@@ -94,7 +94,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    void testFindByUsernameUserFound() {
+    void findByUsernameUserFound() {
         TypedQuery<User> typedQuery = mock(TypedQuery.class);
         when(entityManager.createQuery(any(), eq(User.class))).thenReturn(typedQuery);
         when(typedQuery.getSingleResult()).thenReturn(new User());
@@ -105,7 +105,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    void testFindByUsernameUserNotFound() {
+    void findByUsernameUserNotFound() {
         TypedQuery<User> typedQuery = mock(TypedQuery.class);
         when(entityManager.createQuery(any(), eq(User.class))).thenReturn(typedQuery);
         when(typedQuery.getSingleResult()).thenThrow(new NoResultException());
@@ -117,7 +117,7 @@ class UserRepositoryImplTest {
 
 
     @Test
-    void testChangeStatusSuccess() {
+    void changeStatusSuccess() {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(entityManager.getTransaction()).thenReturn(transaction);
 
@@ -136,7 +136,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    void testChangeStatusUserNotFound() {
+    void changeStatusUserNotFound() {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(entityManager.getTransaction()).thenReturn(transaction);
 

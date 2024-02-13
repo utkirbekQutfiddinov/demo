@@ -48,7 +48,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    void testCreateTrainee_Success() {
+    void createTrainee_Success() {
         String firstName = "utkirbek";
         String lastName = "qutfiddinov";
         TraineeDto traineeDto = new TraineeDto(firstName, lastName, null, null);
@@ -67,7 +67,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    void testCreateTrainee_Failure() {
+    void createTrainee_Failure() {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(entityManager.getTransaction()).thenReturn(transaction);
 

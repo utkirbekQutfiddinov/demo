@@ -52,7 +52,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testRegister_Success() {
+    void register_Success() {
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
 
@@ -74,7 +74,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testRegister_BadRequest() {
+    void register_BadRequest() {
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
 
@@ -94,7 +94,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testRegister_ErrorDuringCreating() {
+    void register_ErrorDuringCreating() {
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
 
@@ -116,7 +116,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testRegister_InternalServerError() {
+    void register_InternalServerError() {
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
 
@@ -138,7 +138,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testGetByUsername_Success() {
+    void getByUsername_Success() {
         String username = "utkir";
 
         String firstname = "utkirbek";
@@ -157,7 +157,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testGetByUsername_NotFound() {
+    void getByUsername_NotFound() {
         String username = "utkir";
 
         when(trainerService.getByUsername(username)).thenReturn(null);
@@ -169,7 +169,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testGetByUsername_InternaServerError() {
+    void getByUsername_InternaServerError() {
         String username = "utkir";
 
         Trainer trainer = new Trainer();
@@ -183,7 +183,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testUpdateProfile_Success() {
+    void updateProfile_Success() {
 
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
@@ -210,7 +210,7 @@ class TrainerControllerTest {
 
 
     @Test
-    void testUpdateProfile_BadRequest() {
+    void updateProfile_BadRequest() {
 
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
@@ -236,7 +236,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testUpdateProfile_TrainerNotFound() {
+    void updateProfile_TrainerNotFound() {
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
 
@@ -261,7 +261,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testUpdateProfile_InternalServerError() {
+    void updateProfile_InternalServerError() {
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
 
@@ -284,7 +284,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testGetTrainings_Succes() {
+    void getTrainings_Succes() {
         String username = "utkirbek";
         LocalDate periodFrom = LocalDate.now().minusDays(7);
         LocalDate periodTo = LocalDate.now();
@@ -297,7 +297,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testGetTrainings_InternalServerError() {
+    void getTrainings_InternalServerError() {
         String username = "utkirbek";
         LocalDate periodFrom = LocalDate.now().minusDays(7);
         LocalDate periodTo = LocalDate.now();
@@ -312,7 +312,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testChangeStatus_Success() {
+    void changeStatus_Success() {
         String username = "utkirbek";
         Boolean isActive = true;
 
@@ -326,7 +326,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testChangeStatus_BadRequest() {
+    void changeStatus_BadRequest() {
         String username = null;
         Boolean isActive = true;
 
@@ -339,7 +339,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void testChangeStatus_NotChanged() {
+    void changeStatus_NotChanged() {
         String username = "utkirbek";
         Boolean isActive = true;
 

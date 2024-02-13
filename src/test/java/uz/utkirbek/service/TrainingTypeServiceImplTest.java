@@ -31,7 +31,7 @@ class TrainingTypeServiceImplTest {
     }
 
     @Test
-    void testGetAll() {
+    void getAll() {
         when(trainingTypeRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<TrainingType> result = trainingTypeService.getAll();
@@ -41,7 +41,7 @@ class TrainingTypeServiceImplTest {
     }
 
     @Test
-    void testGetOne() {
+    void getOne() {
         when(trainingTypeRepository.findById(1)).thenReturn(Optional.of(new TrainingType()));
 
         TrainingType result = trainingTypeService.getOne(1);
@@ -50,7 +50,7 @@ class TrainingTypeServiceImplTest {
     }
 
     @Test
-    void testGetOneNotFound() {
+    void getOneNotFound() {
         when(trainingTypeRepository.findById(1)).thenReturn(Optional.empty());
 
         TrainingType result = trainingTypeService.getOne(1);
@@ -59,7 +59,7 @@ class TrainingTypeServiceImplTest {
     }
 
     @Test
-    void testAdd() {
+    void add() {
         when(trainingTypeRepository.create(any())).thenReturn(Optional.of(new TrainingType()));
 
         TrainingType result = trainingTypeService.add(new TrainingType());
@@ -68,7 +68,7 @@ class TrainingTypeServiceImplTest {
     }
 
     @Test
-    void testAddRepositoryError() {
+    void addRepositoryError() {
         when(trainingTypeRepository.create(any())).thenReturn(Optional.empty());
 
         TrainingType result = trainingTypeService.add(new TrainingType());
@@ -77,7 +77,7 @@ class TrainingTypeServiceImplTest {
     }
 
     @Test
-    void testGetByName() {
+    void getByName() {
         when(trainingTypeRepository.findByName("TrainingType")).thenReturn(Optional.of(new TrainingType()));
 
         TrainingType result = trainingTypeService.getByName("TrainingType");
@@ -86,7 +86,7 @@ class TrainingTypeServiceImplTest {
     }
 
     @Test
-    void testGetByNameNotFound() {
+    void getByNameNotFound() {
         when(trainingTypeRepository.findByName("TrainingType")).thenReturn(Optional.empty());
 
         TrainingType result = trainingTypeService.getByName("TrainingType");

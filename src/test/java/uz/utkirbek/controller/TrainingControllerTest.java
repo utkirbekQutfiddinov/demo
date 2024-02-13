@@ -34,7 +34,7 @@ public class TrainingControllerTest {
     }
 
     @Test
-    public void testAdd_Success() {
+    public void add_Success() {
         TrainingDto validDto = new TrainingDto();
         validDto.setDate(new Date());
         validDto.setDuration(60);
@@ -51,7 +51,7 @@ public class TrainingControllerTest {
     }
 
     @Test
-    public void testAdd_BadRequest() {
+    public void add_BadRequest() {
         TrainingDto invalidDto = new TrainingDto();
 
         ResponseEntity<String> response = trainingController.add(invalidDto);
@@ -61,7 +61,7 @@ public class TrainingControllerTest {
     }
 
     @Test
-    public void testAdd_Failure() {
+    public void add_Failure() {
         TrainingDto validDto = new TrainingDto();
         validDto.setDate(new Date());
         validDto.setDuration(60);
@@ -78,7 +78,7 @@ public class TrainingControllerTest {
     }
 
     @Test
-    public void testUpdateTrainerList_ValidTrainingUpdateDto_ReturnsSuccess() {
+    public void updateTrainerList_ValidTrainingUpdateDto_ReturnsSuccess() {
         TrainingUpdateDto validDto = new TrainingUpdateDto();
         validDto.setTrainingId(1);
         validDto.setTrainerUsername("newTrainerUsername");
@@ -92,7 +92,7 @@ public class TrainingControllerTest {
     }
 
     @Test
-    public void testUpdateTrainerList_InvalidTrainingUpdateDto_ReturnsBadRequest() {
+    public void updateTrainerList_InvalidTrainingUpdateDto_ReturnsBadRequest() {
         TrainingUpdateDto invalidDto = new TrainingUpdateDto(); // missing required fields
 
         ResponseEntity<String> response = trainingController.updateTrainerList(invalidDto);
@@ -102,7 +102,7 @@ public class TrainingControllerTest {
     }
 
     @Test
-    public void testUpdateTrainerList_InternalServerError() {
+    public void updateTrainerList_InternalServerError() {
         TrainingUpdateDto validDto = new TrainingUpdateDto();
         validDto.setTrainingId(1);
         validDto.setTrainerUsername("newTrainerUsername");

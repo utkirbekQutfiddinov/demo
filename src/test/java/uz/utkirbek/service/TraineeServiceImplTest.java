@@ -41,7 +41,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testGetAll() {
+    void getAll() {
         when(traineeRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<Trainee> result = traineeService.getAll();
@@ -51,7 +51,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testGetOne() {
+    void getOne() {
         when(traineeRepository.findById(1)).thenReturn(Optional.of(new Trainee()));
 
         Trainee result = traineeService.getOne(1);
@@ -60,7 +60,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testGetOneNotFound() {
+    void getOneNotFound() {
         when(traineeRepository.findById(1)).thenReturn(Optional.empty());
 
         Trainee result = traineeService.getOne(1);
@@ -69,7 +69,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testAdd() {
+    void add() {
         when(traineeRepository.create(any())).thenReturn(Optional.of(new Trainee()));
 
         Trainee result = traineeService.add(new TraineeDto());
@@ -78,7 +78,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testAddRepositoryError() {
+    void addRepositoryError() {
         when(traineeRepository.create(any())).thenReturn(Optional.empty());
 
         Trainee result = traineeService.add(new TraineeDto());
@@ -87,7 +87,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testUpdate() {
+    void update() {
         when(traineeRepository.update(any())).thenReturn(Optional.of(new Trainee()));
 
         Trainee result = traineeService.update(new Trainee());
@@ -96,7 +96,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testUpdateRepositoryError() {
+    void updateRepositoryError() {
         when(traineeRepository.update(any())).thenReturn(Optional.empty());
 
         Trainee result = traineeService.update(new Trainee());
@@ -105,7 +105,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testDelete() {
+    void delete() {
         when(traineeRepository.findById(1)).thenReturn(Optional.of(new Trainee()));
 
         boolean result = traineeService.delete(1);
@@ -114,7 +114,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testDeleteNotFound() {
+    void deleteNotFound() {
         when(traineeRepository.findById(1)).thenReturn(Optional.empty());
 
         boolean result = traineeService.delete(1);
@@ -123,7 +123,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testGetByUsername() {
+    void getByUsername() {
         when(traineeRepository.findByUsername("username")).thenReturn(Optional.of(new Trainee()));
 
         Trainee result = traineeService.getByUsername("username");
@@ -132,7 +132,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testGetByUsernameNotFound() {
+    void getByUsernameNotFound() {
         when(traineeRepository.findByUsername("username")).thenReturn(Optional.empty());
 
         Trainee result = traineeService.getByUsername("username");
@@ -141,7 +141,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testChangeStatus() {
+    void changeStatus() {
         when(userRepository.changeStatus("username", true)).thenReturn(Optional.of(true));
 
         boolean result = traineeService.changeStatus("username", true);
@@ -150,7 +150,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testChangeStatusRepositoryError() {
+    void changeStatusRepositoryError() {
         when(userRepository.changeStatus("username", true)).thenReturn(Optional.empty());
 
         boolean result = traineeService.changeStatus("username", true);
@@ -159,7 +159,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testGetNotAssignedAcitiveTrainers() {
+    void getNotAssignedAcitiveTrainers() {
         when(traineeRepository.getNotAssignedActiveTrainers("username")).thenReturn(new ArrayList<>());
 
         List<TraineeTrainerResponse> result = traineeService.getNotAssignedAcitiveTrainers("username");

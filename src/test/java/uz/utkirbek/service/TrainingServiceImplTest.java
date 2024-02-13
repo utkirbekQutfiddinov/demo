@@ -34,7 +34,7 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void testGetAll() {
+    void getAll() {
         when(trainingRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<Training> result = trainingService.getAll();
@@ -44,7 +44,7 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void testGetOne() {
+    void getOne() {
         when(trainingRepository.findById(1)).thenReturn(Optional.of(new Training()));
 
         Training result = trainingService.getOne(1);
@@ -53,7 +53,7 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void testGetOneNotFound() {
+    void getOneNotFound() {
         when(trainingRepository.findById(1)).thenReturn(Optional.empty());
 
         Training result = trainingService.getOne(1);
@@ -62,7 +62,7 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void testAdd() {
+    void add() {
         when(trainingRepository.create(any())).thenReturn(Optional.of(new Training()));
 
         Training result = trainingService.add(new TrainingDto());
@@ -71,7 +71,7 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void testAddRepositoryError() {
+    void addRepositoryError() {
         when(trainingRepository.create(any())).thenReturn(Optional.empty());
 
         Training result = trainingService.add(new TrainingDto());
@@ -80,7 +80,7 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void testGetByCriteria() {
+    void getByCriteria() {
         when(trainingRepository.getByCriteria(any())).thenReturn(new ArrayList<>());
 
         List<TrainingResponse> result = trainingService.getByCriteria(new TrainingFiltersDto());
@@ -90,7 +90,7 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void testUpdateTrainer() {
+    void updateTrainer() {
         when(trainingRepository.updateTrainer(1, "trainerUsername")).thenReturn(Optional.of(true));
 
         Boolean result = trainingService.updateTrainer(1, "trainerUsername");
@@ -99,7 +99,7 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void testUpdateTrainerRepositoryError() {
+    void updateTrainerRepositoryError() {
         when(trainingRepository.updateTrainer(1, "trainerUsername")).thenReturn(Optional.empty());
 
         Boolean result = trainingService.updateTrainer(1, "trainerUsername");
