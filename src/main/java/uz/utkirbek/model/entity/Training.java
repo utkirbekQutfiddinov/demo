@@ -33,4 +33,10 @@ public class Training implements Serializable {
     @Column(nullable = false)
     private Integer duration;
 
+    public Training(int id, String name, Integer duration, Date trainingDate) {
+        this.id = id;
+        this.name = name;
+        this.trainingDate = trainingDate;
+        this.duration = duration;
+    }
 }
