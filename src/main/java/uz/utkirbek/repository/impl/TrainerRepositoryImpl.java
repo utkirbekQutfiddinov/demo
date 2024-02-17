@@ -93,23 +93,28 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public Optional<Trainer> update(Trainer item) {
-        item = entityManager.merge(item);
-        return Optional.ofNullable(item);
+        try {
+            item = entityManager.merge(item);
+            return Optional.ofNullable(item);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public Optional<Trainer> findByUsername(String username) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
-        Root<Trainer> trainerRoot = criteriaQuery.from(Trainer.class);
-
-        Join<Trainer, User> userJoin = trainerRoot.join("user", JoinType.LEFT);
-
-
-        Predicate usernamePredicate = criteriaBuilder.equal(userJoin.get("username"), username);
-        criteriaQuery.where(usernamePredicate);
 
         try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
+            Root<Trainer> trainerRoot = criteriaQuery.from(Trainer.class);
+
+            Join<Trainer, User> userJoin = trainerRoot.join("user", JoinType.LEFT);
+
+
+            Predicate usernamePredicate = criteriaBuilder.equal(userJoin.get("username"), username);
+            criteriaQuery.where(usernamePredicate);
+
             Trainer trainer = entityManager.createQuery(criteriaQuery).getSingleResult();
             return Optional.ofNullable(trainer);
         } catch (NoResultException e) {

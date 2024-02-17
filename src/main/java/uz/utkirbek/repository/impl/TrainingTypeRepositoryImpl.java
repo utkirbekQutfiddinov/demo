@@ -10,6 +10,7 @@ import uz.utkirbek.model.entity.TrainingType;
 import uz.utkirbek.model.entity.User;
 import uz.utkirbek.repository.TrainingTypeRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,27 +43,36 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
 
     @Override
     public Optional<TrainingType> findById(int id) {
-        TrainingType type = entityManager.find(TrainingType.class, id);
-        return type == null ? Optional.empty() : Optional.ofNullable(type);
+        try {
+            TrainingType type = entityManager.find(TrainingType.class, id);
+            return type == null ? Optional.empty() : Optional.ofNullable(type);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public List<TrainingType> findAll() {
-        Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
-        return nativeQuery.getResultList();
+        try {
+            Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
+            return nativeQuery.getResultList();
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     @Override
     public Optional<TrainingType> findByName(String name) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<TrainingType> criteriaQuery = criteriaBuilder.createQuery(TrainingType.class);
-        Root<TrainingType> root = criteriaQuery.from(TrainingType.class);
-
-        criteriaQuery.where(criteriaBuilder.equal(root.get("name"), name));
-
-        TypedQuery<TrainingType> typedQuery = entityManager.createQuery(criteriaQuery);
 
         try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<TrainingType> criteriaQuery = criteriaBuilder.createQuery(TrainingType.class);
+            Root<TrainingType> root = criteriaQuery.from(TrainingType.class);
+
+            criteriaQuery.where(criteriaBuilder.equal(root.get("name"), name));
+
+            TypedQuery<TrainingType> typedQuery = entityManager.createQuery(criteriaQuery);
+
             TrainingType result = typedQuery.getSingleResult();
             return Optional.ofNullable(result);
         } catch (NoResultException e) {
@@ -72,21 +82,22 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
 
     @Override
     public Optional<TrainingType> findByUsername(String username) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<TrainingType> criteriaQuery = criteriaBuilder.createQuery(TrainingType.class);
-        Root<TrainingType> trainingTypeRoot = criteriaQuery.from(TrainingType.class);
-
-        Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
-        Root<Trainer> trainerRoot = subquery.from(Trainer.class);
-        Join<Trainer, User> trainerUserJoin = trainerRoot.join("user", JoinType.LEFT);
-        subquery.select(trainerRoot.get("trainingType").get("id"))
-                .where(criteriaBuilder.equal(trainerUserJoin.get("username"), username));
-
-        criteriaQuery.select(trainingTypeRoot)
-                .where(criteriaBuilder.equal(trainingTypeRoot.get("id"), subquery));
-
-        TypedQuery<TrainingType> typedQuery = entityManager.createQuery(criteriaQuery);
         try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<TrainingType> criteriaQuery = criteriaBuilder.createQuery(TrainingType.class);
+            Root<TrainingType> trainingTypeRoot = criteriaQuery.from(TrainingType.class);
+
+            Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
+            Root<Trainer> trainerRoot = subquery.from(Trainer.class);
+            Join<Trainer, User> trainerUserJoin = trainerRoot.join("user", JoinType.LEFT);
+            subquery.select(trainerRoot.get("trainingType").get("id"))
+                    .where(criteriaBuilder.equal(trainerUserJoin.get("username"), username));
+
+            criteriaQuery.select(trainingTypeRoot)
+                    .where(criteriaBuilder.equal(trainingTypeRoot.get("id"), subquery));
+
+            TypedQuery<TrainingType> typedQuery = entityManager.createQuery(criteriaQuery);
+
             TrainingType result = typedQuery.getSingleResult();
             return Optional.ofNullable(result);
         } catch (NoResultException e) {

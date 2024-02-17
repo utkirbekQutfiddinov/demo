@@ -9,6 +9,7 @@ import uz.utkirbek.repository.TrainingRepository;
 import uz.utkirbek.repository.UserRepository;
 import uz.utkirbek.service.TraineeService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,44 +32,76 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public Trainee getOne(int id) {
-        Optional<Trainee> optional = traineeRepository.findById(id);
-        return optional.orElse(null);
+        try {
+            Optional<Trainee> optional = traineeRepository.findById(id);
+            return optional.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Trainee add(TraineeDto bean) {
-        return traineeRepository.create(bean).orElse(null);
+        try {
+            Optional<Trainee> trainee = traineeRepository.create(bean);
+            return trainee.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Trainee update(Trainee bean) {
-        return traineeRepository.update(bean).orElse(null);
+        try {
+            Optional<Trainee> update = traineeRepository.update(bean);
+            return update.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Boolean delete(int id) {
-        Trainee trainee = getOne(id);
-        if (trainee == null) {
+        try {
+            Trainee trainee = getOne(id);
+            if (trainee == null) {
+                return false;
+            }
+            traineeRepository.delete(trainee);
+            return true;
+        } catch (Exception e) {
             return false;
         }
-        traineeRepository.delete(trainee);
-        return true;
     }
 
     @Override
     public Trainee getByUsername(String username) {
-        return traineeRepository.findByUsername(username).orElse(null);
+        try {
+            Optional<Trainee> byUsername = traineeRepository.findByUsername(username);
+            return byUsername.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Boolean changeStatus(String username, Boolean isActive) {
-        Optional<Boolean> isChanged = userRepository.changeStatus(username, isActive);
-        return isChanged.orElse(false);
+        try {
+            Optional<Boolean> isChanged = userRepository.changeStatus(username, isActive);
+            return isChanged.orElse(false);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
     public List<TraineeTrainerResponse> getNotAssignedAcitiveTrainers(String username) {
-        return traineeRepository.getNotAssignedActiveTrainers(username);
+        try {
+            List<TraineeTrainerResponse> notAssignedActiveTrainers = traineeRepository.getNotAssignedActiveTrainers(username);
+            return notAssignedActiveTrainers;
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
 

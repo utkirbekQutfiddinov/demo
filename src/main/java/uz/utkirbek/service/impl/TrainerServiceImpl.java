@@ -8,6 +8,7 @@ import uz.utkirbek.repository.TrainingRepository;
 import uz.utkirbek.repository.UserRepository;
 import uz.utkirbek.service.TrainerService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,33 +26,61 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public List<Trainer> getAll() {
-        return repository.findAll();
+        try {
+            List<Trainer> all = repository.findAll();
+            return all;
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     @Override
     public Trainer getOne(int id) {
-        Optional<Trainer> optional = repository.findById(id);
-        return optional.orElse(null);
+        try {
+            Optional<Trainer> optional = repository.findById(id);
+            return optional.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Trainer add(TrainerDto bean) {
-        return repository.create(bean).orElse(null);
+        try {
+            Optional<Trainer> trainerOptional = repository.create(bean);
+            return trainerOptional.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Trainer update(Trainer bean) {
-        return repository.update(bean).orElse(null);
+        try {
+            Optional<Trainer> update = repository.update(bean);
+            return update.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Trainer getByUsername(String username) {
-        return repository.findByUsername(username).orElse(null);
+        try {
+            Optional<Trainer> byUsername = repository.findByUsername(username);
+            return byUsername.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Boolean changeStatus(String username, Boolean isActive) {
-        Optional<Boolean> isChanged = userRepository.changeStatus(username, isActive);
-        return isChanged.orElse(false);
+        try {
+            Optional<Boolean> isChanged = userRepository.changeStatus(username, isActive);
+            return isChanged.orElse(false);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

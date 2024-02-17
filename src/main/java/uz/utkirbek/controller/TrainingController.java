@@ -3,7 +3,6 @@ package uz.utkirbek.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.utkirbek.model.dto.TrainingDto;
@@ -26,12 +25,12 @@ public class TrainingController {
     @PostMapping
     public ResponseEntity<String> add(@RequestBody TrainingDto dto) {
 
-        if (!isValidTrainingDto(dto)) {
-            LOGGER.error("Empty parameters: " + dto);
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(400));
-        }
-
         try {
+            if (!isValidTrainingDto(dto)) {
+                LOGGER.error("Empty parameters: " + dto);
+                return new ResponseEntity<>("Empty parameters: " + dto, HttpStatus.BAD_REQUEST);
+            }
+
 
             Training training = trainingService.add(dto);
 
@@ -44,27 +43,9 @@ public class TrainingController {
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
 
-    }
-
-    @PutMapping
-    public ResponseEntity<String> updateTrainerList(@RequestBody TrainingUpdateDto dto) {
-
-        if (dto.getTrainingId() == null || dto.getTrainerUsername() == null) {
-            LOGGER.error("Empty parameters");
-            return new ResponseEntity<>("Empty parameters", HttpStatusCode.valueOf(400));
-        }
-
-        Boolean isChanged = trainingService.updateTrainer(dto.getTrainingId(), dto.getTrainerUsername());
-
-        if (!isChanged) {
-            LOGGER.trace("Error on changing trainer of training: " + dto);
-            return ResponseEntity.internalServerError().body("Error on changing trainer of training");
-        }
-
-        return ResponseEntity.ok("Success");
     }
 
     private boolean isValidTrainingDto(TrainingDto dto) {

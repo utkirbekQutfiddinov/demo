@@ -2,7 +2,7 @@ package uz.utkirbek.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.utkirbek.model.dto.TraineeDto;
@@ -40,36 +40,41 @@ public class TraineeController {
     @PostMapping
     public ResponseEntity<RegisterResponse> register(@RequestBody TraineeDto traineeDto) {
 
-        if (traineeDto == null || traineeDto.getFirstName() == null || traineeDto.getLastName() == null) {
-            LOGGER.error("Empty parameters: " + traineeDto);
-            return ResponseEntity.badRequest().body(null);
-        }
+        try {
+            if (traineeDto == null || traineeDto.getFirstName() == null || traineeDto.getLastName() == null) {
+                LOGGER.error("Empty parameters: " + traineeDto);
+                return ResponseEntity.badRequest().body(null);
+            }
 
-        Trainee addedTrainee = traineeService.add(traineeDto);
-        if (addedTrainee == null) {
+            Trainee addedTrainee = traineeService.add(traineeDto);
+            if (addedTrainee == null) {
+                LOGGER.error("Error during creation: " + traineeDto);
+                return ResponseEntity.internalServerError().body(null);
+            }
+
+            return ResponseEntity.ok(new RegisterResponse(addedTrainee.getUser().getUsername(),
+                    addedTrainee.getUser().getPassword()));
+        } catch (Exception e) {
             LOGGER.error("Error during creation: " + traineeDto);
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.internalServerError().body(null);
         }
-
-        return ResponseEntity.ok(new RegisterResponse(addedTrainee.getUser().getUsername(),
-                addedTrainee.getUser().getPassword()));
     }
 
     @GetMapping
     public ResponseEntity<TraineeResponse> getByUsername(@RequestParam String username) {
 
-        if (username == null) {
-            LOGGER.error("Empty parameters: username is null");
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(400));
-        }
-
-        Trainee trainee = traineeService.getByUsername(username);
-        if (trainee == null) {
-            LOGGER.error("Trainee does not exist by username: " + username);
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(404));
-        }
-
         try {
+            if (username == null) {
+                LOGGER.error("Empty parameters: username is null");
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
+
+            Trainee trainee = traineeService.getByUsername(username);
+            if (trainee == null) {
+                LOGGER.error("Trainee does not exist by username: " + username);
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+
             TraineeResponse response = new TraineeResponse();
 
             User traineeUser = trainee.getUser();
@@ -83,7 +88,7 @@ public class TraineeController {
             List<TraineeTrainerResponse> trainerResponses = getTrainerResponses(trainee.getTrainings());
             response.setTrainersList(trainerResponses);
 
-            return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.internalServerError().build();
@@ -93,55 +98,65 @@ public class TraineeController {
     @PutMapping
     public ResponseEntity<TraineeResponse> updateProfile(@RequestBody TraineeUpdateDto dto) {
 
-        if (!isValidDtoForUpdating(dto)) {
-            LOGGER.error("Empty parameters: " + dto);
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(400));
+        try {
+            if (!isValidDtoForUpdating(dto)) {
+                LOGGER.error("Empty parameters: " + dto);
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
+
+            Trainee trainee = traineeService.getByUsername(dto.getUsername());
+            if (trainee == null) {
+                LOGGER.error("Trainee not found: username=" + dto.getUsername());
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+
+            trainee.setAddress(dto.getAddress());
+            trainee.setBirthdate(dto.getBirthDate());
+
+            traineeService.update(trainee);
+
+            User user = trainee.getUser();
+            user.setFirstname(dto.getFirstName());
+            user.setLastname(dto.getLastName());
+            user.setActive(dto.isActive());
+
+            userService.update(user);
+
+            return getByUsername(dto.getUsername());
+        } catch (Exception e) {
+            LOGGER.error("Error on updating: " + dto);
+            return ResponseEntity.internalServerError().build();
         }
-
-        Trainee trainee = traineeService.getByUsername(dto.getUsername());
-        if (trainee == null) {
-            LOGGER.error("Trainee not found: username=" + dto.getUsername());
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(404));
-        }
-
-        trainee.setAddress(dto.getAddress());
-        trainee.setBirthdate(dto.getBirthDate());
-
-        traineeService.update(trainee);
-
-        User user = trainee.getUser();
-        user.setFirstname(dto.getFirstName());
-        user.setLastname(dto.getLastName());
-        user.setActive(dto.isActive());
-
-        userService.update(user);
-
-        return getByUsername(dto.getUsername());
     }
 
 
     @DeleteMapping
     public ResponseEntity<String> delete(@RequestParam String username) {
 
-        if (username == null) {
-            LOGGER.error("Empty parameters: username is null");
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(400));
-        }
+        try {
+            if (username == null) {
+                LOGGER.error("Empty parameters: username is null");
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
 
-        Trainee trainee = traineeService.getByUsername(username);
+            Trainee trainee = traineeService.getByUsername(username);
 
-        if (trainee == null) {
-            LOGGER.error("Trainee not found: username = " + username);
-            return new ResponseEntity<>("Error", HttpStatusCode.valueOf(404));
-        }
+            if (trainee == null) {
+                LOGGER.error("Trainee not found: username = " + username);
+                return new ResponseEntity<>("Error", HttpStatus.NOT_FOUND);
+            }
 
-        Boolean isDeleted = traineeService.delete(trainee.getId());
+            Boolean isDeleted = traineeService.delete(trainee.getId());
 
-        if (isDeleted) {
-            return new ResponseEntity<>("Success", HttpStatusCode.valueOf(200));
-        } else {
-            LOGGER.error("Trainee deleting failed: username = " + username);
-            return new ResponseEntity<>("Error", HttpStatusCode.valueOf(501));
+            if (isDeleted) {
+                return new ResponseEntity<>("Success", HttpStatus.OK);
+            } else {
+                LOGGER.error("Trainee deleting failed: username = " + username);
+                return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            LOGGER.error("error on deleting: " + username);
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -152,14 +167,14 @@ public class TraineeController {
                                                                       @RequestParam(required = false) String trainerUsername,
                                                                       @RequestParam(required = false) String trainingType) {
 
-        if (username == null) {
-            LOGGER.error("Empty parameters: username is null");
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(400));
-        }
-
-        TrainingFiltersDto filter = new TrainingFiltersDto(username, periodFrom, periodTo, trainerUsername, trainingType);
-
         try {
+            if (username == null) {
+                LOGGER.error("Empty parameters: username is null");
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
+
+            TrainingFiltersDto filter = new TrainingFiltersDto(username, periodFrom, periodTo, trainerUsername, trainingType);
+
             List<TrainingResponse> trainings = trainingService.getByCriteria(filter);
 
             List<TraineeTrainingResponse> traineeTrainingsResponse = trainings.stream().map((training) -> {
@@ -185,7 +200,7 @@ public class TraineeController {
         try {
             if (username == null) {
                 LOGGER.error("Empty parameters: username is null");
-                return new ResponseEntity<>(null, HttpStatusCode.valueOf(400));
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
             List<TraineeTrainerResponse> notAssignedActiveTrainers = traineeService.getNotAssignedAcitiveTrainers(username);
 
@@ -200,17 +215,22 @@ public class TraineeController {
     @PatchMapping
     public ResponseEntity<String> changeStatus(@RequestParam String username, @RequestParam Boolean isActive) {
 
-        if (username == null || isActive == null) {
-            LOGGER.error("Empty parameters");
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(400));
-        }
+        try {
+            if (username == null || isActive == null) {
+                LOGGER.error("Empty parameters");
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
 
-        Boolean isChanged = traineeService.changeStatus(username, isActive);
-        if (!isChanged) {
+            Boolean isChanged = traineeService.changeStatus(username, isActive);
+            if (!isChanged) {
+                return ResponseEntity.internalServerError().build();
+            }
+
+            return ResponseEntity.ok("Success");
+        } catch (Exception e) {
+            LOGGER.error("error on changing status: " + username + ", status: " + isActive);
             return ResponseEntity.internalServerError().build();
         }
-
-        return ResponseEntity.ok("Success");
 
     }
 

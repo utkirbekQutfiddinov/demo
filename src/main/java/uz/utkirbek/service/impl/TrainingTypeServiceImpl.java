@@ -5,6 +5,7 @@ import uz.utkirbek.model.entity.TrainingType;
 import uz.utkirbek.repository.TrainingTypeRepository;
 import uz.utkirbek.service.TrainingTypeService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,23 +19,41 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
 
     @Override
     public List<TrainingType> getAll() {
-        return repository.findAll();
+        try {
+            List<TrainingType> all = repository.findAll();
+            return all;
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     @Override
     public TrainingType getOne(int id) {
-        Optional<TrainingType> optional = repository.findById(id);
-        return optional.orElse(null);
+        try {
+            Optional<TrainingType> optional = repository.findById(id);
+            return optional.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public TrainingType add(TrainingType bean) {
-        return repository.create(bean).orElse(null);
+        try {
+            Optional<TrainingType> trainingType = repository.create(bean);
+            return trainingType.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public TrainingType getByName(String name) {
-        Optional<TrainingType> optional = repository.findByName(name);
-        return optional.orElse(null);
+        try {
+            Optional<TrainingType> optional = repository.findByName(name);
+            return optional.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

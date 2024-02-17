@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import uz.utkirbek.model.entity.User;
 import uz.utkirbek.repository.UserRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,19 +44,32 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findById(int id) {
-        User user = entityManager.find(User.class, id);
-        return user == null ? Optional.empty() : Optional.ofNullable(user);
+        try {
+            User user = entityManager.find(User.class, id);
+            return user == null ? Optional.empty() : Optional.ofNullable(user);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public List<User> findAll() {
-        Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
-        return nativeQuery.getResultList();
+        try {
+            Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
+            return nativeQuery.getResultList();
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     @Override
     public Optional<User> update(User item) {
-        return create(item);
+        try {
+            Optional<User> userOptional = create(item);
+            return userOptional;
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     @Override

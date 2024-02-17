@@ -18,6 +18,7 @@ import uz.utkirbek.repository.TrainingRepository;
 import uz.utkirbek.repository.TrainingTypeRepository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,14 +82,22 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public Optional<Training> findById(int id) {
-        Training training = entityManager.find(Training.class, id);
-        return training == null ? Optional.empty() : Optional.ofNullable(training);
+        try {
+            Training training = entityManager.find(Training.class, id);
+            return training == null ? Optional.empty() : Optional.ofNullable(training);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public List<Training> findAll() {
-        Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
-        return nativeQuery.getResultList();
+        try {
+            Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
+            return nativeQuery.getResultList();
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     @Override
@@ -127,77 +136,81 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     public List<TrainingResponse> getByCriteria(TrainingFiltersDto filter) {
 
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);
-        Root<Training> trainingRoot = criteriaQuery.from(Training.class);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);
+            Root<Training> trainingRoot = criteriaQuery.from(Training.class);
 
-        Join<Training, Trainer> trainerJoin = trainingRoot.join("trainer", JoinType.LEFT);
-        Join<Trainer, TrainingType> trainingTypeJoin = trainerJoin.join("trainingType", JoinType.LEFT);
-        Join<Trainer, User> userJoin = trainerJoin.join("user", JoinType.LEFT);
-        Join<Training, Trainee> traineeJoin = trainingRoot.join("trainee", JoinType.LEFT);
-        Join<Trainee, User> traineeUserJoin = traineeJoin.join("user", JoinType.LEFT);
+            Join<Training, Trainer> trainerJoin = trainingRoot.join("trainer", JoinType.LEFT);
+            Join<Trainer, TrainingType> trainingTypeJoin = trainerJoin.join("trainingType", JoinType.LEFT);
+            Join<Trainer, User> userJoin = trainerJoin.join("user", JoinType.LEFT);
+            Join<Training, Trainee> traineeJoin = trainingRoot.join("trainee", JoinType.LEFT);
+            Join<Trainee, User> traineeUserJoin = traineeJoin.join("user", JoinType.LEFT);
 
-        criteriaQuery.multiselect(
-                trainingRoot.get("id"),
-                trainingRoot.get("name"),
-                trainingRoot.get("duration"),
-                trainingRoot.get("trainingDate")
-        );
+            criteriaQuery.multiselect(
+                    trainingRoot.get("id"),
+                    trainingRoot.get("name"),
+                    trainingRoot.get("duration"),
+                    trainingRoot.get("trainingDate")
+            );
 
-        List<Predicate> predicates = new ArrayList<>();
+            List<Predicate> predicates = new ArrayList<>();
 
-        if (filter.getTraineeUsername() != null) {
-            predicates.add(criteriaBuilder.equal(traineeUserJoin.get("username"), filter.getTraineeUsername()));
-        }
-
-        if (filter.getPeriodFrom() != null) {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(trainingRoot.get("trainingDate"), filter.getPeriodFrom()));
-        }
-
-        if (filter.getPeriodTo() != null) {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(trainingRoot.get("trainingDate"), filter.getPeriodTo()));
-        }
-
-        if (filter.getTrainerUsername() != null) {
-            predicates.add(criteriaBuilder.equal(userJoin.get("username"), filter.getTrainerUsername()));
-        }
-
-        if (filter.getTrainingType() != null) {
-            predicates.add(criteriaBuilder.equal(trainingTypeJoin.get("name"), filter.getTrainingType()));
-        }
-
-
-        criteriaQuery.where(predicates.toArray(new Predicate[0]));
-
-        TypedQuery<Training> typedQuery = entityManager.createQuery(criteriaQuery);
-
-        List<Training> resultList = typedQuery.getResultList();
-
-        List<TrainingResponse> finalList = new ArrayList<>();
-        for (Training training : resultList) {
-            TrainingResponse resp = new TrainingResponse();
-            resp.setDate(training.getTrainingDate());
-            resp.setName(training.getName());
-            resp.setDuration(training.getDuration());
-
-            Trainee trainee = traineeRepository.findByTrainingId(training.getId());
-            if (trainee != null && trainee.getUser() != null) {
-                resp.setTraineeUsername(trainee.getUser().getUsername());
+            if (filter.getTraineeUsername() != null) {
+                predicates.add(criteriaBuilder.equal(traineeUserJoin.get("username"), filter.getTraineeUsername()));
             }
 
-            Trainer trainer = trainerRepository.findByTrainingId(training.getId());
-            if (trainer != null && trainer.getUser() != null) {
-                resp.setTrainerUsername(trainer.getUser().getUsername());
-
-                Optional<TrainingType> byUsername = trainingTypeRepository.findByUsername(trainer.getUser().getUsername());
-
-                byUsername.ifPresent(trainingType -> resp.setType(trainingType.getName()));
+            if (filter.getPeriodFrom() != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(trainingRoot.get("trainingDate"), filter.getPeriodFrom()));
             }
-            finalList.add(resp);
 
+            if (filter.getPeriodTo() != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(trainingRoot.get("trainingDate"), filter.getPeriodTo()));
+            }
+
+            if (filter.getTrainerUsername() != null) {
+                predicates.add(criteriaBuilder.equal(userJoin.get("username"), filter.getTrainerUsername()));
+            }
+
+            if (filter.getTrainingType() != null) {
+                predicates.add(criteriaBuilder.equal(trainingTypeJoin.get("name"), filter.getTrainingType()));
+            }
+
+
+            criteriaQuery.where(predicates.toArray(new Predicate[0]));
+
+            TypedQuery<Training> typedQuery = entityManager.createQuery(criteriaQuery);
+
+            List<Training> resultList = typedQuery.getResultList();
+
+            List<TrainingResponse> finalList = new ArrayList<>();
+            for (Training training : resultList) {
+                TrainingResponse resp = new TrainingResponse();
+                resp.setDate(training.getTrainingDate());
+                resp.setName(training.getName());
+                resp.setDuration(training.getDuration());
+
+                Trainee trainee = traineeRepository.findByTrainingId(training.getId());
+                if (trainee != null && trainee.getUser() != null) {
+                    resp.setTraineeUsername(trainee.getUser().getUsername());
+                }
+
+                Trainer trainer = trainerRepository.findByTrainingId(training.getId());
+                if (trainer != null && trainer.getUser() != null) {
+                    resp.setTrainerUsername(trainer.getUser().getUsername());
+
+                    Optional<TrainingType> byUsername = trainingTypeRepository.findByUsername(trainer.getUser().getUsername());
+
+                    byUsername.ifPresent(trainingType -> resp.setType(trainingType.getName()));
+                }
+                finalList.add(resp);
+
+            }
+
+            return finalList;
+        } catch (Exception e) {
+            return Collections.emptyList();
         }
-
-        return finalList;
     }
 
 }

@@ -16,6 +16,7 @@ import uz.utkirbek.repository.TrainingTypeRepository;
 import uz.utkirbek.repository.UserRepository;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,8 +90,12 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Optional<Trainee> update(Trainee item) {
-        item = entityManager.merge(item);
-        return Optional.ofNullable(item);
+        try {
+            item = entityManager.merge(item);
+            return Optional.ofNullable(item);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -129,39 +134,43 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public List<TraineeTrainerResponse> getNotAssignedActiveTrainers(String username) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<TraineeTrainerResponse> criteriaQuery = criteriaBuilder.createQuery(TraineeTrainerResponse.class);
-        Root<Trainer> trainerRoot = criteriaQuery.from(Trainer.class);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<TraineeTrainerResponse> criteriaQuery = criteriaBuilder.createQuery(TraineeTrainerResponse.class);
+            Root<Trainer> trainerRoot = criteriaQuery.from(Trainer.class);
 
-        Join<Trainer, User> userJoin = trainerRoot.join("user", JoinType.LEFT);
+            Join<Trainer, User> userJoin = trainerRoot.join("user", JoinType.LEFT);
 
-        Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
-        Root<Training> trainingRoot = subquery.from(Training.class);
-        Join<Training, Trainee> traineeJoin = trainingRoot.join("trainee", JoinType.LEFT);
-        Join<Trainee, User> traineeUserJoin = traineeJoin.join("user", JoinType.LEFT);
-        subquery.select(trainingRoot.get("trainer").get("id"))
-                .where(criteriaBuilder.equal(traineeUserJoin.get("username"), "trainee"));
+            Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
+            Root<Training> trainingRoot = subquery.from(Training.class);
+            Join<Training, Trainee> traineeJoin = trainingRoot.join("trainee", JoinType.LEFT);
+            Join<Trainee, User> traineeUserJoin = traineeJoin.join("user", JoinType.LEFT);
+            subquery.select(trainingRoot.get("trainer").get("id"))
+                    .where(criteriaBuilder.equal(traineeUserJoin.get("username"), "trainee"));
 
-        criteriaQuery.select(criteriaBuilder.construct(
-                TraineeTrainerResponse.class,
-                userJoin.get("username"),
-                userJoin.get("firstname"),
-                userJoin.get("lastname")
-        ))
-                .where(
-                        criteriaBuilder.isTrue(userJoin.get("isActive")),
-                        criteriaBuilder.not(trainerRoot.get("id").in(subquery))
-                );
+            criteriaQuery.select(criteriaBuilder.construct(
+                    TraineeTrainerResponse.class,
+                    userJoin.get("username"),
+                    userJoin.get("firstname"),
+                    userJoin.get("lastname")
+            ))
+                    .where(
+                            criteriaBuilder.isTrue(userJoin.get("isActive")),
+                            criteriaBuilder.not(trainerRoot.get("id").in(subquery))
+                    );
 
-        TypedQuery<TraineeTrainerResponse> typedQuery = entityManager.createQuery(criteriaQuery);
-        List<TraineeTrainerResponse> result = typedQuery.getResultList();
+            TypedQuery<TraineeTrainerResponse> typedQuery = entityManager.createQuery(criteriaQuery);
+            List<TraineeTrainerResponse> result = typedQuery.getResultList();
 
-        for (TraineeTrainerResponse item : result) {
-            Optional<TrainingType> typeOptional = trainingTypeRepository.findByUsername(item.getUsername());
-            typeOptional.ifPresent(item::setSpecialization);
+            for (TraineeTrainerResponse item : result) {
+                Optional<TrainingType> typeOptional = trainingTypeRepository.findByUsername(item.getUsername());
+                typeOptional.ifPresent(item::setSpecialization);
+            }
+
+            return result;
+        } catch (Exception e) {
+            return Collections.emptyList();
         }
-
-        return result;
 
     }
 

@@ -2,12 +2,13 @@ package uz.utkirbek.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.utkirbek.model.dto.TrainerDto;
 import uz.utkirbek.model.dto.TrainerUpdateDto;
 import uz.utkirbek.model.dto.TrainingFiltersDto;
+import uz.utkirbek.model.dto.TrainingUpdateDto;
 import uz.utkirbek.model.entity.Trainee;
 import uz.utkirbek.model.entity.Trainer;
 import uz.utkirbek.model.entity.TrainingType;
@@ -67,15 +68,15 @@ public class TrainerController {
     @GetMapping
     public ResponseEntity<TrainerResponse> getByUsername(@RequestParam String username) {
 
-        Trainer trainer = trainerService.getByUsername(username);
-        if (trainer == null) {
-            LOGGER.error("Trainer does not exist by username: " + username);
-            return ResponseEntity.notFound().build();
-        }
-
-        TrainerResponse response = new TrainerResponse();
-
         try {
+            Trainer trainer = trainerService.getByUsername(username);
+            if (trainer == null) {
+                LOGGER.error("Trainer does not exist by username: " + username);
+                return ResponseEntity.notFound().build();
+            }
+
+            TrainerResponse response = new TrainerResponse();
+
             User trainerUser = trainer.getUser();
             response.setActive(trainerUser.isActive());
             response.setFirstName(trainerUser.getFirstname());
@@ -87,28 +88,28 @@ public class TrainerController {
 
             List<TrainerTraineeResponse> trainerResponses = getTraineesList(trainingService.getByCriteria(filter));
             response.setTraineesList(trainerResponses);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
 
-        return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
     }
 
     @PutMapping
     public ResponseEntity<TrainerResponse> updateProfile(@RequestBody TrainerUpdateDto dto) {
 
-        if (!isValidTrainerDtoForUpdating(dto)) {
-            LOGGER.error("Empty parameters: " + dto);
-            return ResponseEntity.badRequest().build();
-        }
-
-        Trainer trainer = trainerService.getByUsername(dto.getUsername());
-        if (trainer == null) {
-            LOGGER.error("Trainer not found: username=" + dto.getUsername());
-            return ResponseEntity.notFound().build();
-        }
         try {
+            if (!isValidTrainerDtoForUpdating(dto)) {
+                LOGGER.error("Empty parameters: " + dto);
+                return ResponseEntity.badRequest().build();
+            }
+
+            Trainer trainer = trainerService.getByUsername(dto.getUsername());
+            if (trainer == null) {
+                LOGGER.error("Trainer not found: username=" + dto.getUsername());
+                return ResponseEntity.notFound().build();
+            }
 
             TrainingType trainingType = trainingTypeService.getByName(dto.getSpecialization().getName());
             trainer.setTrainingType(trainingType);
@@ -149,7 +150,7 @@ public class TrainerController {
                 try {
                     response.setDate(sdf.parse(training.getDate().toString()));
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    LOGGER.error(e.getMessage());
                 }
                 response.setType(training.getType());
                 response.setName(training.getName());
@@ -158,9 +159,32 @@ public class TrainerController {
                 return response;
             }).collect(Collectors.toList());
 
-            return new ResponseEntity<>(traineeTrainingsResponse, HttpStatusCode.valueOf(200));
+            return new ResponseEntity<>(traineeTrainingsResponse, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("/training-trainer")
+    public ResponseEntity<String> updateTrainerList(@RequestBody TrainingUpdateDto dto) {
+
+        try {
+            if (dto.getTrainingId() == null || dto.getTrainerUsername() == null) {
+                LOGGER.error("Empty parameters");
+                return new ResponseEntity<>("Empty parameters", HttpStatus.BAD_REQUEST);
+            }
+
+            Boolean isChanged = trainingService.updateTrainer(dto.getTrainingId(), dto.getTrainerUsername());
+
+            if (!isChanged) {
+                LOGGER.trace("Error on changing trainer of training: " + dto);
+                return ResponseEntity.internalServerError().body("Error on changing trainer of training");
+            }
+
+            return ResponseEntity.ok("Success");
+        } catch (Exception e) {
+            LOGGER.error("error on updating: " + dto);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -168,17 +192,23 @@ public class TrainerController {
     @PatchMapping
     public ResponseEntity<String> changeStatus(@RequestParam String username, @RequestParam Boolean isActive) {
 
-        if (username == null || isActive == null) {
-            LOGGER.error("Empty parameters");
-            return new ResponseEntity<>(null, HttpStatusCode.valueOf(400));
-        }
+        try {
+            if (username == null || isActive == null) {
+                LOGGER.error("Empty parameters");
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
 
-        Boolean isChanged = trainerService.changeStatus(username, isActive);
-        if (!isChanged) {
+            Boolean isChanged = trainerService.changeStatus(username, isActive);
+            if (!isChanged) {
+                LOGGER.error("error on chaning status: " + username + ", status: " + isActive);
+                return ResponseEntity.internalServerError().build();
+            }
+
+            return ResponseEntity.ok("Success");
+        } catch (Exception e) {
+            LOGGER.error("error on chaning status: " + username + ", status: " + isActive);
             return ResponseEntity.internalServerError().build();
         }
-
-        return ResponseEntity.ok("Success");
 
     }
 
