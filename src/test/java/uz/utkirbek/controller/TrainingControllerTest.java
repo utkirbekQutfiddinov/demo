@@ -76,42 +76,4 @@ public class TrainingControllerTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         verify(trainingService).add(validDto);
     }
-
-    @Test
-    public void updateTrainerList_ValidTrainingUpdateDto_ReturnsSuccess() {
-        TrainingUpdateDto validDto = new TrainingUpdateDto();
-        validDto.setTrainingId(1);
-        validDto.setTrainerUsername("newTrainerUsername");
-
-        when(trainingService.updateTrainer(validDto.getTrainingId(), validDto.getTrainerUsername())).thenReturn(true);
-
-        ResponseEntity<String> response = trainingController.updateTrainerList(validDto);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(trainingService).updateTrainer(validDto.getTrainingId(), validDto.getTrainerUsername());
-    }
-
-    @Test
-    public void updateTrainerList_InvalidTrainingUpdateDto_ReturnsBadRequest() {
-        TrainingUpdateDto invalidDto = new TrainingUpdateDto(); // missing required fields
-
-        ResponseEntity<String> response = trainingController.updateTrainerList(invalidDto);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(trainingService, Mockito.never()).updateTrainer(Mockito.anyInt(), Mockito.anyString());
-    }
-
-    @Test
-    public void updateTrainerList_InternalServerError() {
-        TrainingUpdateDto validDto = new TrainingUpdateDto();
-        validDto.setTrainingId(1);
-        validDto.setTrainerUsername("newTrainerUsername");
-
-        when(trainingService.updateTrainer(validDto.getTrainingId(), validDto.getTrainerUsername())).thenReturn(false);
-
-        ResponseEntity<String> response = trainingController.updateTrainerList(validDto);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        verify(trainingService).updateTrainer(validDto.getTrainingId(), validDto.getTrainerUsername());
-    }
 }

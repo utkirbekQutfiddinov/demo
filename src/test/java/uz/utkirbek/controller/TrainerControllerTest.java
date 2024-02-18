@@ -4,11 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uz.utkirbek.model.dto.TrainerDto;
 import uz.utkirbek.model.dto.TrainerUpdateDto;
+import uz.utkirbek.model.dto.TrainingUpdateDto;
 import uz.utkirbek.model.entity.Trainer;
 import uz.utkirbek.model.entity.TrainingType;
 import uz.utkirbek.model.entity.User;
@@ -24,6 +26,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class TrainerControllerTest {
@@ -349,6 +352,44 @@ class TrainerControllerTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertNull(response.getBody());
+    }
+
+    @Test
+    public void updateTrainerList_ValidTrainingUpdateDto_ReturnsSuccess() {
+        TrainingUpdateDto validDto = new TrainingUpdateDto();
+        validDto.setTrainingId(1);
+        validDto.setTrainerUsername("newTrainerUsername");
+
+        when(trainingService.updateTrainer(validDto.getTrainingId(), validDto.getTrainerUsername())).thenReturn(true);
+
+        ResponseEntity<String> response = trainerController.updateTrainerList(validDto);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(trainingService).updateTrainer(validDto.getTrainingId(), validDto.getTrainerUsername());
+    }
+
+    @Test
+    public void updateTrainerList_InvalidTrainingUpdateDto_ReturnsBadRequest() {
+        TrainingUpdateDto invalidDto = new TrainingUpdateDto(); // missing required fields
+
+        ResponseEntity<String> response = trainerController.updateTrainerList(invalidDto);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        verify(trainingService, Mockito.never()).updateTrainer(Mockito.anyInt(), Mockito.anyString());
+    }
+
+    @Test
+    public void updateTrainerList_InternalServerError() {
+        TrainingUpdateDto validDto = new TrainingUpdateDto();
+        validDto.setTrainingId(1);
+        validDto.setTrainerUsername("newTrainerUsername");
+
+        when(trainingService.updateTrainer(validDto.getTrainingId(), validDto.getTrainerUsername())).thenReturn(false);
+
+        ResponseEntity<String> response = trainerController.updateTrainerList(validDto);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        verify(trainingService).updateTrainer(validDto.getTrainingId(), validDto.getTrainerUsername());
     }
 }
 
