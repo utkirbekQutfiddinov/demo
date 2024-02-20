@@ -1,5 +1,6 @@
 package uz.utkirbek.service.impl;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.utkirbek.model.entity.User;
 import uz.utkirbek.repository.UserRepository;
@@ -12,9 +13,11 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository repository) {
+    public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -41,7 +44,7 @@ public class UserServiceImpl implements UserService {
     public User add(User bean) {
         try {
             bean.setUsername(generateUsername(bean.getFirstname(), bean.getLastname()));
-            bean.setPassword(generatePassword());
+            bean.setPassword(passwordEncoder.encode(generatePassword()));
             return repository.create(bean).orElse(null);
         } catch (Exception e) {
             return null;
@@ -51,6 +54,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(User bean) {
         try {
+            bean.setPassword(passwordEncoder.encode(bean.getPassword()));
             Optional<User> update = repository.update(bean);
             return update.orElse(null);
         } catch (Exception e) {
@@ -92,7 +96,7 @@ public class UserServiceImpl implements UserService {
             }
             User user = byUserName.get();
 
-            return user.getPassword().equals(password) ? user : null;
+            return passwordEncoder.matches(password, user.getPassword()) ? user : null;
         } catch (Exception e) {
             return null;
         }

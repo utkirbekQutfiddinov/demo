@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.model.entity.User;
 import uz.utkirbek.repository.UserRepository;
@@ -18,9 +19,11 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String SELECT_ALL = "select u.* from users u";
     private static final String SELECT_BY_USERNAME = "SELECT u FROM User u WHERE u.username = :username";
     private final EntityManager entityManager;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserRepositoryImpl(EntityManager entityManager) {
+    public UserRepositoryImpl(EntityManager entityManager, PasswordEncoder passwordEncoder) {
         this.entityManager = entityManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -31,6 +34,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         try {
             transaction.begin();
+            item.setPassword(passwordEncoder.encode(item.getPassword()));
             if (item.getId() == 0) {
                 entityManager.persist(item);
             } else {
@@ -65,6 +69,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> update(User item) {
         try {
+            item.setPassword(passwordEncoder.encode(item.getPassword()));
             Optional<User> userOptional = create(item);
             return userOptional;
         } catch (Exception e) {
@@ -109,7 +114,7 @@ public class UserRepositoryImpl implements UserRepository {
             transaction.begin();
 
             User user = entityManager.find(User.class, id);
-            user.setPassword(password);
+            user.setPassword(passwordEncoder.encode(password));
             entityManager.flush();
 
             return Optional.of(true);

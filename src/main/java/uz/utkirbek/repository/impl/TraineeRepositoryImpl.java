@@ -7,6 +7,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.model.dto.TraineeDto;
 import uz.utkirbek.model.entity.*;
@@ -26,6 +27,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     private final EntityManager entityManager;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final TrainingTypeRepository trainingTypeRepository;
 
     private final String SELECT_ALL = "select u.* from trainees u";
@@ -34,9 +36,10 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             " where t.id=:trainingId";
 
 
-    public TraineeRepositoryImpl(EntityManager entityManager, UserRepository userRepository, TrainingTypeRepository trainingTypeRepository) {
+    public TraineeRepositoryImpl(EntityManager entityManager, UserRepository userRepository, PasswordEncoder passwordEncoder, TrainingTypeRepository trainingTypeRepository) {
         this.entityManager = entityManager;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         this.trainingTypeRepository = trainingTypeRepository;
     }
 
@@ -53,7 +56,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             transaction.begin();
             User user = new User(item.getFirstName(), item.getLastName());
             user.setUsername(generateUsername(item.getFirstName(), item.getLastName()));
-            user.setPassword(generatePassword());
+            user.setPassword(passwordEncoder.encode(generatePassword()));
 
             Trainee trainee = new Trainee(user, item.getAddress(), item.getBirthDate());
 
@@ -91,6 +94,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     @Override
     public Optional<Trainee> update(Trainee item) {
         try {
+            item.getUser().setPassword(passwordEncoder.encode(item.getUser().getPassword()));
             item = entityManager.merge(item);
             return Optional.ofNullable(item);
         } catch (Exception e) {

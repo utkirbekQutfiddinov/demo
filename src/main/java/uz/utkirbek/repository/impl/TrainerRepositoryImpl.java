@@ -7,6 +7,7 @@ import jakarta.persistence.Query;
 import jakarta.persistence.criteria.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.model.dto.TrainerDto;
 import uz.utkirbek.model.entity.Trainer;
@@ -31,11 +32,13 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     private final TrainingTypeRepository trainingTypeRepository;
     private final UserRepository userRepository;
     private final EntityManager entityManager;
+    private final PasswordEncoder passwordEncoder;
 
-    public TrainerRepositoryImpl(TrainingTypeRepository trainingTypeRepository, UserRepository userRepository, EntityManager entityManager) {
+    public TrainerRepositoryImpl(TrainingTypeRepository trainingTypeRepository, UserRepository userRepository, EntityManager entityManager, PasswordEncoder passwordEncoder) {
         this.trainingTypeRepository = trainingTypeRepository;
         this.userRepository = userRepository;
         this.entityManager = entityManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -47,7 +50,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             transaction.begin();
             User user = new User(item.getFirstName(), item.getLastName());
             user.setUsername(generateUsername(item.getFirstName(), item.getLastName()));
-            user.setPassword(generatePassword());
+            user.setPassword(passwordEncoder.encode(generatePassword()));
 
             Optional<TrainingType> trainingType = trainingTypeRepository.findByName(item.getSpecialization().getName());
 
@@ -94,6 +97,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public Optional<Trainer> update(Trainer item) {
         try {
+            item.getUser().setPassword(passwordEncoder.encode(item.getUser().getPassword()));
             item = entityManager.merge(item);
             return Optional.ofNullable(item);
         } catch (Exception e) {
