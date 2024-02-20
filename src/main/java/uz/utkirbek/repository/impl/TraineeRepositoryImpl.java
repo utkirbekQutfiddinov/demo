@@ -57,6 +57,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             User user = new User(item.getFirstName(), item.getLastName());
             user.setUsername(generateUsername(item.getFirstName(), item.getLastName()));
             user.setPassword(passwordEncoder.encode(generatePassword()));
+            user.setActive(true);
 
             Trainee trainee = new Trainee(user, item.getAddress(), item.getBirthDate());
 

@@ -51,6 +51,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             User user = new User(item.getFirstName(), item.getLastName());
             user.setUsername(generateUsername(item.getFirstName(), item.getLastName()));
             user.setPassword(passwordEncoder.encode(generatePassword()));
+            user.setActive(true);
 
             Optional<TrainingType> trainingType = trainingTypeRepository.findByName(item.getSpecialization().getName());
 
