@@ -58,7 +58,7 @@ public class TrainerController {
             }
 
             return ResponseEntity.ok(new RegisterResponse(addedTrainer.getUser().getUsername(),
-                    addedTrainer.getUser().getPassword()));
+                    addedTrainer.getUser().getRawPassword()));
         } catch (Exception e) {
             LOGGER.error("Error: " + e.getMessage());
             return ResponseEntity.internalServerError().body(null);

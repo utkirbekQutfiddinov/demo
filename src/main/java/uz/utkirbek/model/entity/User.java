@@ -32,6 +32,9 @@ public class User implements Serializable {
             columnDefinition = "boolean DEFAULT true")
     private boolean isActive;
 
+    @Transient
+    private String rawPassword;
+
     public User(int id) {
         this.id = id;
     }

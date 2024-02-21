@@ -53,7 +53,7 @@ public class TraineeController {
             }
 
             return ResponseEntity.ok(new RegisterResponse(addedTrainee.getUser().getUsername(),
-                    addedTrainee.getUser().getPassword()));
+                    addedTrainee.getUser().getRawPassword()));
         } catch (Exception e) {
             LOGGER.error("Error during creation: " + traineeDto);
             return ResponseEntity.internalServerError().body(null);
