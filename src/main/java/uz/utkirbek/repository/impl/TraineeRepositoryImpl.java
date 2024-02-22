@@ -30,8 +30,8 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     private final PasswordEncoder passwordEncoder;
     private final TrainingTypeRepository trainingTypeRepository;
 
-    private final String SELECT_ALL = "select u.* from trainees u";
-    private final String SELECT_TRAINEE_BY_TRAINING_ID = "select t2.* from trainings t" +
+    private static final String SELECT_ALL = "select u.* from trainees u";
+    private static final String SELECT_TRAINEE_BY_TRAINING_ID = "select t2.* from trainings t" +
             " left join trainees t2 on t.trainee_id = t2.id" +
             " where t.id=:trainingId";
 
