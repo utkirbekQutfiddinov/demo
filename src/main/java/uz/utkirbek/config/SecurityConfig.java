@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/trainees").permitAll()
                         .requestMatchers(HttpMethod.POST, "/trainers").permitAll()
                         .requestMatchers( "/swagger-ui/**").permitAll()
+                        .requestMatchers( "/actuator/**").permitAll()
                         .anyRequest()
                         .authenticated()
                 )

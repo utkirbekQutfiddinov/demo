@@ -1,7 +1,9 @@
 package uz.utkirbek.health;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -9,10 +11,17 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Component
+@PropertySource("classpath:database.properties")
 public class DatabaseHealth implements HealthIndicator {
-    private final String jdbcUrl = "jdbc:postgresql://localhost:5432/postgres";
-    private final String username = "postgres";
-    private final String password = "1223";
+
+    @Value("${db.url}")
+    private String jdbcUrl;
+
+    @Value("${db.username}")
+    private String username;
+
+    @Value("${db.password}")
+    private String password;
 
     @Override
     public Health health() {
