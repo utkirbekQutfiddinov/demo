@@ -40,8 +40,11 @@
 
         <dependency>
             <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>1.12.2</version> <!-- Replace with the latest version -->
         </dependency>
 
         <dependency>
@@ -80,7 +83,12 @@
             <scope>test</scope>
         </dependency>
 
-        <!--        logging-->
+        <!--        swagger-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
+        </dependency>
         <!--        utils-->
         <dependency>
             <groupId>org.projectlombok</groupId>

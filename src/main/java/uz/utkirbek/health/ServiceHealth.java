@@ -1,4 +1,4 @@
-package uz.utkirbek.config;
+package uz.utkirbek.health;
 
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -8,18 +8,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Component
-public class ActuatorConfig implements HealthIndicator {
+public class ServiceHealth implements HealthIndicator {
 
-    private static final String EXTERNAL_SERVICE_URL = "http://localhost:8082";
+    private static final String EXTERNAL_SERVICE_URL = "http://localhost:8082/serviceHealth";
 
     @Override
     public Health health() {
         boolean isHealthy = isExternalServiceUp();
 
         if (isHealthy) {
-            return Health.up().withDetail("CustomStatus", "External service is available").build();
+            return Health.up().withDetail("WebServiceHealth", "Service is available").build();
         } else {
-            return Health.down().withDetail("CustomStatus", "External service is not available").build();
+            return Health.down().withDetail("WebServiceHealth", "Service is not available").build();
         }
     }
 
