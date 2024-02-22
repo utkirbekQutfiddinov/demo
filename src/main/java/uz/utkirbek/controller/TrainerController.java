@@ -46,14 +46,14 @@ public class TrainerController {
 
         if (trainerDto.getFirstName() == null || trainerDto.getLastName() == null
                 || trainerDto.getSpecialization() == null) {
-            LOGGER.error("Empty parameters: " + trainerDto);
+            LOGGER.info("Empty parameters: " + trainerDto);
             return ResponseEntity.badRequest().body(null);
         }
 
         try {
             Trainer addedTrainer = trainerService.add(trainerDto);
             if (addedTrainer == null) {
-                LOGGER.error("Error during creation: " + trainerDto);
+                LOGGER.info("Error during creation: " + trainerDto);
                 return ResponseEntity.internalServerError().body(null);
             }
 
@@ -71,7 +71,7 @@ public class TrainerController {
         try {
             Trainer trainer = trainerService.getByUsername(username);
             if (trainer == null) {
-                LOGGER.error("Trainer does not exist by username: " + username);
+                LOGGER.info("Trainer does not exist by username: " + username);
                 return ResponseEntity.notFound().build();
             }
 
@@ -101,13 +101,13 @@ public class TrainerController {
 
         try {
             if (!isValidTrainerDtoForUpdating(dto)) {
-                LOGGER.error("Empty parameters: " + dto);
+                LOGGER.info("Empty parameters: " + dto);
                 return ResponseEntity.badRequest().build();
             }
 
             Trainer trainer = trainerService.getByUsername(dto.getUsername());
             if (trainer == null) {
-                LOGGER.error("Trainer not found: username=" + dto.getUsername());
+                LOGGER.info("Trainer not found: username=" + dto.getUsername());
                 return ResponseEntity.notFound().build();
             }
 
@@ -171,14 +171,14 @@ public class TrainerController {
 
         try {
             if (dto.getTrainingId() == null || dto.getTrainerUsername() == null) {
-                LOGGER.error("Empty parameters");
+                LOGGER.info("Empty parameters");
                 return new ResponseEntity<>("Empty parameters", HttpStatus.BAD_REQUEST);
             }
 
             Boolean isChanged = trainingService.updateTrainer(dto.getTrainingId(), dto.getTrainerUsername());
 
             if (!isChanged) {
-                LOGGER.trace("Error on changing trainer of training: " + dto);
+                LOGGER.info("Error on changing trainer of training: " + dto);
                 return ResponseEntity.internalServerError().body("Error on changing trainer of training");
             }
 
@@ -194,13 +194,13 @@ public class TrainerController {
 
         try {
             if (username == null || isActive == null) {
-                LOGGER.error("Empty parameters");
+                LOGGER.info("Empty parameters");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
 
             Boolean isChanged = trainerService.changeStatus(username, isActive);
             if (!isChanged) {
-                LOGGER.error("error on chaning status: " + username + ", status: " + isActive);
+                LOGGER.info("error on chaning status: " + username + ", status: " + isActive);
                 return ResponseEntity.internalServerError().build();
             }
 

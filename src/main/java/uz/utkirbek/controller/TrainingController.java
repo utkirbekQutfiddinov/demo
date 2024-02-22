@@ -27,7 +27,7 @@ public class TrainingController {
 
         try {
             if (!isValidTrainingDto(dto)) {
-                LOGGER.error("Empty parameters: " + dto);
+                LOGGER.info("Empty parameters: " + dto);
                 return new ResponseEntity<>("Empty parameters: " + dto, HttpStatus.BAD_REQUEST);
             }
 
@@ -35,7 +35,7 @@ public class TrainingController {
             Training training = trainingService.add(dto);
 
             if (training == null) {
-                LOGGER.error("Error on creating: " + dto);
+                LOGGER.info("Error on creating: " + dto);
                 return ResponseEntity.internalServerError().build();
             }
 

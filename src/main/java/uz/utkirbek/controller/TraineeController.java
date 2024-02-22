@@ -1,5 +1,6 @@
 package uz.utkirbek.controller;
 
+import io.prometheus.client.Counter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -26,10 +27,16 @@ import java.util.stream.Collectors;
 @RequestMapping("/trainees")
 public class TraineeController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeController.class);
+    private static final Counter counter =
+            Counter.build()
+                    .name("traineeApiCounter")
+                    .help("Total number of calls to the TraineeController's APIs")
+                    .register();
 
     private final TraineeService traineeService;
     private final TrainingService trainingService;
     private final UserService userService;
+
 
     public TraineeController(TraineeService traineeService, TrainingService trainingService, UserService userService) {
         this.traineeService = traineeService;
@@ -42,13 +49,13 @@ public class TraineeController {
 
         try {
             if (traineeDto == null || traineeDto.getFirstName() == null || traineeDto.getLastName() == null) {
-                LOGGER.error("Empty parameters: " + traineeDto);
+                LOGGER.info("Empty parameters: " + traineeDto);
                 return ResponseEntity.badRequest().body(null);
             }
 
             Trainee addedTrainee = traineeService.add(traineeDto);
             if (addedTrainee == null) {
-                LOGGER.error("Error during creation: " + traineeDto);
+                LOGGER.info("Error during creation: " + traineeDto);
                 return ResponseEntity.internalServerError().body(null);
             }
 
@@ -65,13 +72,13 @@ public class TraineeController {
 
         try {
             if (username == null) {
-                LOGGER.error("Empty parameters: username is null");
+                LOGGER.info("Empty parameters: username is null");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
 
             Trainee trainee = traineeService.getByUsername(username);
             if (trainee == null) {
-                LOGGER.error("Trainee does not exist by username: " + username);
+                LOGGER.info("Trainee does not exist by username: " + username);
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
 
@@ -100,13 +107,13 @@ public class TraineeController {
 
         try {
             if (!isValidDtoForUpdating(dto)) {
-                LOGGER.error("Empty parameters: " + dto);
+                LOGGER.info("Empty parameters: " + dto);
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
 
             Trainee trainee = traineeService.getByUsername(dto.getUsername());
             if (trainee == null) {
-                LOGGER.error("Trainee not found: username=" + dto.getUsername());
+                LOGGER.info("Trainee not found: username=" + dto.getUsername());
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
 
@@ -135,14 +142,14 @@ public class TraineeController {
 
         try {
             if (username == null) {
-                LOGGER.error("Empty parameters: username is null");
+                LOGGER.info("Empty parameters: username is null");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
 
             Trainee trainee = traineeService.getByUsername(username);
 
             if (trainee == null) {
-                LOGGER.error("Trainee not found: username = " + username);
+                LOGGER.info("Trainee not found: username = " + username);
                 return new ResponseEntity<>("Error", HttpStatus.NOT_FOUND);
             }
 
@@ -169,7 +176,7 @@ public class TraineeController {
 
         try {
             if (username == null) {
-                LOGGER.error("Empty parameters: username is null");
+                LOGGER.info("Empty parameters: username is null");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
 
@@ -199,7 +206,7 @@ public class TraineeController {
 
         try {
             if (username == null) {
-                LOGGER.error("Empty parameters: username is null");
+                LOGGER.info("Empty parameters: username is null");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
             List<TraineeTrainerResponse> notAssignedActiveTrainers = traineeService.getNotAssignedAcitiveTrainers(username);
@@ -217,7 +224,7 @@ public class TraineeController {
 
         try {
             if (username == null || isActive == null) {
-                LOGGER.error("Empty parameters");
+                LOGGER.info("Empty parameters");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
 

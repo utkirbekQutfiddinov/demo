@@ -26,19 +26,19 @@ public class UserController {
 
         try {
             if (username == null || password == null) {
-                LOGGER.error("Empty parameters: username=" + username + ", password=" + password);
+                LOGGER.info("Empty parameters: username=" + username + ", password=" + password);
                 return ResponseEntity.badRequest().body(null);
             }
 
             User user = userService.findByUsernameAndPassword(username, password);
 
             if (user == null) {
-                LOGGER.error("User does not exist: username=" + username + ", password=" + password);
+                LOGGER.info("User does not exist: username=" + username + ", password=" + password);
                 return ResponseEntity.notFound().build();
             }
 
             if (!user.isActive()) {
-                LOGGER.error("User is not active");
+                LOGGER.info("User is not active");
                 return ResponseEntity.badRequest().build();
             }
 
@@ -54,14 +54,14 @@ public class UserController {
 
         try {
             if (dto.getUsername() == null || dto.getOldPassword() == null || dto.getNewPassword() == null) {
-                LOGGER.error("Empty parameters: " + dto);
+                LOGGER.info("Empty parameters: " + dto);
                 return ResponseEntity.badRequest().body(null);
             }
 
             User user = userService.findByUsernameAndPassword(dto.getUsername(), dto.getOldPassword());
 
             if (user == null) {
-                LOGGER.error("User does not exist: " + dto);
+                LOGGER.info("User does not exist: " + dto);
                 return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
             }
 
