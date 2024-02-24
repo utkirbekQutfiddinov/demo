@@ -1,5 +1,6 @@
 package uz.utkirbek.controller;
 
+import io.prometheus.client.Counter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,13 @@ import uz.utkirbek.service.UserService;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    private static final Counter userApiCounter =
+            Counter.build()
+                    .name("userApiCounter")
+                    .help("Total number of calls to the UserController's APIs")
+                    .register();
+
 
     private final UserService userService;
 
@@ -25,6 +32,7 @@ public class UserController {
                                         @RequestParam String password) {
 
         try {
+            userApiCounter.inc();
             if (username == null || password == null) {
                 LOGGER.info("Empty parameters: username=" + username + ", password=" + password);
                 return ResponseEntity.badRequest().body(null);
@@ -53,6 +61,7 @@ public class UserController {
     public ResponseEntity<String> changePassword(@RequestBody UserChangePasswordDto dto) {
 
         try {
+            userApiCounter.inc();
             if (dto.getUsername() == null || dto.getOldPassword() == null || dto.getNewPassword() == null) {
                 LOGGER.info("Empty parameters: " + dto);
                 return ResponseEntity.badRequest().body(null);

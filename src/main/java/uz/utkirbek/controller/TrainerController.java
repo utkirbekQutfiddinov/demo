@@ -1,5 +1,6 @@
 package uz.utkirbek.controller;
 
+import io.prometheus.client.Counter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,12 @@ import java.util.stream.Collectors;
 public class TrainerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerController.class);
 
+    private static final Counter trainerApiCounter =
+            Counter.build()
+                    .name("trainerApiCounter")
+                    .help("Total number of calls to the TrainerController's APIs")
+                    .register();
+
     private final TrainerService trainerService;
     private final TraineeService traineeService;
     private final TrainingService trainingService;
@@ -44,13 +51,15 @@ public class TrainerController {
     @PostMapping
     public ResponseEntity<RegisterResponse> register(@RequestBody TrainerDto trainerDto) {
 
-        if (trainerDto.getFirstName() == null || trainerDto.getLastName() == null
-                || trainerDto.getSpecialization() == null) {
-            LOGGER.info("Empty parameters: " + trainerDto);
-            return ResponseEntity.badRequest().body(null);
-        }
 
         try {
+            trainerApiCounter.inc();
+            if (trainerDto.getFirstName() == null || trainerDto.getLastName() == null
+                    || trainerDto.getSpecialization() == null) {
+                LOGGER.info("Empty parameters: " + trainerDto);
+                return ResponseEntity.badRequest().body(null);
+            }
+
             Trainer addedTrainer = trainerService.add(trainerDto);
             if (addedTrainer == null) {
                 LOGGER.info("Error during creation: " + trainerDto);
@@ -69,6 +78,7 @@ public class TrainerController {
     public ResponseEntity<TrainerResponse> getByUsername(@RequestParam String username) {
 
         try {
+            trainerApiCounter.inc();
             Trainer trainer = trainerService.getByUsername(username);
             if (trainer == null) {
                 LOGGER.info("Trainer does not exist by username: " + username);
@@ -100,6 +110,7 @@ public class TrainerController {
     public ResponseEntity<TrainerResponse> updateProfile(@RequestBody TrainerUpdateDto dto) {
 
         try {
+            trainerApiCounter.inc();
             if (!isValidTrainerDtoForUpdating(dto)) {
                 LOGGER.info("Empty parameters: " + dto);
                 return ResponseEntity.badRequest().build();
@@ -139,6 +150,7 @@ public class TrainerController {
 
 
         try {
+            trainerApiCounter.inc();
             TrainingFiltersDto filter = new TrainingFiltersDto(traineeUserName, periodFrom, periodTo, username, trainingType);
 
             List<TrainingResponse> trainings = trainingService.getByCriteria(filter);
@@ -170,6 +182,7 @@ public class TrainerController {
     public ResponseEntity<String> updateTrainerList(@RequestBody TrainingUpdateDto dto) {
 
         try {
+            trainerApiCounter.inc();
             if (dto.getTrainingId() == null || dto.getTrainerUsername() == null) {
                 LOGGER.info("Empty parameters");
                 return new ResponseEntity<>("Empty parameters", HttpStatus.BAD_REQUEST);
@@ -193,6 +206,7 @@ public class TrainerController {
     public ResponseEntity<String> changeStatus(@RequestParam String username, @RequestParam Boolean isActive) {
 
         try {
+            trainerApiCounter.inc();
             if (username == null || isActive == null) {
                 LOGGER.info("Empty parameters");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/trainees")
 public class TraineeController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeController.class);
-    private static final Counter counter =
+    private static final Counter traineeApiCounter =
             Counter.build()
                     .name("traineeApiCounter")
                     .help("Total number of calls to the TraineeController's APIs")
@@ -48,6 +48,7 @@ public class TraineeController {
     public ResponseEntity<RegisterResponse> register(@RequestBody TraineeDto traineeDto) {
 
         try {
+            traineeApiCounter.inc();
             if (traineeDto == null || traineeDto.getFirstName() == null || traineeDto.getLastName() == null) {
                 LOGGER.info("Empty parameters: " + traineeDto);
                 return ResponseEntity.badRequest().body(null);
@@ -71,6 +72,7 @@ public class TraineeController {
     public ResponseEntity<TraineeResponse> getByUsername(@RequestParam String username) {
 
         try {
+            traineeApiCounter.inc();
             if (username == null) {
                 LOGGER.info("Empty parameters: username is null");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -106,6 +108,7 @@ public class TraineeController {
     public ResponseEntity<TraineeResponse> updateProfile(@RequestBody TraineeUpdateDto dto) {
 
         try {
+            traineeApiCounter.inc();
             if (!isValidDtoForUpdating(dto)) {
                 LOGGER.info("Empty parameters: " + dto);
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -141,6 +144,7 @@ public class TraineeController {
     public ResponseEntity<String> delete(@RequestParam String username) {
 
         try {
+            traineeApiCounter.inc();
             if (username == null) {
                 LOGGER.info("Empty parameters: username is null");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -175,6 +179,7 @@ public class TraineeController {
                                                                       @RequestParam(required = false) String trainingType) {
 
         try {
+            traineeApiCounter.inc();
             if (username == null) {
                 LOGGER.info("Empty parameters: username is null");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -205,6 +210,7 @@ public class TraineeController {
     public ResponseEntity<List<TraineeTrainerResponse>> getActiveNotAssignedTrainers(@RequestParam String username) {
 
         try {
+            traineeApiCounter.inc();
             if (username == null) {
                 LOGGER.info("Empty parameters: username is null");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -223,6 +229,7 @@ public class TraineeController {
     public ResponseEntity<String> changeStatus(@RequestParam String username, @RequestParam Boolean isActive) {
 
         try {
+            traineeApiCounter.inc();
             if (username == null || isActive == null) {
                 LOGGER.info("Empty parameters");
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
