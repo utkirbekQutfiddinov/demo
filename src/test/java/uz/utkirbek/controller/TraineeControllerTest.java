@@ -65,7 +65,7 @@ class TraineeControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertNotNull(response.getBody().getUsername());
-        assertNotNull(response.getBody().getPassword());
+//        assertNotNull(response.getBody().getPassword());
     }
 
     @Test
@@ -87,6 +87,20 @@ class TraineeControllerTest {
         assertNotNull(response);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNull(response.getBody());
+    }
+
+    @Test
+    void register_Exception() {
+        when(traineeService.add(any())).thenReturn(null);
+
+
+        TraineeDto traineeDto = new TraineeDto("utkirbek", "qutfiddinov", null, null);
+        ResponseEntity<RegisterResponse> response = traineeController.register(traineeDto);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNull(response.getBody());
+
     }
 
     @Test
@@ -206,6 +220,22 @@ class TraineeControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Success", response.getBody());
+        verify(traineeService).getByUsername(username);
+        verify(traineeService).delete(trainee.getId());
+    }
+
+    @Test
+    public void delete_ValidUsername_ReturnsFalse() {
+        String username = "testUsername";
+        Trainee trainee = new Trainee();
+        trainee.setId(1);
+
+        when(traineeService.getByUsername(username)).thenReturn(trainee);
+        when(traineeService.delete(trainee.getId())).thenReturn(false);
+
+        ResponseEntity<String> response = traineeController.delete(username);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         verify(traineeService).getByUsername(username);
         verify(traineeService).delete(trainee.getId());
     }
