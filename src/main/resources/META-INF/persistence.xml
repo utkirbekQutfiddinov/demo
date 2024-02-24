@@ -25,4 +25,25 @@
             <property name="hibernate.hbm2ddl.auto" value="update"/>
         </properties>
     </persistence-unit>
+    <persistence-unit name="epamTaskDev" transaction-type="RESOURCE_LOCAL">
+        <class>uz.utkirbek.model.entity.User</class>
+        <class>uz.utkirbek.model.entity.TrainingType</class>
+        <class>uz.utkirbek.model.entity.Training</class>
+        <class>uz.utkirbek.model.entity.Trainee</class>
+        <class>uz.utkirbek.model.entity.Trainer</class>
+
+        <properties>
+            <!-- Database connection properties -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/gymdbdev"/>
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <property name="javax.persistence.jdbc.password" value="1223"/>
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+
+            <!-- Hibernate properties -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+        </properties>
+    </persistence-unit>
 </persistence>
