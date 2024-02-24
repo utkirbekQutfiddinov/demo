@@ -50,6 +50,14 @@ class TrainerServiceImplTest {
     }
 
     @Test
+    void getOne_Exception() {
+        when(trainerRepository.findById(any())).thenThrow(RuntimeException.class);
+
+        Trainer result = trainerService.getOne(1);
+        assertNull(result);
+    }
+
+    @Test
     void getOne() {
         when(trainerRepository.findById(1)).thenReturn(Optional.of(new Trainer()));
 
