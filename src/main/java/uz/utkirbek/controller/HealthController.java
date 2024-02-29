@@ -16,7 +16,7 @@ public class HealthController {
                     .register();
 
     @GetMapping
-    public ResponseEntity<String> getHealth(){
+    public ResponseEntity<String> getHealth() {
         healthControllerApiCounter.inc();
         return ResponseEntity.ok("Service is up");
     }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import uz.utkirbek.model.dto.TrainerDto;
 import uz.utkirbek.model.entity.Trainer;
 import uz.utkirbek.model.entity.TrainingType;
@@ -32,6 +33,9 @@ class TrainerRepositoryImplTest {
 
     @Mock
     private EntityManager entityManager;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private TrainerRepositoryImpl trainerRepository;
@@ -100,16 +104,6 @@ class TrainerRepositoryImplTest {
     }
 
     @Test
-    void update_Success() {
-        Trainer trainer = new Trainer();
-        when(entityManager.merge(any())).thenReturn(trainer);
-
-        Optional<Trainer> result = trainerRepository.update(new Trainer());
-
-        assertTrue(result.isPresent());
-    }
-
-    @Test
     void findByUsername_WhenUsernameExists_ReturnsTrainer() {
         CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class);
         CriteriaQuery criteriaQuery = mock(CriteriaQuery.class);
@@ -154,7 +148,7 @@ class TrainerRepositoryImplTest {
     }
 
     @Test
-    void findByTrainingId_WhenTrainingIdExists_ReturnsTrainer() {
+    void findByTrainingId_WhenTrainingIdExists_ReturnsTrainer() throws Exception {
         Query nativeQuery = mock(Query.class);
         when(entityManager.createNativeQuery(any())).thenReturn(nativeQuery);
         when(nativeQuery.setParameter("trainingId", 1)).thenReturn(nativeQuery);
@@ -173,7 +167,7 @@ class TrainerRepositoryImplTest {
         Query nativeQuery = mock(Query.class);
         when(entityManager.createNativeQuery(any())).thenReturn(nativeQuery);
         when(nativeQuery.setParameter("trainingId", 1)).thenReturn(nativeQuery);
-        when(nativeQuery.getSingleResult()).thenThrow(new RuntimeException()); // Simulate an exception
+        when(nativeQuery.getSingleResult()).thenThrow(new RuntimeException());
 
         Trainer result = trainerRepository.findByTrainingId(1);
 

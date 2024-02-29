@@ -370,7 +370,7 @@ class TrainerControllerTest {
 
     @Test
     public void updateTrainerList_InvalidTrainingUpdateDto_ReturnsBadRequest() {
-        TrainingUpdateDto invalidDto = new TrainingUpdateDto(); // missing required fields
+        TrainingUpdateDto invalidDto = new TrainingUpdateDto();
 
         ResponseEntity<String> response = trainerController.updateTrainerList(invalidDto);
 

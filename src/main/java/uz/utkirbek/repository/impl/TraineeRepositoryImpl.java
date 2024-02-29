@@ -106,7 +106,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public void delete(Trainee item) {
+    public boolean delete(Trainee item) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
@@ -117,6 +117,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         } finally {
             transaction.commit();
         }
+        return true;
     }
 
     @Override
@@ -156,11 +157,11 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                     .where(criteriaBuilder.equal(traineeUserJoin.get("username"), "trainee"));
 
             criteriaQuery.select(criteriaBuilder.construct(
-                    TraineeTrainerResponse.class,
-                    userJoin.get("username"),
-                    userJoin.get("firstname"),
-                    userJoin.get("lastname")
-            ))
+                            TraineeTrainerResponse.class,
+                            userJoin.get("username"),
+                            userJoin.get("firstname"),
+                            userJoin.get("lastname")
+                    ))
                     .where(
                             criteriaBuilder.isTrue(userJoin.get("isActive")),
                             criteriaBuilder.not(trainerRoot.get("id").in(subquery))

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import uz.utkirbek.model.dto.TraineeDto;
 import uz.utkirbek.model.entity.Trainee;
 import uz.utkirbek.model.entity.Trainer;
@@ -34,6 +35,9 @@ class TraineeRepositoryImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private TraineeRepositoryImpl traineeRepository;
 
@@ -48,7 +52,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    void createTrainee_Success() {
+    void createTrainee_Success() throws Exception {
         String firstName = "utkirbek";
         String lastName = "qutfiddinov";
         TraineeDto traineeDto = new TraineeDto(firstName, lastName, null, null);
@@ -67,7 +71,7 @@ class TraineeRepositoryImplTest {
     }
 
     @Test
-    void createTrainee_Failure() {
+    void createTrainee_Failure() throws Exception {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(entityManager.getTransaction()).thenReturn(transaction);
 
@@ -295,16 +299,16 @@ class TraineeRepositoryImplTest {
         TypedQuery typedQuery = mock(TypedQuery.class);
         when(entityManager.createQuery(criteriaQuery)).thenReturn(typedQuery);
 
-        Path path=mock(Path.class);
+        Path path = mock(Path.class);
         when(trainingRoot.get(anyString())).thenReturn(path);
 
-        Subquery selectedSubquery=mock(Subquery.class);
+        Subquery selectedSubquery = mock(Subquery.class);
         when(subquery.select(any())).thenReturn(selectedSubquery);
 
-        Path trainerRootGetPath=mock(Path.class);
+        Path trainerRootGetPath = mock(Path.class);
         when(trainerRoot.get(anyString())).thenReturn(trainerRootGetPath);
 
-        CriteriaQuery selectedCriteriaQuery=mock(CriteriaQuery.class);
+        CriteriaQuery selectedCriteriaQuery = mock(CriteriaQuery.class);
         when(criteriaQuery.select(any())).thenReturn(selectedCriteriaQuery);
 
         List<TraineeTrainerResponse> expectedResult = new ArrayList<>();

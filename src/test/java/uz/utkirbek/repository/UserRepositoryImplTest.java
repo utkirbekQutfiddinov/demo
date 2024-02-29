@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import uz.utkirbek.model.entity.User;
 import uz.utkirbek.repository.impl.UserRepositoryImpl;
 
@@ -20,8 +21,12 @@ class UserRepositoryImplTest {
     @Mock
     private EntityManager entityManager;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private UserRepositoryImpl userRepository;
+
 
     @BeforeEach
     void setUp() {
@@ -71,6 +76,16 @@ class UserRepositoryImplTest {
         List<User> result = userRepository.findAll();
 
         assertNotNull(result);
+    }
+
+    @Test
+    void findAll_Exception() {
+        Query query = mock(Query.class);
+        when(entityManager.createNativeQuery(anyString())).thenThrow(RuntimeException.class);
+
+        List<User> result = userRepository.findAll();
+
+        assertEquals(0, result.size());
     }
 
     @Test
