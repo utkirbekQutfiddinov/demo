@@ -44,7 +44,17 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void getOne() {
+    void getAll_Exception() {
+        when(trainingRepository.findAll()).thenThrow(RuntimeException.class);
+
+        List<Training> result = trainingService.getAll();
+
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void getOne() throws Exception {
         when(trainingRepository.findById(1)).thenReturn(Optional.of(new Training()));
 
         Training result = trainingService.getOne(1);
@@ -53,7 +63,16 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void getOneNotFound() {
+    void getOne_Exception() throws Exception {
+        when(trainingRepository.findById(1)).thenThrow(RuntimeException.class);
+
+        Training result = trainingService.getOne(1);
+
+        assertNull(result);
+    }
+
+    @Test
+    void getOneNotFound() throws Exception {
         when(trainingRepository.findById(1)).thenReturn(Optional.empty());
 
         Training result = trainingService.getOne(1);
@@ -62,7 +81,7 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void add() {
+    void add() throws Exception {
         when(trainingRepository.create(any())).thenReturn(Optional.of(new Training()));
 
         Training result = trainingService.add(new TrainingDto());
@@ -71,7 +90,16 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void addRepositoryError() {
+    void add_Exception() throws Exception {
+        when(trainingRepository.create(any())).thenThrow(RuntimeException.class);
+
+        Training result = trainingService.add(new TrainingDto());
+
+        assertNull(result);
+    }
+
+    @Test
+    void addRepositoryError() throws Exception {
         when(trainingRepository.create(any())).thenReturn(Optional.empty());
 
         Training result = trainingService.add(new TrainingDto());
@@ -96,6 +124,15 @@ class TrainingServiceImplTest {
         Boolean result = trainingService.updateTrainer(1, "trainerUsername");
 
         assertTrue(result);
+    }
+
+    @Test
+    void updateTrainer_Exception() {
+        when(trainingRepository.updateTrainer(1, "trainerUsername")).thenThrow(RuntimeException.class);
+
+        Boolean result = trainingService.updateTrainer(1, "trainerUsername");
+
+        assertFalse(result);
     }
 
     @Test

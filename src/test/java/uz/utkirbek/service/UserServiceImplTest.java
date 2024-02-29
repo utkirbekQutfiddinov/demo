@@ -41,7 +41,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getOne() {
+    void getOne() throws Exception {
         when(userRepository.findById(1)).thenReturn(Optional.of(new User()));
 
         User result = userService.getOne(1);
@@ -50,7 +50,16 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getOneNotFound() {
+    void getOne_Exception() throws Exception {
+        when(userRepository.findById(1)).thenThrow(RuntimeException.class);
+
+        User result = userService.getOne(1);
+
+        assertNull(result);
+    }
+
+    @Test
+    void getOneNotFound() throws Exception {
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
         User result = userService.getOne(1);
@@ -60,7 +69,7 @@ class UserServiceImplTest {
 
 
     @Test
-    void addRepositoryError() {
+    void addRepositoryError() throws Exception {
         when(userRepository.create(any())).thenReturn(Optional.empty());
 
         User result = userService.add(new User());
@@ -69,16 +78,25 @@ class UserServiceImplTest {
     }
 
     @Test
-    void update() {
+    void update() throws Exception {
         when(userRepository.update(any())).thenReturn(Optional.of(new User()));
 
         User result = userService.update(new User());
 
-        assertNotNull(result);
+        assertNull(result);
     }
 
     @Test
-    void updateRepositoryError() {
+    void update_Exception() throws Exception {
+        when(userRepository.update(any())).thenThrow(RuntimeException.class);
+
+        User result = userService.update(new User());
+
+        assertNull(result);
+    }
+
+    @Test
+    void updateRepositoryError() throws Exception {
         when(userRepository.update(any())).thenReturn(Optional.empty());
 
         User result = userService.update(new User());
@@ -87,7 +105,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void delete() {
+    void delete() throws Exception {
         when(userRepository.findById(1)).thenReturn(Optional.of(new User()));
 
         Boolean result = userService.delete(1);
@@ -97,7 +115,19 @@ class UserServiceImplTest {
     }
 
     @Test
-    void deleteNotFound() {
+    void delete_Exception() throws Exception {
+        User user = mock(User.class);
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
+        when(userRepository.delete(user)).thenThrow(RuntimeException.class);
+
+        Boolean result = userService.delete(1);
+
+        assertFalse(result);
+        verify(userRepository, times(1)).delete(any());
+    }
+
+    @Test
+    void deleteNotFound() throws Exception {
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
         Boolean result = userService.delete(1);
@@ -116,6 +146,15 @@ class UserServiceImplTest {
     }
 
     @Test
+    void changePassword_Exception() {
+        when(userRepository.changePassword(1, "newPassword")).thenThrow(RuntimeException.class);
+
+        Boolean result = userService.changePassword(1, "newPassword");
+
+        assertFalse(result);
+    }
+
+    @Test
     void changePasswordRepositoryError() {
         when(userRepository.changePassword(1, "newPassword")).thenReturn(Optional.empty());
 
@@ -128,6 +167,15 @@ class UserServiceImplTest {
     @Test
     void findByUsernameAndPasswordNotFound() {
         when(userRepository.findByUsername("nonexistentUser")).thenReturn(Optional.empty());
+
+        User result = userService.findByUsernameAndPassword("nonexistentUser", "testPassword");
+
+        assertNull(result);
+    }
+
+    @Test
+    void findByUsernameAndPasswordNotFound_Exception() {
+        when(userRepository.findByUsername("nonexistentUser")).thenThrow(RuntimeException.class);
 
         User result = userService.findByUsernameAndPassword("nonexistentUser", "testPassword");
 

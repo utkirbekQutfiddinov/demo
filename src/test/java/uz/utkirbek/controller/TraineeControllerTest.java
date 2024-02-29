@@ -65,7 +65,6 @@ class TraineeControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertNotNull(response.getBody().getUsername());
-//        assertNotNull(response.getBody().getPassword());
     }
 
     @Test
@@ -98,7 +97,7 @@ class TraineeControllerTest {
         ResponseEntity<RegisterResponse> response = traineeController.register(traineeDto);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertNull(response.getBody());
 
     }

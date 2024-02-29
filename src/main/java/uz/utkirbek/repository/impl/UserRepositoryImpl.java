@@ -78,7 +78,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void delete(User item) {
+    public boolean delete(User item) {
         EntityTransaction transaction = entityManager.getTransaction();
 
         try {
@@ -90,7 +90,7 @@ public class UserRepositoryImpl implements UserRepository {
         } finally {
             transaction.commit();
         }
-
+        return true;
     }
 
     @Override
