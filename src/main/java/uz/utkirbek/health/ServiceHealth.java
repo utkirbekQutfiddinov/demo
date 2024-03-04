@@ -1,16 +1,20 @@
 package uz.utkirbek.health;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.logging.Logger;
 
 @Component
 public class ServiceHealth implements HealthIndicator {
-    private static final Logger logger = Logger.getLogger(ServiceHealth.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceHealth.class.getName());
 
     private static final String EXTERNAL_SERVICE_URL = "http://localhost:8082/serviceHealth";
     private static final String REQUEST_METHOD_NAME = "GET";
@@ -29,13 +33,15 @@ public class ServiceHealth implements HealthIndicator {
 
     private boolean isExternalServiceUp() {
         try {
-            URL url = new URL(EXTERNAL_SERVICE_URL);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(REQUEST_METHOD_NAME);
-            int responseCode = connection.getResponseCode();
-            return responseCode == HttpURLConnection.HTTP_OK;
+            HttpClient httpClient = HttpClients.createDefault();
+            HttpGet request = new HttpGet(EXTERNAL_SERVICE_URL);
+
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            return statusCode == HttpStatus.SC_OK;
         } catch (Exception e) {
-            logger.warning("Exception on: " + e.getMessage());
+            LOGGER.error("Exception on: " + e.getMessage());
             return false;
         }
     }
