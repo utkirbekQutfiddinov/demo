@@ -1,16 +1,20 @@
 package uz.utkirbek.health;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.logging.Logger;
 
 @Component
 public class ServiceHealth implements HealthIndicator {
-    private static final Logger logger = Logger.getLogger(ServiceHealth.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceHealth.class.getName());
 
     private static final String EXTERNAL_SERVICE_URL = "http://localhost:8082/serviceHealth";
     private static final String REQUEST_METHOD_NAME = "GET";
