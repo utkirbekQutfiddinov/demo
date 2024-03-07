@@ -5,7 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import uz.utkirbek.model.dto.UserChangePasswordDto;
 import uz.utkirbek.model.entity.User;
 import uz.utkirbek.service.UserService;
@@ -27,35 +30,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String username,
-                                        @RequestParam String password) {
-
-        try {
-            userApiCounter.inc();
-            if (username == null || password == null) {
-                LOGGER.info("Empty parameters: username=" + username + ", password=" + password);
-                return ResponseEntity.badRequest().body(null);
-            }
-
-            User user = userService.findByUsernameAndPassword(username, password);
-
-            if (user == null) {
-                LOGGER.info("User does not exist: username=" + username + ", password=" + password);
-                return ResponseEntity.notFound().build();
-            }
-
-            if (!user.isActive()) {
-                LOGGER.info("User is not active");
-                return ResponseEntity.badRequest().build();
-            }
-
-            return ResponseEntity.ok("Success");
-        } catch (Exception e) {
-            LOGGER.error("error on login: " + username + ", pass:" + password);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
 
     @PutMapping("/change-password")
     public ResponseEntity<String> changePassword(@RequestBody UserChangePasswordDto dto) {

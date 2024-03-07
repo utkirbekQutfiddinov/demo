@@ -30,73 +30,6 @@ public class UserControllerTest {
     }
 
     @Test
-    public void login_ValidCredentials_ReturnsOk() {
-        String username = "testUsername";
-        String password = "testPassword";
-        User mockUser = new User();
-        mockUser.setUsername(username);
-        mockUser.setPassword(password);
-        mockUser.setActive(true);
-
-        Mockito.when(userService.findByUsernameAndPassword(username, password)).thenReturn(mockUser);
-
-        ResponseEntity<String> response = userController.login(username, password);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Success", response.getBody());
-        Mockito.verify(userService).findByUsernameAndPassword(username, password);
-    }
-
-    @Test
-    public void login_EmptyUsername_ReturnsBadRequest() {
-        ResponseEntity<String> response = userController.login(null, "testPassword");
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNull(response.getBody());
-        Mockito.verifyNoInteractions(userService);
-    }
-
-    @Test
-    public void login_EmptyPassword_ReturnsBadRequest() {
-        ResponseEntity<String> response = userController.login("testUsername", null);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNull(response.getBody());
-        Mockito.verifyNoInteractions(userService);
-    }
-
-    @Test
-    public void login_UserNotFound_ReturnsNotFound() {
-        String username = "testUsername";
-        String password = "testPassword";
-        Mockito.when(userService.findByUsernameAndPassword(username, password)).thenReturn(null);
-
-        ResponseEntity<String> response = userController.login(username, password);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNull(response.getBody());
-        Mockito.verify(userService).findByUsernameAndPassword(username, password);
-    }
-
-    @Test
-    public void login_InactiveUser_ReturnsBadRequest() {
-        String username = "testUsername";
-        String password = "testPassword";
-        User mockUser = new User();
-        mockUser.setUsername(username);
-        mockUser.setPassword(password);
-        mockUser.setActive(false);
-
-        Mockito.when(userService.findByUsernameAndPassword(username, password)).thenReturn(mockUser);
-
-        ResponseEntity<String> response = userController.login(username, password);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNull(response.getBody());
-        Mockito.verify(userService).findByUsernameAndPassword(username, password);
-    }
-
-    @Test
     public void changePassword_ValidParameters_ReturnsSuccess() {
         UserChangePasswordDto dto = new UserChangePasswordDto();
         dto.setUsername("testUsername");
@@ -178,6 +111,22 @@ public class UserControllerTest {
         assertEquals("Error", response.getBody());
         Mockito.verify(userService).findByUsernameAndPassword(dto.getUsername(), dto.getOldPassword());
         Mockito.verify(userService).changePassword(mockUser.getId(), dto.getNewPassword());
+    }
+
+    @Test
+    void changePassword_UserNotFound() {
+        UserChangePasswordDto dto = new UserChangePasswordDto();
+        dto.setUsername("nonExistingUser");
+        dto.setOldPassword("oldPassword");
+        dto.setNewPassword("newPassword");
+
+        Mockito.when(userService.findByUsernameAndPassword("nonExistingUser", "oldPassword")).thenReturn(null);
+
+        ResponseEntity<String> response = userController.changePassword(dto);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("User does not exist", response.getBody());
+
     }
 
 }
