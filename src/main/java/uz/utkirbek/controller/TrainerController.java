@@ -15,6 +15,7 @@ import uz.utkirbek.model.entity.Trainer;
 import uz.utkirbek.model.entity.TrainingType;
 import uz.utkirbek.model.entity.User;
 import uz.utkirbek.model.response.*;
+import uz.utkirbek.security.JwtProvider;
 import uz.utkirbek.service.*;
 
 import java.text.ParseException;
@@ -39,13 +40,15 @@ public class TrainerController {
     private final TrainingService trainingService;
     private final UserService userService;
     private final TrainingTypeService trainingTypeService;
+    private final JwtProvider jwtProvider;
 
-    public TrainerController(TrainerService trainerService, TraineeService traineeService, TrainingService trainingService, UserService userService, TrainingTypeService trainingTypeService) {
+    public TrainerController(TrainerService trainerService, TraineeService traineeService, TrainingService trainingService, UserService userService, TrainingTypeService trainingTypeService, JwtProvider jwtProvider) {
         this.trainerService = trainerService;
         this.traineeService = traineeService;
         this.trainingService = trainingService;
         this.userService = userService;
         this.trainingTypeService = trainingTypeService;
+        this.jwtProvider = jwtProvider;
     }
 
     @PostMapping
@@ -67,7 +70,7 @@ public class TrainerController {
             }
 
             return ResponseEntity.ok(new RegisterResponse(addedTrainer.getUser().getUsername(),
-                    addedTrainer.getUser().getRawPassword()));
+                    addedTrainer.getUser().getRawPassword(), jwtProvider.generateToken(addedTrainer.getUser().getUsername())));
         } catch (Exception e) {
             LOGGER.error("Error: " + e.getMessage());
             return ResponseEntity.internalServerError().body(null);

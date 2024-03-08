@@ -14,6 +14,7 @@ import uz.utkirbek.model.entity.Trainer;
 import uz.utkirbek.model.entity.Training;
 import uz.utkirbek.model.entity.User;
 import uz.utkirbek.model.response.*;
+import uz.utkirbek.security.JwtProvider;
 import uz.utkirbek.service.TraineeService;
 import uz.utkirbek.service.TrainingService;
 import uz.utkirbek.service.UserService;
@@ -36,12 +37,14 @@ public class TraineeController {
     private final TraineeService traineeService;
     private final TrainingService trainingService;
     private final UserService userService;
+    private final JwtProvider jwtProvider;
 
 
-    public TraineeController(TraineeService traineeService, TrainingService trainingService, UserService userService) {
+    public TraineeController(TraineeService traineeService, TrainingService trainingService, UserService userService, JwtProvider jwtProvider) {
         this.traineeService = traineeService;
         this.trainingService = trainingService;
         this.userService = userService;
+        this.jwtProvider = jwtProvider;
     }
 
     @PostMapping
@@ -61,7 +64,7 @@ public class TraineeController {
             }
 
             return ResponseEntity.ok(new RegisterResponse(addedTrainee.getUser().getUsername(),
-                    addedTrainee.getUser().getRawPassword()));
+                    addedTrainee.getUser().getRawPassword(), jwtProvider.generateToken(addedTrainee.getUser().getUsername())));
         } catch (Exception e) {
             LOGGER.error("Error during creation: " + traineeDto);
             return ResponseEntity.internalServerError().body(null);

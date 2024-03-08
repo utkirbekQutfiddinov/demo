@@ -9,22 +9,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uz.utkirbek.model.entity.User;
+import uz.utkirbek.security.JwtProvider;
 import uz.utkirbek.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserService userService;
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
+    private final UserService userService;
+    private final JwtProvider jwtProvider;
     private static final Counter userApiCounter =
             Counter.build()
                     .name("authApiCounter")
                     .help("Total number of calls to the AuthController's APIs")
                     .register();
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, JwtProvider jwtProvider) {
         this.userService = userService;
+        this.jwtProvider = jwtProvider;
     }
 
     @GetMapping("/login")
@@ -50,7 +53,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().build();
             }
 
-            return ResponseEntity.ok("Success");
+            return ResponseEntity.ok(jwtProvider.generateToken(username));
         } catch (Exception e) {
             LOGGER.error("error on login: " + username + ", pass:" + password);
             return ResponseEntity.internalServerError().build();

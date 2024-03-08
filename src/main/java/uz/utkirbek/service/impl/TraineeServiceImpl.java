@@ -7,6 +7,7 @@ import uz.utkirbek.model.response.TraineeTrainerResponse;
 import uz.utkirbek.repository.TraineeRepository;
 import uz.utkirbek.repository.TrainingRepository;
 import uz.utkirbek.repository.UserRepository;
+import uz.utkirbek.security.JwtFilter;
 import uz.utkirbek.service.TraineeService;
 
 import java.util.Collections;
@@ -17,12 +18,10 @@ import java.util.Optional;
 public class TraineeServiceImpl implements TraineeService {
     private final TraineeRepository traineeRepository;
     private final UserRepository userRepository;
-    private final TrainingRepository trainingRepository;
 
-    public TraineeServiceImpl(TraineeRepository repository, UserRepository userRepository, TrainingRepository trainingRepository) {
+    public TraineeServiceImpl(TraineeRepository repository, UserRepository userRepository) {
         this.traineeRepository = repository;
         this.userRepository = userRepository;
-        this.trainingRepository = trainingRepository;
     }
 
     @Override
