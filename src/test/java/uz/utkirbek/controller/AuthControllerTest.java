@@ -11,8 +11,9 @@ import org.springframework.http.ResponseEntity;
 import uz.utkirbek.model.entity.User;
 import uz.utkirbek.service.UserService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthControllerTest {
     @Mock
@@ -38,16 +39,16 @@ public class AuthControllerTest {
 
         Mockito.when(userService.findByUsernameAndPassword(username, password)).thenReturn(mockUser);
 
-        ResponseEntity<String> response = authController.login(username, password);
+        ResponseEntity<Map> response = authController.login(username, password);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Success", response.getBody());
+        assertNotNull( response.getBody());
         Mockito.verify(userService).findByUsernameAndPassword(username, password);
     }
 
     @Test
     public void login_EmptyUsername_ReturnsBadRequest() {
-        ResponseEntity<String> response = authController.login(null, "testPassword");
+        ResponseEntity<Map> response = authController.login(null, "testPassword");
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNull(response.getBody());
@@ -56,7 +57,7 @@ public class AuthControllerTest {
 
     @Test
     public void login_EmptyPassword_ReturnsBadRequest() {
-        ResponseEntity<String> response = authController.login("testUsername", null);
+        ResponseEntity<Map> response = authController.login("testUsername", null);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNull(response.getBody());
@@ -69,7 +70,7 @@ public class AuthControllerTest {
         String password = "testPassword";
         Mockito.when(userService.findByUsernameAndPassword(username, password)).thenReturn(null);
 
-        ResponseEntity<String> response = authController.login(username, password);
+        ResponseEntity<Map> response = authController.login(username, password);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
@@ -87,7 +88,7 @@ public class AuthControllerTest {
 
         Mockito.when(userService.findByUsernameAndPassword(username, password)).thenReturn(mockUser);
 
-        ResponseEntity<String> response = authController.login(username, password);
+        ResponseEntity<Map> response = authController.login(username, password);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNull(response.getBody());

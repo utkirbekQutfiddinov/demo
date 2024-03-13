@@ -12,6 +12,8 @@ import uz.utkirbek.model.entity.User;
 import uz.utkirbek.security.JwtProvider;
 import uz.utkirbek.service.UserService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -31,8 +33,8 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String username,
-                                        @RequestParam String password) {
+    public ResponseEntity<Map> login(@RequestParam String username,
+                                     @RequestParam String password) {
 
         try {
             userApiCounter.inc();
@@ -53,7 +55,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().build();
             }
 
-            return ResponseEntity.ok(jwtProvider.generateToken(username));
+            return ResponseEntity.ok(Map.of("token",jwtProvider.generateToken(username)));
         } catch (Exception e) {
             LOGGER.error("error on login: " + username + ", pass:" + password);
             return ResponseEntity.internalServerError().build();
