@@ -12,9 +12,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -22,9 +19,11 @@ public class SecurityConfig {
 
     @Lazy
     @Autowired
-    JwtFilter jwtFilter;
+    private JwtFilter jwtFilter;
+
     @Autowired
     private AuthenticationFailureHandler failureHandler;
+
     @Autowired
     private MyLogoutHandler myLogoutHandler;
 
