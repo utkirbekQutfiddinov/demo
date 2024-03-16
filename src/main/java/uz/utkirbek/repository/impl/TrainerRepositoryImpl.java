@@ -17,6 +17,7 @@ import uz.utkirbek.repository.TrainerRepository;
 import uz.utkirbek.repository.TrainingTypeRepository;
 import uz.utkirbek.repository.UserRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,6 +68,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
             return Optional.ofNullable(trainer);
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         } finally {
             transaction.commit();
@@ -80,6 +82,9 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             transaction.begin();
             Trainer trainer = entityManager.find(Trainer.class, id);
             return trainer == null ? Optional.empty() : Optional.ofNullable(trainer);
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return Optional.empty();
         } finally {
             transaction.commit();
         }
@@ -92,6 +97,9 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             transaction.begin();
             Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
             return nativeQuery.getResultList();
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return Collections.emptyList();
         } finally {
             transaction.commit();
         }
@@ -104,6 +112,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             item = entityManager.merge(item);
             return Optional.ofNullable(item);
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         }
     }

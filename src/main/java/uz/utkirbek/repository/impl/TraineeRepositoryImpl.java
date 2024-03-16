@@ -24,16 +24,14 @@ import java.util.Optional;
 @Repository
 public class TraineeRepositoryImpl implements TraineeRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeRepositoryImpl.class);
-
-    private final EntityManager entityManager;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final TrainingTypeRepository trainingTypeRepository;
-
     private static final String SELECT_ALL = "select u.* from trainees u";
     private static final String SELECT_TRAINEE_BY_TRAINING_ID = "select t2.* from trainings t" +
             " left join trainees t2 on t.trainee_id = t2.id" +
             " where t.id=:trainingId";
+    private final EntityManager entityManager;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final TrainingTypeRepository trainingTypeRepository;
 
 
     public TraineeRepositoryImpl(EntityManager entityManager, UserRepository userRepository, PasswordEncoder passwordEncoder, TrainingTypeRepository trainingTypeRepository) {
@@ -65,6 +63,9 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
             entityManager.persist(trainee);
             return Optional.ofNullable(trainee);
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return Optional.empty();
         } finally {
             transaction.commit();
         }
@@ -77,6 +78,9 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             transaction.begin();
             Trainee trainee = entityManager.find(Trainee.class, id);
             return trainee == null ? Optional.empty() : Optional.ofNullable(trainee);
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return Optional.empty();
         } finally {
             transaction.commit();
         }
@@ -89,6 +93,9 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             transaction.begin();
             Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
             return nativeQuery.getResultList();
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return Collections.emptyList();
         } finally {
             transaction.commit();
         }
@@ -101,6 +108,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             item = entityManager.merge(item);
             return Optional.ofNullable(item);
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -114,6 +122,9 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             if (entityManager.contains(item)) {
                 entityManager.remove(item);
             }
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return false;
         } finally {
             transaction.commit();
         }
@@ -136,6 +147,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             Trainee trainee = typedQuery.getSingleResult();
             return Optional.ofNullable(trainee);
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -177,6 +189,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
             return result;
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Collections.emptyList();
         }
 

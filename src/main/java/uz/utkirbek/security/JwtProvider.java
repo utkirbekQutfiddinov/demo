@@ -2,6 +2,8 @@ package uz.utkirbek.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +11,8 @@ import java.util.Date;
 
 @Component
 public class JwtProvider {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtProvider.class);
+
     @Value("${jwt.expireTime}")
     private long expireTime;
 
@@ -35,6 +39,7 @@ public class JwtProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return false;
         }
     }
