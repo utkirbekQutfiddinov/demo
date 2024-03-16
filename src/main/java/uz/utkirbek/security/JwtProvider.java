@@ -2,14 +2,18 @@ package uz.utkirbek.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
 public class JwtProvider {
-    private final long expireTime = 3_600_000;//an hour
-    private final String secretKey = "qwqwoi398wjdn98329hdfjs!@#$@";
+    @Value("${jwt.expireTime}")
+    private long expireTime;
+
+    @Value("${jwt.secretKey}")
+    private String secretKey;
 
     public String generateToken(String username) {
         long currentTimeMillis = System.currentTimeMillis();
