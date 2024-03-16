@@ -1,5 +1,6 @@
 package uz.utkirbek.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -7,7 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class MyPasswordEncoder implements PasswordEncoder {
 
-    private final String salt = "123Utkirbek!@#Qutfiddinov?Epam:Task";
+    @Value("${password.salt}")
+    private String salt;
     private final PasswordEncoder encoder;
 
     public MyPasswordEncoder() {
