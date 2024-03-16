@@ -32,9 +32,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.disable())
-                .formLogin().permitAll()
-                .failureHandler(failureHandler)
-                .and()
+                .formLogin(auth -> auth.permitAll()
+                        .failureHandler(failureHandler)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/trainers").permitAll()
                         .requestMatchers(HttpMethod.POST, "/trainees").permitAll()
