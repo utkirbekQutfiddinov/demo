@@ -19,13 +19,13 @@ import java.util.Map;
 public class AuthController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
-    private final UserService userService;
-    private final JwtProvider jwtProvider;
     private static final Counter userApiCounter =
             Counter.build()
                     .name("authApiCounter")
                     .help("Total number of calls to the AuthController's APIs")
                     .register();
+    private final UserService userService;
+    private final JwtProvider jwtProvider;
 
     public AuthController(UserService userService, JwtProvider jwtProvider) {
         this.userService = userService;
@@ -55,7 +55,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().build();
             }
 
-            return ResponseEntity.ok(Map.of("token",jwtProvider.generateToken(username)));
+            return ResponseEntity.ok(Map.of("token", jwtProvider.generateToken(username)));
         } catch (Exception e) {
             LOGGER.error("error on login: " + username + ", pass:" + password);
             return ResponseEntity.internalServerError().build();

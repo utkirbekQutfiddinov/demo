@@ -9,16 +9,20 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uz.utkirbek.model.entity.User;
+import uz.utkirbek.security.JwtProvider;
 import uz.utkirbek.service.UserService;
 
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class AuthControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private JwtProvider jwtProvider;
     @InjectMocks
     private AuthController authController;
 
@@ -32,17 +36,20 @@ public class AuthControllerTest {
     public void login_ValidCredentials_ReturnsOk() {
         String username = "testUsername";
         String password = "testPassword";
+        String mockToken = "mockJwtToken";
+
+
         User mockUser = new User();
         mockUser.setUsername(username);
         mockUser.setPassword(password);
         mockUser.setActive(true);
 
         Mockito.when(userService.findByUsernameAndPassword(username, password)).thenReturn(mockUser);
-
+        Mockito.when(jwtProvider.generateToken(anyString())).thenReturn(mockToken);
         ResponseEntity<Map> response = authController.login(username, password);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull( response.getBody());
+        assertNotNull(response.getBody());
         Mockito.verify(userService).findByUsernameAndPassword(username, password);
     }
 

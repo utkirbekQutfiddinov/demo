@@ -16,6 +16,7 @@ import uz.utkirbek.model.response.RegisterResponse;
 import uz.utkirbek.model.response.TraineeResponse;
 import uz.utkirbek.model.response.TraineeTrainerResponse;
 import uz.utkirbek.model.response.TraineeTrainingResponse;
+import uz.utkirbek.security.JwtProvider;
 import uz.utkirbek.service.TraineeService;
 import uz.utkirbek.service.TrainingService;
 import uz.utkirbek.service.UserService;
@@ -40,6 +41,9 @@ class TraineeControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private JwtProvider jwtProvider;
+
     @InjectMocks
     private TraineeController traineeController;
 
@@ -56,7 +60,10 @@ class TraineeControllerTest {
         user.setUsername(firstname + lastname);
         user.setPassword("mockPassword");
 
+        String mockToken="mockJwtToken";
+
         when(traineeService.add(any())).thenReturn(new Trainee(user, null, null));
+        when(jwtProvider.generateToken(any())).thenReturn(mockToken);
 
         TraineeDto traineeDto = new TraineeDto(firstname, lastname, null, null);
         ResponseEntity<RegisterResponse> response = traineeController.register(traineeDto);
