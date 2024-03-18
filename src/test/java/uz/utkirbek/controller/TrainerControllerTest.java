@@ -17,6 +17,7 @@ import uz.utkirbek.model.entity.User;
 import uz.utkirbek.model.response.RegisterResponse;
 import uz.utkirbek.model.response.TrainerResponse;
 import uz.utkirbek.model.response.TrainerTrainingResponse;
+import uz.utkirbek.security.JwtProvider;
 import uz.utkirbek.service.*;
 
 import java.time.LocalDate;
@@ -44,6 +45,9 @@ class TrainerControllerTest {
     private UserService userService;
 
     @Mock
+    private JwtProvider jwtProvider;
+
+    @Mock
     private TrainingTypeService trainingTypeService;
 
     @InjectMocks
@@ -58,6 +62,7 @@ class TrainerControllerTest {
     void register_Success() {
         String firstname = "utkirbek";
         String lastname = "qutfiddinov";
+        String mockJwtToken="mockToken";
 
         Trainer addedTrainer = new Trainer();
         User user = new User(firstname, lastname);
@@ -69,6 +74,7 @@ class TrainerControllerTest {
 
         addedTrainer.setUser(user);
         when(trainerService.add(trainerDto)).thenReturn(addedTrainer);
+        when(jwtProvider.generateToken(any())).thenReturn(mockJwtToken);
 
         ResponseEntity<RegisterResponse> response = trainerController.register(trainerDto);
 

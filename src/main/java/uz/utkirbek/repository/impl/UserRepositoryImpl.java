@@ -4,6 +4,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import uz.utkirbek.model.entity.User;
@@ -15,6 +17,8 @@ import java.util.Optional;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserRepositoryImpl.class);
+
 
     private static final String SELECT_ALL = "select u.* from users u";
     private static final String SELECT_BY_USERNAME = "SELECT u FROM User u WHERE u.username = :username";
@@ -34,13 +38,16 @@ public class UserRepositoryImpl implements UserRepository {
 
         try {
             transaction.begin();
-            item.setPassword(passwordEncoder.encode(item.getPassword()));
+            item.setPassword(passwordEncoder.encode(item.getPasswordSalt() + item.getPassword()));
             if (item.getId() == 0) {
                 entityManager.persist(item);
             } else {
                 item = entityManager.merge(item);
             }
             return Optional.ofNullable(item);
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return Optional.empty();
         } finally {
             transaction.commit();
         }
@@ -52,6 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
             User user = entityManager.find(User.class, id);
             return user == null ? Optional.empty() : Optional.ofNullable(user);
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -62,6 +70,7 @@ public class UserRepositoryImpl implements UserRepository {
             Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
             return nativeQuery.getResultList();
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Collections.emptyList();
         }
     }
@@ -69,10 +78,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> update(User item) {
         try {
-            item.setPassword(passwordEncoder.encode(item.getPassword()));
+            item.setPassword(passwordEncoder.encode(item.getPasswordSalt() + item.getPassword()));
             Optional<User> userOptional = create(item);
             return userOptional;
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -87,6 +97,9 @@ public class UserRepositoryImpl implements UserRepository {
             if (entityManager.contains(item)) {
                 entityManager.remove(item);
             }
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return false;
         } finally {
             transaction.commit();
         }
@@ -103,6 +116,7 @@ public class UserRepositoryImpl implements UserRepository {
 
             return Optional.ofNullable(user);
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -114,10 +128,13 @@ public class UserRepositoryImpl implements UserRepository {
             transaction.begin();
 
             User user = entityManager.find(User.class, id);
-            user.setPassword(passwordEncoder.encode(password));
+            user.setPassword(passwordEncoder.encode(user.getPasswordSalt() + password));
             entityManager.flush();
 
             return Optional.of(true);
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return Optional.of(false);
         } finally {
             transaction.commit();
         }
@@ -140,6 +157,7 @@ public class UserRepositoryImpl implements UserRepository {
 
             return Optional.of(true);
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.of(false);
         } finally {
             transaction.commit();

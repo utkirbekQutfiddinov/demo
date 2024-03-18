@@ -86,6 +86,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
             Training training = entityManager.find(Training.class, id);
             return training == null ? Optional.empty() : Optional.ofNullable(training);
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -96,6 +97,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
             Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
             return nativeQuery.getResultList();
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Collections.emptyList();
         }
     }
@@ -209,6 +211,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
             return finalList;
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Collections.emptyList();
         }
     }

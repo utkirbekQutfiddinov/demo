@@ -44,7 +44,10 @@ public class UserServiceImpl implements UserService {
     public User add(User bean) {
         try {
             bean.setUsername(generateUsername(bean.getFirstname(), bean.getLastname()));
-            bean.setPassword(passwordEncoder.encode(generatePassword()));
+            String passwordSalt = generateRandomText();
+            String password = generateRandomText();
+            bean.setPasswordSalt(passwordSalt);
+            bean.setPassword(passwordEncoder.encode(passwordSalt + password));
             return repository.create(bean).orElse(null);
         } catch (Exception e) {
             return null;
@@ -54,7 +57,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(User bean) {
         try {
-            bean.setPassword(passwordEncoder.encode(bean.getPassword()));
+            bean.setPassword(passwordEncoder.encode(bean.getPasswordSalt() + bean.getPassword()));
             Optional<User> update = repository.update(bean);
             return update.orElse(null);
         } catch (Exception e) {
@@ -96,7 +99,7 @@ public class UserServiceImpl implements UserService {
             }
             User user = byUserName.get();
 
-            return passwordEncoder.matches(password, user.getPassword()) ? user : null;
+            return passwordEncoder.matches(user.getPasswordSalt() + password, user.getPassword()) ? user : null;
         } catch (Exception e) {
             return null;
         }
@@ -120,7 +123,7 @@ public class UserServiceImpl implements UserService {
         return existingUser.isPresent();
     }
 
-    private String generatePassword() {
+    private String generateRandomText() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder password = new StringBuilder();
 

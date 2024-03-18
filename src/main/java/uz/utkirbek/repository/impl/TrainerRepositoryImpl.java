@@ -17,6 +17,7 @@ import uz.utkirbek.repository.TrainerRepository;
 import uz.utkirbek.repository.TrainingTypeRepository;
 import uz.utkirbek.repository.UserRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,8 +51,10 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             transaction.begin();
             User user = new User(item.getFirstName(), item.getLastName());
             user.setUsername(generateUsername(item.getFirstName(), item.getLastName()));
-            String rawPassword = generatePassword();
-            user.setPassword(passwordEncoder.encode(rawPassword));
+            String rawPassword = generateRandomText();
+            String passwordSalt = generateRandomText();
+            user.setPasswordSalt(passwordSalt);
+            user.setPassword(passwordEncoder.encode(passwordSalt + rawPassword));
             user.setActive(true);
             user.setRawPassword(rawPassword);
 
@@ -67,6 +70,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
             return Optional.ofNullable(trainer);
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         } finally {
             transaction.commit();
@@ -80,6 +84,9 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             transaction.begin();
             Trainer trainer = entityManager.find(Trainer.class, id);
             return trainer == null ? Optional.empty() : Optional.ofNullable(trainer);
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return Optional.empty();
         } finally {
             transaction.commit();
         }
@@ -92,6 +99,9 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             transaction.begin();
             Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
             return nativeQuery.getResultList();
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return Collections.emptyList();
         } finally {
             transaction.commit();
         }
@@ -100,10 +110,12 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public Optional<Trainer> update(Trainer item) {
         try {
-            item.getUser().setPassword(passwordEncoder.encode(item.getUser().getPassword()));
+            User user = item.getUser();
+            user.setPassword(passwordEncoder.encode(user.getPasswordSalt() + user.getPassword()));
             item = entityManager.merge(item);
             return Optional.ofNullable(item);
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -173,7 +185,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         return existingUser.isPresent();
     }
 
-    private String generatePassword() {
+    private String generateRandomText() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder password = new StringBuilder();
 

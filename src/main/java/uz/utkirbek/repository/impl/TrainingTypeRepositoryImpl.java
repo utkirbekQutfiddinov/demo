@@ -36,6 +36,9 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
 
             return Optional.ofNullable(item);
 
+        } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
+            return Optional.empty();
         } finally {
             transaction.commit();
         }
@@ -47,6 +50,7 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
             TrainingType type = entityManager.find(TrainingType.class, id);
             return type == null ? Optional.empty() : Optional.ofNullable(type);
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -57,6 +61,7 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
             Query nativeQuery = entityManager.createNativeQuery(SELECT_ALL);
             return nativeQuery.getResultList();
         } catch (Exception e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Collections.emptyList();
         }
     }
@@ -76,6 +81,7 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
             TrainingType result = typedQuery.getSingleResult();
             return Optional.ofNullable(result);
         } catch (NoResultException e) {
+            LOGGER.error("Error on: " + e.getMessage());
             return Optional.empty();
         }
     }

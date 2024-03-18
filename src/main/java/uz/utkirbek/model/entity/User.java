@@ -35,6 +35,8 @@ public class User implements Serializable {
     @Transient
     private String rawPassword;
 
+    private String passwordSalt;
+
     public User(int id) {
         this.id = id;
     }
