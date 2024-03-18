@@ -25,7 +25,7 @@ public class SecurityConfig {
     private AuthenticationFailureHandler failureHandler;
 
     @Autowired
-    private MyLogoutHandler myLogoutHandler;
+    private CustomLogoutHandler myLogoutHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

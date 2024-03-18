@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class MyAuthenticationFailureHandler implements AuthenticationFailureHandler {
+public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Autowired
     private LoginAttemptService loginAttemptService;
