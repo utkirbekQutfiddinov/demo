@@ -51,8 +51,10 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             transaction.begin();
             User user = new User(item.getFirstName(), item.getLastName());
             user.setUsername(generateUsername(item.getFirstName(), item.getLastName()));
-            String rawPassword = generatePassword();
-            user.setPassword(passwordEncoder.encode(rawPassword));
+            String rawPassword = generateRandomText();
+            String passwordSalt = generateRandomText();
+            user.setPasswordSalt(passwordSalt);
+            user.setPassword(passwordEncoder.encode(passwordSalt + rawPassword));
             user.setActive(true);
             user.setRawPassword(rawPassword);
 
@@ -108,7 +110,8 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public Optional<Trainer> update(Trainer item) {
         try {
-            item.getUser().setPassword(passwordEncoder.encode(item.getUser().getPassword()));
+            User user = item.getUser();
+            user.setPassword(passwordEncoder.encode(user.getPasswordSalt() + user.getPassword()));
             item = entityManager.merge(item);
             return Optional.ofNullable(item);
         } catch (Exception e) {
@@ -182,7 +185,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         return existingUser.isPresent();
     }
 
-    private String generatePassword() {
+    private String generateRandomText() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder password = new StringBuilder();
 
